@@ -1,8 +1,8 @@
 'use client'
 
+import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { Models } from 'react-native-appwrite'
-import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
 
 const queryKey = ['appwrite', 'locale', 'continents']
 

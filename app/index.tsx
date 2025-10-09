@@ -9,7 +9,7 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!isLoading) {
       if (account) {
-        router.replace('/(chat)/chat-list');
+        router.replace('/(tabs)');
       } else {
         router.replace('/(auth)/login');
       }

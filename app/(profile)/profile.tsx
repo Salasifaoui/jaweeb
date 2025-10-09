@@ -3,7 +3,6 @@ import { useAccount } from '@/src/appwrite/account';
 import { useSignOut } from '@/src/appwrite/account/useSignOut';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
-import { useChats } from '@/src/hooks/useChats';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -12,7 +11,6 @@ export default function ProfileScreen() {
   const { chatId } = useLocalSearchParams<{ chatId?: string }>();
   const [loading, setLoading] = useState(false);
   const { data: account } = useAccount();
-  const { getChatInfo } = useChats();
   const logout = useSignOut({
     onSuccess: () => {
       router.replace('/(auth)/login');
