@@ -1,45 +1,89 @@
+import { useEmailSignIn } from '@/src/appwrite/account/useEmailSignIn';
+import { useEmailSignUp } from '@/src/appwrite/account/useEmailSignUp';
+import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
-import { useAuth } from '@/src/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function RegisterScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState<{ title: string; description: string } | null>(null);
 
-  const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('خطأ', 'يرجى ملء جميع الحقول');
-      return;
-    }
+    const emailSignUp = useEmailSignUp({
+        onSuccess: async () => {
+            setErrorMessage(null); // Clear any previous errors
+            // After successful registration, sign in the user
+            emailSignIn.mutate({ email, password });
+        },
+        onError: (error) => {
+            const parsedError = parseErrorMessage(error);
+            console.error("Registration error:", error);
+            setErrorMessage(parsedError);
+            setIsLoading(false);
+        }
+    });
 
-    if (password !== confirmPassword) {
-      Alert.alert('خطأ', 'كلمات المرور غير متطابقة');
-      return;
-    }
+    const emailSignIn = useEmailSignIn({
+        onSuccess: () => {
+            setErrorMessage(null); // Clear any previous errors
+            router.replace("/");
+        },
+        onError: (error) => {
+            const parsedError = parseErrorMessage(error);
+            setErrorMessage(parsedError);
+            console.error("Auto sign-in error:", error);
+            setIsLoading(false);
+        }
+    });
 
-    if (password.length < 6) {
-      Alert.alert('خطأ', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-      return;
-    }
+    const handleNameChange = (text: string) => {
+        setName(text);
+        if (errorMessage) {
+            setErrorMessage(null); // Clear error when user starts typing
+        }
+    };
 
-    setLoading(true);
-    try {
-      await register(name, email, password);
-      router.replace('/(chat)/chat-list');
-    } catch (error) {
-      Alert.alert('خطأ في إنشاء الحساب', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleEmailChange = (text: string) => {
+        setEmail(text);
+        if (errorMessage) {
+            setErrorMessage(null); // Clear error when user starts typing
+        }
+    };
 
+    const handlePasswordChange = (text: string) => {
+        setPassword(text);
+        if (errorMessage) {
+            setErrorMessage(null); // Clear error when user starts typing
+        }
+    };
+
+    const handleRegister = async () => {
+        if (!name || !email || !password || !confirmPassword) return;
+
+        setErrorMessage(null); // Clear any previous errors
+        setIsLoading(true);
+        emailSignUp.mutate({
+            name: name.trim(),
+            email: email.trim(),
+            password
+        });
+    };
+
+    const handleAppleSignUp = () => {
+        // Implement Apple sign up
+        console.log("Apple sign up pressed");
+    };
+
+    const handleGoogleSignUp = () => {
+        // Implement Google sign up
+        console.log("Google sign up pressed");
+    };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>إنشاء حساب جديد</Text>
@@ -76,7 +120,7 @@ export default function RegisterScreen() {
       <Button
         title="إنشاء الحساب"
         onPress={handleRegister}
-        loading={loading}
+        loading={isLoading}
         style={styles.registerButton}
       />
       

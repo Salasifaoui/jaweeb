@@ -1,20 +1,20 @@
-import { useAuth } from '@/src/hooks/useAuth';
+import { useAccount } from '@/src/appwrite/account';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
-  const { user, loading } = useAuth();
+  const { data: account, isLoading } = useAccount();
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
+    if (!isLoading) {
+      if (account) {
         router.replace('/(chat)/chat-list');
       } else {
         router.replace('/(auth)/login');
       }
     }
-  }, [user, loading]);
+  }, [account, isLoading]);
 
   return (
     <View style={styles.container}>

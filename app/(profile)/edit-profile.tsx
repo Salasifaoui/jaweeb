@@ -1,45 +1,109 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Avatar } from '@/src/components/Avatar';
+import { useAccount } from '@/src/appwrite/account/useAccount';
+import { useUpdateEmail } from "@/src/appwrite/account/useUpdateEmail";
+import { useUpdateName } from "@/src/appwrite/account/useUpdateName";
+import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
-import { useAuth } from '@/src/hooks/useAuth';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function EditProfileScreen() {
-  const { user, updateProfile } = useAuth();
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [bio, setBio] = useState(user?.bio || '');
+  const { data: account } = useAccount();
+  const [name, setName] = useState( '');
+  const [email, setEmail] = useState('');
+  const [bio, setBio] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const handleSave = async () => {
-    if (!name.trim()) {
-      Alert.alert('خطأ', 'يرجى إدخال الاسم');
-      return;
+  // Initialize form with current account data
+  useEffect(() => {
+    if (account) {
+        setName(account.name || "");
+        setEmail(account.email || "");
     }
+}, [account]);
 
-    if (!email.trim()) {
-      Alert.alert('خطأ', 'يرجى إدخال البريد الإلكتروني');
-      return;
+// Check if there are changes
+useEffect(() => {
+    if (account) {
+        const nameChanged = name.trim() !== (account.name || "");
+        const emailChanged = email.trim() !== (account.email || "");
+        setHasChanges(nameChanged || emailChanged );
     }
+}, [name, email, account]);
 
-    setLoading(true);
-    try {
-      await updateProfile({
-        name: name.trim(),
-        email: email.trim(),
-        bio: bio.trim(),
-      });
-      Alert.alert('نجح', 'تم تحديث الملف الشخصي بنجاح');
+  const updateName = useUpdateName({
+    onSuccess: () => {
+        console.log("Name updated successfully");
+    },
+    onError: (error) => {
+        const parsedError = parseErrorMessage(error);
+        console.error("Name update error:", error);
+        Alert.alert(parsedError.title, parsedError.description);
+        setIsUpdating(false);
+    }
+});
+
+const updateEmail = useUpdateEmail({
+    onSuccess: () => {
+        console.log("Email updated successfully");
+        setPassword(""); // Clear password after successful update
+    },
+    onError: (error) => {
+        const parsedError = parseErrorMessage(error);
+        console.error("Email update error:", error);
+        Alert.alert(parsedError.title, parsedError.description);
+        setIsUpdating(false);
+    }
+});
+
+const handleSave = async () => {
+  if (!account || !hasChanges) return;
+
+  const nameChanged = name.trim() !== (account.name || "");
+  const emailChanged = email.trim() !== (account.email || "");
+
+  if (!name.trim()) {
+      Alert.alert("Invalid Name", "Name cannot be empty.");
+      return;
+  }
+
+  if (!email.trim() || !email.includes('@')) {
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
+      return;
+  }
+
+
+  setIsUpdating(true);
+
+  try {
+      // Update name if changed
+      if (nameChanged) {
+          await updateName.mutateAsync({ name: name.trim() });
+      }
+
+      // Update email if changed
+      if (emailChanged) {
+          await updateEmail.mutateAsync({
+              email: email.trim(),
+              password: password
+          });
+      }
+
+
+      Alert.alert("Success", "Your account information has been updated successfully.");
+      setIsUpdating(false);
+
+      // Navigate back to settings
       router.back();
-    } catch (error) {
-      Alert.alert('خطأ', 'فشل في تحديث الملف الشخصي');
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+      setIsUpdating(false);
+  }
+};
 
   const handleChangeAvatar = () => {
     Alert.alert(
@@ -79,11 +143,11 @@ export default function EditProfileScreen() {
       <View style={styles.content}>
         <View style={styles.avatarSection}>
           <TouchableOpacity onPress={handleChangeAvatar} style={styles.avatarContainer}>
-            <Avatar
-              source={user?.avatar}
+            {/* <Avatar
+              source={account?.prefs?.avatar_url}
               name={name || 'المستخدم'}
               size={100}
-            />
+            /> */}
             <View style={styles.avatarOverlay}>
               <IconSymbol name="camera" size={24} color="#fff" />
             </View>

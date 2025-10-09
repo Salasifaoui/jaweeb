@@ -1,32 +1,69 @@
+import { useEmailSignIn } from '@/src/appwrite/account/useEmailSignIn';
+import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
-import { useAuth } from '@/src/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<{ title: string; description: string } | null>(null);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('خطأ', 'يرجى ملء جميع الحقول');
-      return;
-    }
+    const emailSignIn = useEmailSignIn({
+        onSuccess: () => {
+            setErrorMessage(null); // Clear any previous errors
+            router.replace("/");
+        },
+        onError: (error: any) => {
+            const parsedError = parseErrorMessage(error);
+            setErrorMessage(parsedError);
+            console.error("Login error:", error);
+            setIsLoading(false);
+        }
+    });
 
-    setLoading(true);
-    try {
-      await login(email, password);
-      router.replace('/(chat)/chat-list');
-    } catch (error) {
-      Alert.alert('خطأ في تسجيل الدخول', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleEmailChange = (text: string) => {
+        setEmail(text);
+        if (errorMessage) {
+            setErrorMessage(null); // Clear error when user starts typing
+        }
+    };
+
+    const handlePasswordChange = (text: string) => {
+        setPassword(text);
+        if (errorMessage) {
+            setErrorMessage(null); // Clear error when user starts typing
+        }
+    };
+
+    const handleEmailLogin = async () => {
+        if (!email || !password) return;
+
+        setErrorMessage(null); // Clear any previous errors
+        setIsLoading(true);
+        emailSignIn.mutate({ email, password });
+    };
+
+    const handleForgotPassword = () => {
+        // if (email) {
+        //     router.push(`/(auth)/forgot-password?email=${email}`);
+        // } else {
+            router.push("/(auth)/forgot-password");
+        // }
+    };
+
+    const handleAppleLogin = () => {
+        // Implement Apple login
+        console.log("Apple login pressed");
+    };
+
+    const handleGoogleLogin = () => {
+        // Implement Google login
+        console.log("Google login pressed");
+    };
 
   return (
     <View style={styles.container}>
@@ -35,7 +72,7 @@ export default function LoginScreen() {
       <InputField
         placeholder="البريد الإلكتروني"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={handleEmailChange}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -43,14 +80,14 @@ export default function LoginScreen() {
       <InputField
         placeholder="كلمة المرور"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={handlePasswordChange}
         secureTextEntry
       />
       
       <Button
         title="تسجيل الدخول"
-        onPress={handleLogin}
-        loading={loading}
+        onPress={handleEmailLogin}
+        loading={isLoading}
         style={styles.loginButton}
       />
       
@@ -63,7 +100,7 @@ export default function LoginScreen() {
       
       <Button
         title="نسيت كلمة المرور؟"
-        onPress={() => router.push('/(auth)/forgot-password')}
+        onPress={handleForgotPassword}
         variant="text"
         style={styles.forgotButton}
       />

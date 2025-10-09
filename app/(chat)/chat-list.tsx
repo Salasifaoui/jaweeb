@@ -1,7 +1,7 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useSignOut } from '@/src/appwrite/account/useSignOut';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
-import { useAuth } from '@/src/hooks/useAuth';
 import { useChats } from '@/src/hooks/useChats';
 import type { Chat } from '@/src/types';
 import { formatDate } from '@/src/utils/formatDate';
@@ -13,7 +13,11 @@ export default function ChatListScreen() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const { getChats } = useChats();
-  const { user, logout } = useAuth();
+  const signOut = useSignOut({
+    onSuccess: () => {
+      router.replace('/(auth)/login');
+    },
+  });
 
   useEffect(() => {
     loadChats();
@@ -40,7 +44,7 @@ export default function ChatListScreen() {
           text: 'تسجيل الخروج',
           style: 'destructive',
           onPress: async () => {
-            await logout();
+            await signOut.mutateAsync();
             router.replace('/(auth)/login');
           },
         },

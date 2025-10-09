@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native';
+// import * as Sentry from '@sentry/react-native';
 
 const VAR_RENAMES: Record<string, string> = {
   oldPassword: 'Current Password',
@@ -32,7 +32,7 @@ export function parseErrorMessage(error: any): { title: string; description: str
         description: descParam,
       };
     } catch (error) {
-      Sentry.captureException(error);
+      // Sentry.captureException(error);
       console.error('Failed to parse error message:', error);
     }
   }

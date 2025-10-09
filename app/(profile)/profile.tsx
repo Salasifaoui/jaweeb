@@ -1,7 +1,8 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAccount } from '@/src/appwrite/account';
+import { useSignOut } from '@/src/appwrite/account/useSignOut';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
-import { useAuth } from '@/src/hooks/useAuth';
 import { useChats } from '@/src/hooks/useChats';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -10,8 +11,13 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 export default function ProfileScreen() {
   const { chatId } = useLocalSearchParams<{ chatId?: string }>();
   const [loading, setLoading] = useState(false);
-  const { user, logout } = useAuth();
+  const { data: account } = useAccount();
   const { getChatInfo } = useChats();
+  const logout = useSignOut({
+    onSuccess: () => {
+      router.replace('/(auth)/login');
+    },
+  });
 
   const handleEditProfile = () => {
     router.push('/(profile)/edit-profile');
@@ -29,7 +35,7 @@ export default function ProfileScreen() {
           onPress: async () => {
             setLoading(true);
             try {
-              await logout();
+              await logout.mutateAsync();
               router.replace('/(auth)/login');
             } catch (error) {
               Alert.alert('خطأ', 'فشل في تسجيل الخروج');
@@ -99,12 +105,12 @@ export default function ProfileScreen() {
 
       <View style={styles.profileSection}>
         <Avatar
-          source={user?.avatar}
-          name={user?.name || 'المستخدم'}
+          source={account?.prefs?.avatar_url}
+          name={account?.name || 'المستخدم'}
           size={100}
         />
-        <Text style={styles.userName}>{user?.name || 'المستخدم'}</Text>
-        <Text style={styles.userEmail}>{user?.email}</Text>
+        <Text style={styles.userName}>{account?.name || 'المستخدم'}</Text>
+        <Text style={styles.userEmail}>{account?.email}</Text>
         
         {!chatId && (
           <Button
