@@ -1,3 +1,4 @@
+import { AppHeader } from '@/components/app-header';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAccount } from '@/src/appwrite/account/useAccount';
 import { useUpdateEmail } from "@/src/appwrite/account/useUpdateEmail";
@@ -119,7 +120,7 @@ const handleSave = async () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Button
           variant="text"
           onPress={() => router.back()}
@@ -138,7 +139,33 @@ const handleSave = async () => {
             حفظ
           </Text>
         </Button>
-      </View>
+      </View> */}
+      <AppHeader
+        title="تعديل الملف الشخصي"
+        showBackButton={true}
+        onBackPress={() => router.back()}
+        leftComponent={
+          <Button
+          variant="text"
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <IconSymbol name="chevron.left" size={24} color="#007AFF" />
+        </Button>
+        }
+        rightComponent={
+          <Button
+          variant="text"
+          onPress={handleSave}
+          disabled={loading}
+          style={styles.saveButton}
+        >
+          <Text style={[styles.saveText, loading && styles.disabledText]}>
+            حفظ
+          </Text>
+        </Button>
+        }
+      />
 
       <View style={styles.content}>
         <View style={styles.avatarSection}>
