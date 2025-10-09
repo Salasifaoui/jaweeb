@@ -1,9 +1,9 @@
 'use client'
 
+import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
+import { useAccount } from '@/src/appwrite/account'
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { Models } from 'react-native-appwrite'
-import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
-import { useAccount } from '@/libs/appwrite/account'
 
 const queryKey = ['appwrite', 'account', 'locale']
 

@@ -69,7 +69,7 @@ export class UsersService {
     }
   }
 
-  async createUser(userData: CreateUserData): Promise<User> {
+  async createUser(userData: CreateUserData, userId?: string): Promise<User> {
     try {
       console.log('userData', userData);
       console.log('APPWRITE_CONFIG.DATABASE_ID', APPWRITE_CONFIG.DATABASE_ID);
@@ -79,7 +79,7 @@ export class UsersService {
         APPWRITE_CONFIG.COLLECTIONS.USERS,
         'unique()',
         {
-          user_id: userData.email, // Will be updated with actual user_id
+          user_id: userId || userData.email, // Use provided userId or fallback to email
           username: userData.username,
           email: userData.email,
           avatar_url: userData.avatar_url || '',

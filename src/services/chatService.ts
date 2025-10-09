@@ -62,6 +62,7 @@ export class ChatService {
   }
 
   async createGroup(groupData: CreateGroupData): Promise<string> {
+    console.log('groupData', groupData);
     try {
       const session = await appwriteClient.account.getSession('current');
       if (!session) throw new Error('غير مصرح لك');
@@ -138,6 +139,7 @@ export class ChatService {
         content,
         sender_id: session.userId,
         group_id: chatId,
+        groups: chatId,
         type: 'text',
       });
 

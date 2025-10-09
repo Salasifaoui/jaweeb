@@ -10,6 +10,7 @@ export interface CreateMessageData {
   content: string;
   type: MessageType;
   media_url?: string;
+  groups?: string;
 }
 
 export interface UpdateMessageData {
@@ -84,6 +85,7 @@ export class MessagesService {
           media_url: messageData.media_url,
           is_read: false,
           read_by: [],
+          groups: messageData.groups,
           created_at: new Date().toISOString(),
         }
       );

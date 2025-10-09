@@ -1,4 +1,5 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAccount } from '@/src/appwrite';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
@@ -14,6 +15,7 @@ export default function NewGroupScreen() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const { createGroup, getUsers } = useChats();
+  const { data: account } = useAccount();
 
   React.useEffect(() => {
     loadUsers();
@@ -30,9 +32,9 @@ export default function NewGroupScreen() {
 
   const toggleUserSelection = (user: User) => {
     setSelectedUsers(prev => {
-      const isSelected = prev.some(u => u.id === user.id);
+      const isSelected = prev.some(u => u.user_id === user.user_id);
       if (isSelected) {
-        return prev.filter(u => u.id !== user.id);
+        return prev.filter(u => u.user_id !== user.user_id);
       } else {
         return [...prev, user];
       }
@@ -52,7 +54,13 @@ export default function NewGroupScreen() {
 
     setLoading(true);
     try {
-      const groupId = await createGroup(groupName.trim(), selectedUsers.map(u => u.id));
+      const groupId = await createGroup({
+        name: groupName.trim(),
+        owner_id: account?.user_id,
+          description: '',
+          avatar_url: '',
+        memberIds: selectedUsers.map(u => u.user_id),
+      });
       router.replace(`/(chat)/chat-room?id=${groupId}`);
     } catch (error) {
       Alert.alert('خطأ', 'فشل في إنشاء المجموعة');
@@ -62,7 +70,7 @@ export default function NewGroupScreen() {
   };
 
   const renderUserItem = ({ item }: { item: User }) => {
-    const isSelected = selectedUsers.some(u => u.id === item.id);
+    const isSelected = selectedUsers.some(u => u.user_id === item.user_id);
     
     return (
       <TouchableOpacity
@@ -71,11 +79,11 @@ export default function NewGroupScreen() {
       >
         <Avatar
           source={item.avatar}
-          name={item.name}
+          name={item.username}
           size={50}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.name}</Text>
+          <Text style={styles.userName}>{item.username}</Text>
           <Text style={styles.userEmail}>{item.email}</Text>
         </View>
         {isSelected && (

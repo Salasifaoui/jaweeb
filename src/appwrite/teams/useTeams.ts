@@ -1,9 +1,9 @@
 'use client'
 
+import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
+import { useAccount } from '@/src/appwrite/account'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { useAppwrite } from '@/src/appwrite/AppwriteProvider'
-import { useAccount } from '@/libs/appwrite/account'
 
 /**
  * Access to all teams the local user is a member of.

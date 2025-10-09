@@ -1,3 +1,4 @@
+import { Message } from "./message";
 export interface Group {
   id: string;
   name: string;           // Group name
@@ -5,7 +6,8 @@ export interface Group {
   description?: string;   // Group description
   avatar_url?: string;    // Group image
   members_count?: number;  // Number of members
-  created_at: string;     // Creation timestamp
+  created_at: string; 
+  messages?: Message[];    // Creation timestamp
 }
 
 export interface CreateGroupData {

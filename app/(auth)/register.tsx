@@ -3,6 +3,7 @@ import { useEmailSignUp } from '@/src/appwrite/account/useEmailSignUp';
 import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
+import { usersService } from '@/src/services/usersService';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -16,10 +17,27 @@ export default function RegisterScreen() {
     const [errorMessage, setErrorMessage] = useState<{ title: string; description: string } | null>(null);
 
     const emailSignUp = useEmailSignUp({
-        onSuccess: async () => {
+        onSuccess: async (user) => {
             setErrorMessage(null); // Clear any previous errors
-            // After successful registration, sign in the user
-            emailSignIn.mutate({ email, password });
+            try {
+                // Create user profile in database using the Appwrite user ID
+                await usersService.createUser({
+                    username: name.trim(),
+                    email: email.trim(),
+                    status: 'online',
+                    bio: '',
+                }, user.$id);
+                
+                // After successful registration and profile creation, sign in the user
+                emailSignIn.mutate({ email, password });
+            } catch (profileError) {
+                console.error("Profile creation error:", profileError);
+                setErrorMessage({
+                    title: "خطأ في إنشاء الملف الشخصي",
+                    description: "تم إنشاء الحساب بنجاح ولكن فشل في إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى."
+                });
+                setIsLoading(false);
+            }
         },
         onError: (error) => {
             const parsedError = parseErrorMessage(error);
@@ -42,22 +60,8 @@ export default function RegisterScreen() {
         }
     });
 
-    const handleNameChange = (text: string) => {
-        setName(text);
-        if (errorMessage) {
-            setErrorMessage(null); // Clear error when user starts typing
-        }
-    };
-
-    const handleEmailChange = (text: string) => {
-        setEmail(text);
-        if (errorMessage) {
-            setErrorMessage(null); // Clear error when user starts typing
-        }
-    };
-
-    const handlePasswordChange = (text: string) => {
-        setPassword(text);
+    const handleInputChange = (text: string, setter: (value: string) => void) => {
+        setter(text);
         if (errorMessage) {
             setErrorMessage(null); // Clear error when user starts typing
         }
@@ -65,6 +69,15 @@ export default function RegisterScreen() {
 
     const handleRegister = async () => {
         if (!name || !email || !password || !confirmPassword) return;
+
+        // Validate password confirmation
+        if (password !== confirmPassword) {
+            setErrorMessage({
+                title: "خطأ في كلمة المرور",
+                description: "كلمة المرور وتأكيد كلمة المرور غير متطابقين."
+            });
+            return;
+        }
 
         setErrorMessage(null); // Clear any previous errors
         setIsLoading(true);
@@ -75,30 +88,28 @@ export default function RegisterScreen() {
         });
     };
 
-    const handleAppleSignUp = () => {
-        // Implement Apple sign up
-        console.log("Apple sign up pressed");
-    };
-
-    const handleGoogleSignUp = () => {
-        // Implement Google sign up
-        console.log("Google sign up pressed");
-    };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>إنشاء حساب جديد</Text>
       
+      {errorMessage && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>{errorMessage.title}</Text>
+          <Text style={styles.errorDescription}>{errorMessage.description}</Text>
+        </View>
+      )}
+      
       <InputField
         placeholder="الاسم الكامل"
         value={name}
-        onChangeText={setName}
+        onChangeText={(text) => handleInputChange(text, setName)}
         autoCapitalize="words"
       />
       
       <InputField
         placeholder="البريد الإلكتروني"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => handleInputChange(text, setEmail)}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -106,14 +117,14 @@ export default function RegisterScreen() {
       <InputField
         placeholder="كلمة المرور"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => handleInputChange(text, setPassword)}
         secureTextEntry
       />
       
       <InputField
         placeholder="تأكيد كلمة المرور"
         value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        onChangeText={(text) => handleInputChange(text, setConfirmPassword)}
         secureTextEntry
       />
       
@@ -147,6 +158,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
     color: '#333',
+  },
+  errorContainer: {
+    backgroundColor: '#FFE6E6',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF3B30',
+  },
+  errorTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF3B30',
+    marginBottom: 4,
+  },
+  errorDescription: {
+    fontSize: 14,
+    color: '#FF3B30',
+    lineHeight: 20,
   },
   registerButton: {
     marginTop: 20,

@@ -3,6 +3,7 @@ import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { MessageBubble } from '@/src/components/MessageBubble';
 import { useChats } from '@/src/hooks/useChats';
+import { useGroups } from '@/src/hooks/useGroups';
 import { useRealtime } from '@/src/hooks/useRealtime';
 import type { Message } from '@/src/types';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -16,6 +17,7 @@ export default function ChatRoomScreen() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const { getGroup } = useGroups();
   
   const { getMessages, sendMessage } = useChats();
   const { subscribeToMessages } = useRealtime();
@@ -54,6 +56,7 @@ export default function ChatRoomScreen() {
     setSending(true);
     try {
       await sendMessage(id, newMessage.trim());
+      loadMessages();
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -176,6 +179,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
+    width: '100%',
     alignItems: 'flex-end',
     padding: 16,
     backgroundColor: '#fff',
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
   },
   messageInput: {
     flex: 1,
+    width: '100%',
     marginRight: 12,
     maxHeight: 100,
   },
