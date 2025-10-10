@@ -8,7 +8,11 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (!isLoading) {
-      router.replace('/(tabs)');
+      if (account) {
+        router.replace('/(auth)/inscription');
+      } else {
+        router.replace('/(tabs)');
+      }
     }
   }, [account, isLoading]);
 

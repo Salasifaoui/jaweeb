@@ -1,13 +1,19 @@
 import { IconsList } from '@/components/icons/icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
+import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { APP_NAME } from '@/constants/variables';
+import { useAccount } from '@/src/appwrite/account';
 import { Button } from '@/src/components/Button';
 import { router } from 'expo-router';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ChevronDownCircle, ChevronUpCircle } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function WelcomePage() {
+  const { data: account } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
   const handleNext = () => {
     router.push('/(auth)/complated/gender-birth');
   };
@@ -28,7 +34,42 @@ export default function WelcomePage() {
             Let&apos;s get you set up with a few quick steps to personalize your experience.
           </ThemedText>
         </View>
-
+         <View style={styles.avatarSection}>
+           <UserAvatar 
+             user={account} 
+             size={100} 
+             backgroundColor="#FF6B6B"
+             textColor="#FFFFFF"
+             showInitials={true}
+           />
+           <View style={styles.containerChevron}>
+            <ThemedText style={styles.textChevron}>Select your avatar or upload a new one</ThemedText>
+           
+           {!isOpen ? (
+            <TouchableOpacity
+              onPress={() => setIsOpen(true)}
+            >
+              <ChevronDownCircle
+                size={20}
+                color={'#FF6B6B'}
+                fill={'#fff'}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => setIsOpen(false)}
+            >
+              <ChevronUpCircle
+                size={20}
+                color={'#FF6B6B'}
+                fill={'#fff'}
+              />
+            </TouchableOpacity>
+          )}
+          </View>
+          
+         </View>
+         {isOpen && <ListAvatars userProfile={account} />}
         {/* Features List */}
         <View style={styles.featuresSection}>
           <View style={styles.featureItem}>
@@ -117,4 +158,21 @@ const styles = StyleSheet.create({
   nextButton: {
     backgroundColor: '#FF6B6B',
   },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  containerChevron: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    marginTop: 10,
+  },
+  textChevron: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
+  },
+  
 });

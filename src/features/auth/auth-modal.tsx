@@ -9,6 +9,7 @@ import GoogleSignInButton from '@/src/components/GoogleSignInButton';
 import { router } from 'expo-router';
 import React from 'react';
 import {
+  Alert,
   Linking,
   StyleSheet,
   TouchableOpacity,
@@ -16,45 +17,35 @@ import {
 } from 'react-native';
 
 export function AuthModal() {
-  const handleGoogleSignIn = () => {
-    // Implement Google sign in
-    console.log('Google sign in pressed');
-
-    // Navigate to onboarding flow after successful sign in
-    router.push('/(auth)/complated/welcom');
-  };
+  
 
   const handleEmailSignIn = () => {
     // Navigate to phone sign in
     router.push('/(auth)/login');
   };
 
+  const handleGoogleSignIn = () => {
+    Alert.alert('Google sign in pressed');
+  };
+
   const handleAppleSignIn = () => {
-    // Implement Apple sign in
-    console.log('Apple sign in pressed');
-    // Navigate to onboarding flow after successful sign in
-    router.push('/(auth)/complated/welcom');
+    Alert.alert('Apple sign in pressed');
   };
 
   const handleFacebookSignIn = () => {
-    // Implement Facebook sign in
-    console.log('Facebook sign in pressed');
     // Navigate to onboarding flow after successful sign in
-    router.push('/(auth)/complated/welcom');
+    Alert.alert('Facebook sign in pressed');
   };
 
   const handleTwitterSignIn = () => {
-    // Implement Twitter sign in
-    console.log('Twitter sign in pressed');
-    // Navigate to onboarding flow after successful sign in
-    router.push('/(auth)/complated/welcom');
+    Alert.alert('Twitter sign in pressed');
   };
 
   const handleVKSignIn = () => {
     // Implement VK sign in
     console.log('VK sign in pressed');
     // Navigate to onboarding flow after successful sign in
-    router.push('/(auth)/complated/welcom');
+    Alert.alert('VK sign in pressed');
   };
 
   const handleTermsOfUse = () => {

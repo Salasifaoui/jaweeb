@@ -1,4 +1,4 @@
-import { cn } from '@/libs/utils';
+import { cn } from '@/src/utils/utils';
 import type { LucideIcon, LucideProps } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
