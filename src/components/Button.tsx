@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 interface ButtonProps {
   title?: string;
@@ -11,6 +11,8 @@ interface ButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   children?: React.ReactNode;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 export function Button({
@@ -23,6 +25,8 @@ export function Button({
   style,
   textStyle,
   children,
+  leftIcon,
+  rightIcon,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -59,6 +63,7 @@ export function Button({
       disabled={isDisabled}
       activeOpacity={0.7}
     >
+      {leftIcon && <View style={styles.icon}>{leftIcon}</View>}
       {loading ? (
         <ActivityIndicator 
           color={variant === 'primary' ? '#fff' : '#007AFF'} 
@@ -70,6 +75,7 @@ export function Button({
           {title && <Text style={[...getTextStyle(), textStyle]}>{title}</Text>}
         </>
       )}
+      {rightIcon && <View style={styles.icon}>{rightIcon}</View>}
     </TouchableOpacity>
   );
 }
@@ -137,5 +143,9 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.5,
+  },
+  icon: {
+    marginRight: 8,
+    marginLeft: 8,
   },
 });

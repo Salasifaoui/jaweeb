@@ -2,12 +2,22 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAccount } from '@/src/appwrite/account';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { AuthModal } from '../auth';
 
 export function CameraScreen() {
   const [isRecording, setIsRecording] = useState(false);
+  const { data: account } = useAccount();
 
+  if (!account) {
+    return <AuthModal 
+    visible={true} 
+    onClose={() => router.replace('/(tabs)')} 
+  />
+  }
   const handleStartRecording = () => {
     setIsRecording(true);
     Alert.alert('Recording Started', 'Video recording has begun');
