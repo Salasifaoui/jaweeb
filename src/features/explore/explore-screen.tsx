@@ -1,8 +1,9 @@
 import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
+import { Building, Calendar, FireExtinguisher, GalleryThumbnails, PlusCircle, QrCode, Star, User, UserPlus } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -22,22 +23,22 @@ export function ExploreScreen() {
           
           <View style={styles.discoverGrid}>
             <TouchableOpacity style={styles.discoverCard}>
-              <IconSymbol name="person.2.fill" size={30} color="#007AFF" />
+              <Icon as={User} size={30} color="#007AFF" />
               <ThemedText style={styles.discoverText}>Find Friends</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.discoverCard}>
-              <IconSymbol name="building.2.fill" size={30} color="#34C759" />
+              <Icon as={Building} size={30} color="#34C759" />
               <ThemedText style={styles.discoverText}>Nearby Places</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.discoverCard}>
-              <IconSymbol name="calendar" size={30} color="#FF9500" />
+              <Icon as={Calendar} size={30} color="#FF9500" />
               <ThemedText style={styles.discoverText}>Events</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.discoverCard}>
-              <IconSymbol name="gamecontroller.fill" size={30} color="#FF3B30" />
+              <Icon as={GalleryThumbnails} size={30} color="#FF3B30" />
               <ThemedText style={styles.discoverText}>Games</ThemedText>
             </TouchableOpacity>
           </View>
@@ -50,7 +51,7 @@ export function ExploreScreen() {
           
           <TouchableOpacity style={styles.trendingCard}>
             <View style={styles.trendingHeader}>
-              <IconSymbol name="flame.fill" size={20} color="#FF6B6B" />
+              <Icon as={FireExtinguisher} size={20} color="#FF6B6B" />
               <ThemedText style={styles.trendingTitle}>#JaweebChallenge</ThemedText>
             </View>
             <ThemedText style={styles.trendingContent}>
@@ -65,7 +66,7 @@ export function ExploreScreen() {
           
           <TouchableOpacity style={styles.trendingCard}>
             <View style={styles.trendingHeader}>
-              <IconSymbol name="star.fill" size={20} color="#FFD700" />
+              <Icon as={Star} size={20} color="#FFD700" />
               <ThemedText style={styles.trendingTitle}>#NewFeatures</ThemedText>
             </View>
             <ThemedText style={styles.trendingContent}>
@@ -89,17 +90,17 @@ export function ExploreScreen() {
               style={styles.actionButton}
               onPress={() => router.push('/(chat)/new-group')}
             >
-              <IconSymbol name="plus.circle.fill" size={24} color="#007AFF" />
+              <Icon as={PlusCircle} size={24} color="#007AFF" />
               <ThemedText style={styles.actionText}>Create Group</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="qrcode" size={24} color="#34C759" />
+              <Icon as={QrCode} size={24} color="#34C759" />
               <ThemedText style={styles.actionText}>Scan QR</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="person.badge.plus" size={24} color="#FF9500" />
+              <Icon as={UserPlus} size={24} color="#FF9500" />
               <ThemedText style={styles.actionText}>Add Contact</ThemedText>
             </TouchableOpacity>
           </View>
@@ -113,7 +114,7 @@ export function ExploreScreen() {
           <TouchableOpacity style={styles.recommendationCard}>
             <View style={styles.recommendationHeader}>
               <View style={styles.recommendationAvatar}>
-                <IconSymbol name="person.fill" size={20} color="#007AFF" />
+                <Icon as={User} size={20} color="#007AFF" />
               </View>
               <View style={styles.recommendationInfo}>
                 <ThemedText style={styles.recommendationName}>Tech Enthusiasts Group</ThemedText>
@@ -128,7 +129,7 @@ export function ExploreScreen() {
           <TouchableOpacity style={styles.recommendationCard}>
             <View style={styles.recommendationHeader}>
               <View style={styles.recommendationAvatar}>
-                <IconSymbol name="person.2.fill" size={20} color="#34C759" />
+                <Icon as={User} size={20} color="#34C759" />
               </View>
               <View style={styles.recommendationInfo}>
                 <ThemedText style={styles.recommendationName}>Local Community</ThemedText>

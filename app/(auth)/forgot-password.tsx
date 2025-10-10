@@ -1,9 +1,10 @@
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Icon } from "@/components/ui/icon";
 import { useCreateRecovery } from "@/src/appwrite/account/useCreateRecovery";
 import { Button } from "@/src/components/Button";
 import { InputField } from "@/src/components/InputField";
 import { APP_CONFIG } from "@/src/configs";
 import { router } from "expo-router";
+import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -58,7 +59,7 @@ export default function ForgotPasswordScreen() {
   return (
     <View style={styles.container}>
       <Pressable onPress={handleBackToLogin} className="mb-8 lg:mb-8">
-        <IconSymbol name="chevron.left" size={24} color="#007AFF" />
+        <Icon as={ChevronLeft} size={24} color="#007AFF" />
       </Pressable>
       <Text style={styles.title}>نسيت كلمة المرور؟</Text>
       <Text style={styles.subtitle}>

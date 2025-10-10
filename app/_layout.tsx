@@ -12,7 +12,7 @@ export default function RootLayout() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   useEffect(() => {
-    setColorScheme('dark')
+    setColorScheme('light')
   }, []);
 
   return (

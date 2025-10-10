@@ -1,9 +1,9 @@
 import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { useAccount } from '@/src/appwrite/account';
-import { router } from 'expo-router';
+import { Barcode, Camera, FileText, Image, PlayCircle, QrCode, StopCircle, Video } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AuthModal } from '../auth';
@@ -13,10 +13,7 @@ export function CameraScreen() {
   const { data: account } = useAccount();
 
   if (!account) {
-    return <AuthModal 
-    visible={true} 
-    onClose={() => router.replace('/(tabs)')} 
-  />
+    return <AuthModal />
   }
   const handleStartRecording = () => {
     setIsRecording(true);
@@ -42,7 +39,7 @@ export function CameraScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.cameraSection}>
           <View style={styles.cameraPreview}>
-            <IconSymbol name="camera.fill" size={60} color="#8E8E93" />
+            <Icon as={Camera} size={60} color="#8E8E93" />
             <ThemedText style={styles.previewText}>
               Camera Preview
             </ThemedText>
@@ -59,7 +56,7 @@ export function CameraScreen() {
               style={[styles.controlButton, styles.photoButton]}
               onPress={handleTakePhoto}
             >
-              <IconSymbol name="camera" size={24} color="#fff" />
+              <Icon as={Camera} size={24} color="#fff" />
               <ThemedText style={styles.controlButtonText}>Take Photo</ThemedText>
             </TouchableOpacity>
             
@@ -70,8 +67,7 @@ export function CameraScreen() {
               ]}
               onPress={isRecording ? handleStopRecording : handleStartRecording}
             >
-              <IconSymbol 
-                name={isRecording ? "stop.fill" : "play.fill"} 
+              <Icon as={isRecording ? StopCircle : PlayCircle} 
                 size={24} 
                 color="#fff" 
               />
@@ -89,22 +85,22 @@ export function CameraScreen() {
           
           <View style={styles.mediaGrid}>
             <View style={styles.mediaItem}>
-              <IconSymbol name="photo" size={30} color="#007AFF" />
+              <Icon as={Image} size={30} color="#007AFF" />
               <ThemedText style={styles.mediaText}>Photo 1</ThemedText>
             </View>
             
             <View style={styles.mediaItem}>
-              <IconSymbol name="video" size={30} color="#34C759" />
+              <Icon as={Video} size={30} color="#34C759" />
               <ThemedText style={styles.mediaText}>Video 1</ThemedText>
             </View>
             
             <View style={styles.mediaItem}>
-              <IconSymbol name="photo" size={30} color="#FF9500" />
+              <Icon as={Image} size={30} color="#FF9500" />
               <ThemedText style={styles.mediaText}>Photo 2</ThemedText>
             </View>
             
             <View style={styles.mediaItem}>
-              <IconSymbol name="video" size={30} color="#FF3B30" />
+              <Icon as={Video} size={30} color="#FF3B30" />
               <ThemedText style={styles.mediaText}>Video 2</ThemedText>
             </View>
           </View>
@@ -117,17 +113,17 @@ export function CameraScreen() {
           
           <View style={styles.quickActions}>
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="qrcode" size={24} color="#007AFF" />
+              <Icon as={QrCode} size={24} color="#007AFF" />
               <ThemedText style={styles.actionText}>Scan QR</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="doc.text" size={24} color="#34C759" />
+              <Icon as={FileText} size={24} color="#34C759" />
               <ThemedText style={styles.actionText}>Scan Document</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="barcode" size={24} color="#FF9500" />
+              <Icon as={Barcode} size={24} color="#FF9500" />
               <ThemedText style={styles.actionText}>Scan Barcode</ThemedText>
             </TouchableOpacity>
           </View>

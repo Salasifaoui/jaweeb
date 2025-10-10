@@ -1,7 +1,8 @@
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Circle, Globe, House, Play, Star, User } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -21,9 +22,9 @@ export function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
     
     switch (routeName) {
       case 'index':
-        return <IconSymbol name="house.fill" size={24} color={color} />;
+        return <Icon as={House} size={24} color={color} />;
       case 'explore':
-        return <IconSymbol name="globe" size={24} color={color} />;
+        return <Icon as={Globe} size={24} color={color} />;
       case 'camera':
         return (
           <LinearGradient
@@ -32,15 +33,15 @@ export function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <IconSymbol name="play.fill" size={20} color="#fff" />
+            <Icon as={Play} size={20} color="#fff" />
           </LinearGradient>
         );
       case 'community':
-        return <IconSymbol name="star.fill" size={24} color={color} />;
+        return <Icon as={Star} size={24} color={color} />;
       case 'profile':
-        return <IconSymbol name="person.fill" size={24} color={color} />;
+        return <Icon as={User} size={24} color={color} />;
       default:
-        return <IconSymbol name="circle" size={24} color={color} />;
+        return <Icon as={Circle} size={24} color={color} />;
     }
   };
 

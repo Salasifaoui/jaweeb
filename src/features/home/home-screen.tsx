@@ -1,8 +1,9 @@
 import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
+import { Camera, Plus, User } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 export function HomeScreen() {
@@ -24,7 +25,7 @@ export function HomeScreen() {
             onPress={() => router.push('/(chat)/chat-room')}
           >
             <View style={styles.avatar}>
-              <IconSymbol name="person.fill" size={20} color="#007AFF" />
+              <Icon as={User} size={20} color="#007AFF" />
             </View>
             <View style={styles.chatContent}>
               <View style={styles.chatHeader}>
@@ -42,7 +43,7 @@ export function HomeScreen() {
           
           <TouchableOpacity style={styles.chatItem}>
             <View style={styles.avatar}>
-              <IconSymbol name="person.fill" size={20} color="#34C759" />
+              <Icon as={User} size={20} color="#34C759" />
             </View>
             <View style={styles.chatContent}>
               <View style={styles.chatHeader}>
@@ -57,7 +58,7 @@ export function HomeScreen() {
           
           <TouchableOpacity style={styles.chatItem}>
             <View style={styles.avatar}>
-              <IconSymbol name="person.2.fill" size={20} color="#FF9500" />
+              <Icon as={User} size={20} color="#FF9500" />
             </View>
             <View style={styles.chatContent}>
               <View style={styles.chatHeader}>
@@ -84,21 +85,22 @@ export function HomeScreen() {
               style={styles.actionButton}
               onPress={() => router.push('/(chat)/new-group')}
             >
-              <IconSymbol name="plus.circle.fill" size={24} color="#007AFF" />
+              <Icon as={Plus} size={24} color="#34C759" />
               <ThemedText style={styles.actionText}>New Group</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="person.badge.plus" size={24} color="#34C759" />
+              <TouchableOpacity style={styles.actionButton}>
+                <Icon as={Plus} size={24} color="#34C759" />
               <ThemedText style={styles.actionText}>Add Contact</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <IconSymbol name="camera.fill" size={24} color="#FF9500" />
+              <Icon as={Camera} size={24} color="#FF9500" />
               <ThemedText style={styles.actionText}>Scan QR</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
+
       </ScrollView>
     </ThemedView>
   );

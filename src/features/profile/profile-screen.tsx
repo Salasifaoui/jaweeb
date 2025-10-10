@@ -1,11 +1,12 @@
 import { AppHeader } from "@/components/app-header";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Icon } from "@/components/ui/icon";
 import { useAccount } from "@/src/appwrite/account";
 import { useSignOut } from "@/src/appwrite/account/useSignOut";
 import { Button } from "@/src/components/Button";
 import { router } from "expo-router";
+import { Bell, Camera, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Alert,
@@ -64,10 +65,10 @@ export function ProfileScreen() {
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <IconSymbol name="person.fill" size={40} color="#007AFF" />
+              <Icon as={User} size={40} color="#007AFF" />
             </View>
             <TouchableOpacity style={styles.editAvatarButton}>
-              <IconSymbol name="camera.fill" size={16} color="#fff" />
+              <Icon as={Camera} size={16} color="#fff" />
             </TouchableOpacity>
           </View>
           <ThemedText type="subtitle" style={styles.userName}>
@@ -101,42 +102,42 @@ export function ProfileScreen() {
 
         <View style={styles.menuSection}>
           <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
-            <IconSymbol name="person.circle" size={24} color="#007AFF" />
+            <Icon as={UserCircle} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Edit Profile</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <IconSymbol name="bell" size={24} color="#007AFF" />
+            <Icon as={Bell} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Notifications</ThemedText>
             <View style={styles.menuBadge}>
               <ThemedText style={styles.menuBadgeText}>12</ThemedText>
             </View>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <IconSymbol name="lock" size={24} color="#007AFF" />
+            <Icon as={Lock} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Privacy & Security</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <IconSymbol name="gear" size={24} color="#007AFF" />
+            <Icon as={GalleryHorizontalIcon} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Settings</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <IconSymbol name="questionmark.circle" size={24} color="#007AFF" />
+            <Icon as={HelpCircle} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Help & Support</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <IconSymbol name="info.circle" size={24} color="#007AFF" />
+            <Icon as={CircleAlert} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>About</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
         </View>
 
@@ -147,23 +148,19 @@ export function ProfileScreen() {
 
           <View style={styles.quickActions}>
             <TouchableOpacity style={styles.quickActionButton}>
-              <IconSymbol
-                name="square.and.arrow.up"
-                size={24}
-                color="#007AFF"
-              />
+             
               <ThemedText style={styles.quickActionText}>
                 Share Profile
               </ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.quickActionButton}>
-              <IconSymbol name="qrcode" size={24} color="#34C759" />
+              <Icon as={QrCode} size={24} color="#34C759" />
               <ThemedText style={styles.quickActionText}>QR Code</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.quickActionButton}>
-              <IconSymbol name="person.badge.plus" size={24} color="#FF9500" />
+              <Icon as={UserPlus} size={24} color="#FF9500" />
               <ThemedText style={styles.quickActionText}>
                 Invite Friends
               </ThemedText>

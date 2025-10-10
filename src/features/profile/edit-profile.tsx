@@ -1,5 +1,5 @@
 import { AppHeader } from '@/components/app-header';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { useAccount } from '@/src/appwrite/account/useAccount';
 import { useUpdateEmail } from "@/src/appwrite/account/useUpdateEmail";
 import { useUpdateName } from "@/src/appwrite/account/useUpdateName";
@@ -7,6 +7,7 @@ import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { router } from 'expo-router';
+import { Camera, ChevronLeft } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -120,26 +121,7 @@ const handleSave = async () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Button
-          variant="text"
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <IconSymbol name="chevron.left" size={24} color="#007AFF" />
-        </Button>
-        <Text style={styles.headerTitle}>تعديل الملف الشخصي</Text>
-        <Button
-          variant="text"
-          onPress={handleSave}
-          disabled={loading}
-          style={styles.saveButton}
-        >
-          <Text style={[styles.saveText, loading && styles.disabledText]}>
-            حفظ
-          </Text>
-        </Button>
-      </View> */}
+
       <AppHeader
         title="تعديل الملف الشخصي"
         showBackButton={true}
@@ -150,7 +132,7 @@ const handleSave = async () => {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <IconSymbol name="chevron.left" size={24} color="#007AFF" />
+          <Icon as={ChevronLeft} size={24} color="#007AFF" />
         </Button>
         }
         rightComponent={
@@ -176,7 +158,7 @@ const handleSave = async () => {
               size={100}
             /> */}
             <View style={styles.avatarOverlay}>
-              <IconSymbol name="camera" size={24} color="#fff" />
+              <Icon as={Camera} size={24} color="#fff" />
             </View>
           </TouchableOpacity>
           <Text style={styles.avatarHint}>اضغط لتغيير الصورة</Text>

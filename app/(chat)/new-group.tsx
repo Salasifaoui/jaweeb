@@ -1,4 +1,4 @@
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { useAccount } from '@/src/appwrite';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
@@ -6,8 +6,10 @@ import { InputField } from '@/src/components/InputField';
 import { useChats } from '@/src/hooks/useChats';
 import type { User } from '@/src/types';
 import { router } from 'expo-router';
+import { CheckCircle, ChevronLeft } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Circle } from 'react-native-svg';
 
 export default function NewGroupScreen() {
   const [groupName, setGroupName] = useState('');
@@ -87,7 +89,7 @@ export default function NewGroupScreen() {
           <Text style={styles.userEmail}>{item.email}</Text>
         </View>
         {isSelected && (
-          <IconSymbol name="checkmark.circle.fill" size={24} color="#007AFF" />
+          <Icon as={CheckCircle} size={24} color="#007AFF" />
         )}
       </TouchableOpacity>
     );
@@ -101,7 +103,7 @@ export default function NewGroupScreen() {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <IconSymbol name="chevron.left" size={24} color="#007AFF" />
+          <Icon as={ChevronLeft} size={24} color="#007AFF" />
         </Button>
         <Text style={styles.headerTitle}>مجموعة جديدة</Text>
         <View style={styles.placeholder} />
@@ -135,7 +137,7 @@ export default function NewGroupScreen() {
                     onPress={() => toggleUserSelection(item)}
                     style={styles.removeButton}
                   >
-                    <IconSymbol name="xmark.circle.fill" size={20} color="#FF3B30" />
+                    <Icon as={Circle} size={20} color="#FF3B30" />
                   </TouchableOpacity>
                 </View>
               )}

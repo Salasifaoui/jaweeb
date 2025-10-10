@@ -1,4 +1,4 @@
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { useSignOut } from '@/src/appwrite/account/useSignOut';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
@@ -6,6 +6,7 @@ import { useChats } from '@/src/hooks/useChats';
 import type { Chat } from '@/src/types';
 import { formatDate } from '@/src/utils/formatDate';
 import { router } from 'expo-router';
+import { Bubbles, Plus, RectangleCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -90,13 +91,13 @@ export default function ChatListScreen() {
             style={styles.headerButton}
             onPress={() => router.push('/(chat)/new-group')}
           >
-            <IconSymbol name="plus" size={24} color="#007AFF" />
+            <Icon as={Plus} size={24} color="#007AFF" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerButton}
             onPress={handleLogout}
           >
-            <IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color="#FF3B30" />
+            <Icon as={RectangleCircle} size={24} color="#FF3B30" />
           </TouchableOpacity>
         </View>
       </View>
@@ -107,7 +108,7 @@ export default function ChatListScreen() {
         </View>
       ) : chats.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <IconSymbol name="bubble.left.and.bubble.right" size={64} color="#ccc" />
+          <Icon as={Bubbles} size={64} color="#ccc" />
           <Text style={styles.emptyText}>لا توجد محادثات بعد</Text>
           <Button
             title="بدء محادثة جديدة"

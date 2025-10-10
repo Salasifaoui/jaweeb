@@ -1,4 +1,4 @@
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/ui/icon';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { MessageBubble } from '@/src/components/MessageBubble';
@@ -6,6 +6,7 @@ import { useChats } from '@/src/hooks/useChats';
 import { useRealtime } from '@/src/hooks/useRealtime';
 import type { Message } from '@/src/types';
 import { router, useLocalSearchParams } from 'expo-router';
+import { ChevronLeft, Ellipsis, Paperclip } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
@@ -89,15 +90,15 @@ export default function ChatRoomScreen() {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <IconSymbol name="chevron.left" size={24} color="#007AFF" />
+          <Icon as={ChevronLeft} size={24} color="#007AFF" />
         </Button>
         <Text style={styles.headerTitle}>المحادثة</Text>
         <Button
           variant="text"
-          onPress={() => router.push(`/(profile)/profile?chatId=${id}`)}
+          onPress={() => router.push(`/(tabs)/profile?chatId=${id}`)}
           style={styles.moreButton}
         >
-          <IconSymbol name="ellipsis" size={24} color="#007AFF" />
+          <Icon as={Ellipsis} size={24} color="#007AFF" />
         </Button>
       </View>
 
@@ -125,11 +126,8 @@ export default function ChatRoomScreen() {
           disabled={!newMessage.trim() || sending}
           style={styles.sendButton}
         >
-          <IconSymbol 
-            name="paperplane.fill" 
-            size={20} 
-            color={newMessage.trim() ? "#fff" : "#ccc"} 
-          />
+          <Icon as={Paperclip} size={20} color={newMessage.trim() ? "#fff" : "#ccc"} />
+            
         </Button>
       </View>
     </KeyboardAvoidingView>
