@@ -6,7 +6,7 @@ import { useAccount } from "@/src/appwrite/account";
 import { useSignOut } from "@/src/appwrite/account/useSignOut";
 import { Button } from "@/src/components/Button";
 import { router } from "expo-router";
-import { Bell, Camera, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
+import { Bell, Camera, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Alert,
@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { AuthModal } from "../auth";
 
 export function ProfileScreen() {
   const { data: account } = useAccount();
@@ -54,7 +53,7 @@ export function ProfileScreen() {
   };
 
   if (!account) {
-    return <AuthModal />;
+    return router.replace('/(auth)/inscription');
   }
 
   return (
@@ -117,7 +116,7 @@ export function ProfileScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={Lock} size={24} color="#007AFF" />
+            <Icon as={Lamp} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Privacy & Security</ThemedText>
             <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>

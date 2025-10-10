@@ -2,6 +2,7 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
+import { APP_NAME } from '@/constants/variables';
 import { ArrowUpRight, ChevronRight, Heart, Lightbulb, MessageCircle, Star, User } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -63,9 +64,9 @@ export function CommunityScreen() {
                 <ThemedText style={styles.postTime}>2 hours ago</ThemedText>
               </View>
             </View>
-            <ThemedText style={styles.postTitle}>Welcome to Jaweeb Community!</ThemedText>
+            <ThemedText style={styles.postTitle}>Welcome to {APP_NAME} Community!</ThemedText>
             <ThemedText style={styles.postContent}>
-              Join the conversation and share your thoughts with other users. Let's build something amazing together!
+              Join the conversation and share your thoughts with other users. Let&apos;s build something amazing together!
             </ThemedText>
             <View style={styles.postActions}>
               <TouchableOpacity style={styles.postAction}>
@@ -95,7 +96,7 @@ export function CommunityScreen() {
             </View>
             <ThemedText style={styles.postTitle}>Tips for Better Communication</ThemedText>
             <ThemedText style={styles.postContent}>
-              Here are some tips I've learned about effective communication in our community...
+              Here are some tips I&apos;ve learned about effective communication in our community...
             </ThemedText>
             <View style={styles.postActions}>
               <TouchableOpacity style={styles.postAction}>

@@ -2,6 +2,7 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
+import { APP_NAME } from '@/constants/variables';
 import { router } from 'expo-router';
 import { Building, Calendar, FireExtinguisher, GalleryThumbnails, PlusCircle, QrCode, Star, User, UserPlus } from 'lucide-react-native';
 import React from 'react';
@@ -52,10 +53,10 @@ export function ExploreScreen() {
           <TouchableOpacity style={styles.trendingCard}>
             <View style={styles.trendingHeader}>
               <Icon as={FireExtinguisher} size={20} color="#FF6B6B" />
-              <ThemedText style={styles.trendingTitle}>#JaweebChallenge</ThemedText>
+              <ThemedText style={styles.trendingTitle}>#{APP_NAME}Challenge</ThemedText>
             </View>
             <ThemedText style={styles.trendingContent}>
-              Join thousands of users in the latest Jaweeb challenge!
+              Join thousands of users in the latest {APP_NAME} challenge!
             </ThemedText>
             <View style={styles.trendingStats}>
               <ThemedText style={styles.trendingStat}>12.5k participants</ThemedText>
@@ -70,7 +71,7 @@ export function ExploreScreen() {
               <ThemedText style={styles.trendingTitle}>#NewFeatures</ThemedText>
             </View>
             <ThemedText style={styles.trendingContent}>
-              Check out the latest features and updates in Jaweeb
+              Check out the latest features and updates in {APP_NAME}
             </ThemedText>
             <View style={styles.trendingStats}>
               <ThemedText style={styles.trendingStat}>8.9k views</ThemedText>

@@ -15,7 +15,7 @@ export default function LoginScreen() {
     const emailSignIn = useEmailSignIn({
         onSuccess: () => {
             setErrorMessage(null); // Clear any previous errors
-            router.replace("/");
+            router.replace("/(auth)/complated/welcom");
         },
         onError: (error: any) => {
             const parsedError = parseErrorMessage(error);

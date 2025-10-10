@@ -1,75 +1,67 @@
+import { AppHeader } from '@/components/app-header';
 import { IconsList } from '@/components/icons/icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Icon } from '@/components/ui/icon';
+import { APP_NAME } from '@/constants/variables';
 import AppleSignInButton from '@/src/components/AppleSignInButton';
 import EmailSignInButton from '@/src/components/EmailSignInButton';
 import GoogleSignInButton from '@/src/components/GoogleSignInButton';
 import { router } from 'expo-router';
-import { X } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Alert,
-  Dimensions,
   Linking,
-  Modal,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
 
 export function AuthModal() {
-    const [showAuthModal, setShowAuthModal] = useState(true);
   const handleGoogleSignIn = () => {
     // Implement Google sign in
     console.log('Google sign in pressed');
-    setShowAuthModal(false);
-    Alert.alert('Google Sign In', 'Google sign in functionality will be implemented');
+
+    // Navigate to onboarding flow after successful sign in
+    router.push('/(auth)/complated/welcom');
   };
 
   const handleEmailSignIn = () => {
     // Navigate to phone sign in
     router.push('/(auth)/login');
-    setShowAuthModal(false);
   };
 
   const handleAppleSignIn = () => {
     // Implement Apple sign in
     console.log('Apple sign in pressed');
-    setShowAuthModal(false);
-    Alert.alert('Apple Sign In', 'Apple sign in functionality will be implemented');
+    // Navigate to onboarding flow after successful sign in
+    router.push('/(auth)/complated/welcom');
   };
 
   const handleFacebookSignIn = () => {
     // Implement Facebook sign in
     console.log('Facebook sign in pressed');
-    setShowAuthModal(false);
-    Alert.alert('Facebook Sign In', 'Facebook sign in functionality will be implemented');
+    // Navigate to onboarding flow after successful sign in
+    router.push('/(auth)/complated/welcom');
   };
 
   const handleTwitterSignIn = () => {
     // Implement Twitter sign in
     console.log('Twitter sign in pressed');
-    setShowAuthModal(false);
-    Alert.alert('Twitter Sign In', 'Twitter sign in functionality will be implemented');
+    // Navigate to onboarding flow after successful sign in
+    router.push('/(auth)/complated/welcom');
   };
 
   const handleVKSignIn = () => {
     // Implement VK sign in
     console.log('VK sign in pressed');
-    setShowAuthModal(false);
-    Alert.alert('VK Sign In', 'VK sign in functionality will be implemented');
+    // Navigate to onboarding flow after successful sign in
+    router.push('/(auth)/complated/welcom');
   };
 
   const handleTermsOfUse = () => {
-    // Open terms of use
-    setShowAuthModal(false);
     Linking.openURL('https://example.com/terms');
   };
 
   const handleBroadcasterAgreement = () => {
-    // Open broadcaster agreement
-    setShowAuthModal(false);
     Linking.openURL('https://example.com/broadcaster-agreement');
   };
 
@@ -84,28 +76,19 @@ export function AuthModal() {
   };
 
   return (
-    <Modal
-      visible={showAuthModal}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={() => {
-        setShowAuthModal(false);
-        router.replace('/(tabs)');
-      }}
-    >
       <ThemedView style={styles.container}>
-        {/* Close Button */}
-        <TouchableOpacity style={styles.closeButton} onPress={() => {
-          setShowAuthModal(false);
-          router.replace('/(tabs)');
-        }}>
-          <Icon as={X} size={24} color="#8E8E93" />
-        </TouchableOpacity>
+        <AppHeader
+          title=""
+          showBackButton={true}
+            onBackPress={() => {
+              router.replace('/(tabs)');
+            }}
+        />
 
         {/* Logo Section */}
         <View style={styles.logoSection}>
           <IconsList.jaweeb width={40} height={40} />
-          <ThemedText style={styles.logoText}>Jaweeb</ThemedText>
+          <ThemedText style={styles.logoText}>{APP_NAME}</ThemedText>
         </View>
 
         {/* Main Content */}
@@ -178,17 +161,15 @@ export function AuthModal() {
           </View>
         </View>
       </ThemedView>
-    </Modal>
+
   );
 }
 
-const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    opacity: 0.6,
   },
   closeButton: {
     position: 'absolute',
