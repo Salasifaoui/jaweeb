@@ -1,216 +1,165 @@
-import { appwriteClient } from '@/src/appwrite/appwriteClient';
-import type { User } from '@/src/types';
-import { APPWRITE_CONFIG } from '@/src/utils/constants';
-import { Query } from 'react-native-appwrite';
+import {
+  APP_CONFIG
+} from "@/src/configs";
+import { databases } from "@/src/services/apiService";
+import { Query } from "react-native-appwrite";
+import { UserProfile } from "../models/types";
+import { User } from "../models/User";
 
 export interface CreateUserData {
-  username: string;
   email: string;
-  avatar_url?: string;
+  username: string;
+  password: string;
+  fullName?: string;
   bio?: string;
-  status?: string;
 }
 
 export interface UpdateUserData {
   username?: string;
-  email?: string;
-  avatar_url?: string;
+  fullName?: string;
   bio?: string;
-  status?: string;
-  is_online?: boolean;
-  last_seen?: string;
+  imageUrl?: string;
 }
 
-export class UsersService {
-  async getUsers(): Promise<User[]> {
+export class UserService {
+  // Create a new user account
+  static async createUser(
+    userData: CreateUserData,
+    user: User
+  ): Promise<string> {
     try {
-      const users = await appwriteClient.databases.listDocuments(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS
+      // Create user profile in database using userId as document ID
+      const profile: Omit<UserProfile, "$id"> = {
+        userId: user.$id,
+        email: userData.email,
+        username: userData.username,
+      };
+
+      await databases.createDocument(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
+        user.$id, // Use userId as document ID instead of ID.unique()
+        profile
       );
-      
-      return users.documents.map((user: any) => ({
-        user_id: user.user_id,
-        username: user.username,
-        email: user.email,
-        avatar_url: user.avatar_url,
-        status: user.status,
-        bio: user.bio,
-        last_seen: user.last_seen,
-        is_online: user.is_online,
-        created_at: user.created_at,
-      }));
+
+      return user.$id;
     } catch (error) {
-      throw new Error('فشل في تحميل المستخدمين.');
+      console.error("Error creating user:", error);
+      throw error;
     }
   }
 
-  async getUser(userId: string): Promise<User> {
+  // Get user profile by ID
+  static async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
-      const user = await appwriteClient.databases.getDocument(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
+      if (!userId) {
+        return null;
+      }
+
+      const profile = await databases.getDocument(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
         userId
       );
-      
-      return {
-        user_id: (user as any).user_id,
-        username: (user as any).username,
-        email: (user as any).email,
-        avatar_url: (user as any).avatar_url,
-        status: (user as any).status,
-        bio: (user as any).bio,
-        last_seen: (user as any).last_seen,
-        is_online: (user as any).is_online,
-        created_at: (user as any).created_at,
-      };
+      return profile as unknown as UserProfile;
     } catch (error) {
-      throw new Error('فشل في تحميل المستخدم.');
+      console.error("Error getting user profile:", error);
+      return null;
     }
   }
 
-  async createUser(userData: CreateUserData, userId?: string): Promise<User> {
+  // Update user profile
+  static async updateUserProfile(
+    userId: string,
+    updateData: UpdateUserData
+  ): Promise<UserProfile | null> {
     try {
-      console.log('userData', userData);
-      console.log('APPWRITE_CONFIG.DATABASE_ID', APPWRITE_CONFIG.DATABASE_ID);
-      console.log('APPWRITE_CONFIG.COLLECTIONS.USERS', APPWRITE_CONFIG.COLLECTIONS.USERS);
-      const user = await appwriteClient.databases.createDocument(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
-        'unique()',
-        {
-          user_id: userId || userData.email, // Use provided userId or fallback to email
-          username: userData.username,
-          email: userData.email,
-          avatar_url: userData.avatar_url || '',
-          status: userData.status || 'online',
-          bio: userData.bio || '',
-          is_online: true,
-          last_seen: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-        }
-      );
-
-      return {
-        user_id: (user as any).user_id,
-        username: (user as any).username,
-        email: (user as any).email,
-        avatar_url: (user as any).avatar_url,
-        status: (user as any).status,
-        bio: (user as any).bio,
-        last_seen: (user as any).last_seen,
-        is_online: (user as any).is_online,
-        created_at: (user as any).created_at,
-      };
-    } catch (error) {
-      throw new Error('فشل في إنشاء المستخدم.');
-    }
-  }
-
-  async updateUser(userId: string, userData: UpdateUserData): Promise<User> {
-    try {
-      const user = await appwriteClient.databases.updateDocument(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
+      const updatedProfile = await databases.updateDocument(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
         userId,
-        userData as any
+        updateData
       );
-
-      return {
-        user_id: (user as any).user_id,
-        username: (user as any).username,
-        email: (user as any).email,
-        avatar_url: (user as any).avatar_url,
-        status: (user as any).status,
-        bio: (user as any).bio,
-        last_seen: (user as any).last_seen,
-        is_online: (user as any).is_online,
-        created_at: (user as any).created_at,
-      };
+      console.info("profile updated");
+      return updatedProfile as unknown as UserProfile;
     } catch (error) {
-      throw new Error('فشل في تحديث المستخدم.');
+      console.error("Error updating user profile:", error);
+      throw error;
     }
   }
 
-  async deleteUser(userId: string): Promise<void> {
+  // Get all users (for admin purposes)
+  static async getAllUsers(): Promise<UserProfile[]> {
     try {
-      await appwriteClient.databases.deleteDocument(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
+      const response = await databases.listDocuments(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
+      );
+
+      return response.documents as unknown as UserProfile[];
+    } catch (error) {
+      console.error("Error getting all users:", error);
+      return [];
+    }
+  }
+
+  // Delete user account
+  static async deleteUser(userId: string): Promise<boolean> {
+    try {
+      // Delete the document directly using userId as document ID
+      await databases.deleteDocument(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
         userId
       );
+
+      // Note: Deleting the actual account requires admin privileges
+      // This would typically be done through Appwrite Functions
+      return true;
     } catch (error) {
-      throw new Error('فشل في حذف المستخدم.');
+      console.error("Error deleting user:", error);
+      return false;
     }
   }
 
-  async searchUsers(query: string): Promise<User[]> {
+  // Search users by username or full name
+  static async searchUsers(searchTerm: string): Promise<UserProfile[]> {
     try {
-      const users = await appwriteClient.databases.listDocuments(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
+      const response = await databases.listDocuments(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
         [
-          Query.search('username', query),
+          Query.search("username", searchTerm),
+          Query.search("fullName", searchTerm),
         ]
       );
-      
-      return users.documents.map((user: any) => ({
-        user_id: user.user_id,
-        username: user.username,
-        email: user.email,
-        avatar_url: user.avatar_url,
-        status: user.status,
-        bio: user.bio,
-        last_seen: user.last_seen,
-        is_online: user.is_online,
-        created_at: user.created_at,
-      }));
+
+      return response.documents as unknown as UserProfile[];
     } catch (error) {
-      throw new Error('فشل في البحث عن المستخدمين.');
+      console.error("Error searching users:", error);
+      return [];
     }
   }
 
-  async updateUserStatus(userId: string, isOnline: boolean): Promise<void> {
+  // get user by @nickname
+  static async getUserByNickname(
+    nickname: string
+  ): Promise<UserProfile | null> {
     try {
-      await appwriteClient.databases.updateDocument(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
-        userId,
-        {
-          is_online: isOnline,
-          last_seen: new Date().toISOString(),
-        } as any
-      );
-    } catch (error) {
-      throw new Error('فشل في تحديث حالة المستخدم.');
-    }
-  }
+      if (!nickname) {
+        return null;
+      }
 
-  async getOnlineUsers(): Promise<User[]> {
-    try {
-      const users = await appwriteClient.databases.listDocuments(
-        APPWRITE_CONFIG.DATABASE_ID,
-        APPWRITE_CONFIG.COLLECTIONS.USERS,
-        [
-          Query.equal('is_online', [true]),
-        ]
+      const response = await databases.listDocuments(
+        APP_CONFIG.DATABASE_ID!,
+        APP_CONFIG.USERS_COLLECTION!,
+        [Query.equal("nickname", nickname)]
       );
-      
-      return users.documents.map((user: any) => ({
-        user_id: user.user_id,
-        username: user.username,
-        email: user.email,
-        avatar_url: user.avatar_url,
-        status: user.status,
-        bio: user.bio,
-        last_seen: user.last_seen,
-        is_online: user.is_online,
-        created_at: user.created_at,
-      }));
+
+      return response.documents[0] as unknown as UserProfile;
     } catch (error) {
-      throw new Error('فشل في تحميل المستخدمين المتصلين.');
+      console.error("Error getting user by nickname:", error);
+      return null;
     }
   }
 }
-
-export const usersService = new UsersService();

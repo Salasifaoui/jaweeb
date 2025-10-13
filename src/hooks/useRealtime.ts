@@ -1,10 +1,9 @@
-import { useAppwrite } from '@/src/appwrite/AppwriteProvider';
+import { client } from '@/src/services/apiService';
 import type { Message } from '@/src/types';
 import { APPWRITE_CONFIG, REALTIME_EVENTS } from '@/src/utils/constants';
 import { useEffect, useRef } from 'react';
 
 export function useRealtime() {
-  const { client } = useAppwrite();
   const subscriptions = useRef<any[]>([]);
 
   useEffect(() => {

@@ -1,73 +1,53 @@
 import { AppHeader } from '@/components/app-header';
+import { Gallery } from '@/components/ui/gallery';
 import { Icon } from '@/components/ui/icon';
-import { useAccount } from '@/src/appwrite/account/useAccount';
-import { useUpdateEmail } from "@/src/appwrite/account/useUpdateEmail";
-import { useUpdateName } from "@/src/appwrite/account/useUpdateName";
-import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
+import { useAuth } from '@/src/hooks/useAuth';
+import { useUserProfileUpdate } from '@/src/hooks/useUserProfileUpdate';
+import { Media } from '@/src/models/Media';
 import { router } from 'expo-router';
 import { Camera, ChevronLeft } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function EditProfileScreen() {
-  const { data: account } = useAccount();
+  const { user } = useAuth();
   const [name, setName] = useState( '');
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<Media | null>(null);
+  const [showGallery, setShowGallery] = useState(false);
+  const { updateUserProfile, userProfile } = useUserProfileUpdate();
 
   // Initialize form with current account data
   useEffect(() => {
-    if (account) {
-        setName(account.name || "");
-        setEmail(account.email || "");
+    if (user) {
+        setName(user.name || "");
+        setEmail(user.email || "");
     }
-}, [account]);
+}, [user]);
 
 // Check if there are changes
 useEffect(() => {
-    if (account) {
-        const nameChanged = name.trim() !== (account.name || "");
-        const emailChanged = email.trim() !== (account.email || "");
-        setHasChanges(nameChanged || emailChanged );
+    if (user) {
+        const nameChanged = name.trim() !== (user.name || "");
+        const emailChanged = email.trim() !== (user.email || "");
+        const avatarChanged = selectedAvatar !== null;
+        setHasChanges(nameChanged || emailChanged || avatarChanged);
     }
-}, [name, email, account]);
+}, [name, email, selectedAvatar, user]);
 
-  const updateName = useUpdateName({
-    onSuccess: () => {
-        console.log("Name updated successfully");
-    },
-    onError: (error) => {
-        const parsedError = parseErrorMessage(error);
-        console.error("Name update error:", error);
-        Alert.alert(parsedError.title, parsedError.description);
-        setIsUpdating(false);
-    }
-});
+  
 
-const updateEmail = useUpdateEmail({
-    onSuccess: () => {
-        console.log("Email updated successfully");
-        setPassword(""); // Clear password after successful update
-    },
-    onError: (error) => {
-        const parsedError = parseErrorMessage(error);
-        console.error("Email update error:", error);
-        Alert.alert(parsedError.title, parsedError.description);
-        setIsUpdating(false);
-    }
-});
+
 
 const handleSave = async () => {
-  if (!account || !hasChanges) return;
+  if (!user || !hasChanges) return;
 
-  const nameChanged = name.trim() !== (account.name || "");
-  const emailChanged = email.trim() !== (account.email || "");
+  const nameChanged = name.trim() !== (user.name || "");
+  const emailChanged = email.trim() !== (user.email || "");
 
   if (!name.trim()) {
       Alert.alert("Invalid Name", "Name cannot be empty.");
@@ -80,43 +60,41 @@ const handleSave = async () => {
   }
 
 
-  setIsUpdating(true);
-
   try {
       // Update name if changed
       if (nameChanged) {
-          await updateName.mutateAsync({ name: name.trim() });
+          await updateUserProfile(user.$id, { username: name.trim() });
       }
 
       // Update email if changed
       if (emailChanged) {
-          await updateEmail.mutateAsync({
-              email: email.trim(),
-              password: password
-          });
+          await updateUserProfile(user.$id, { email: email.trim() });
+              
       }
 
-
       Alert.alert("Success", "Your account information has been updated successfully.");
-      setIsUpdating(false);
 
       // Navigate back to settings
       router.back();
   } catch (error) {
-      setIsUpdating(false);
+      console.error("Save error:", error);
   }
 };
 
   const handleChangeAvatar = () => {
-    Alert.alert(
-      'تغيير الصورة الشخصية',
-      'اختر طريقة تغيير الصورة',
-      [
-        { text: 'إلغاء', style: 'cancel' },
-        { text: 'الكاميرا', onPress: () => console.log('Camera') },
-        { text: 'المعرض', onPress: () => console.log('Gallery') },
-      ]
-    );
+    setShowGallery(true);
+  };
+
+  const handleImageSelect = (image: Media) => {
+    setSelectedAvatar(image);
+    setShowGallery(false);
+    Alert.alert('تم اختيار الصورة', 'تم اختيار الصورة الشخصية بنجاح');
+  };
+
+  const handleImageUpload = (image: Media) => {
+    setSelectedAvatar(image);
+    setShowGallery(false);
+    Alert.alert('تم رفع الصورة', 'تم رفع الصورة الشخصية بنجاح');
   };
 
   return (
@@ -139,10 +117,9 @@ const handleSave = async () => {
           <Button
           variant="text"
           onPress={handleSave}
-          disabled={loading}
           style={styles.saveButton}
         >
-          <Text style={[styles.saveText, loading && styles.disabledText]}>
+          <Text style={styles.saveText}>
             حفظ
           </Text>
         </Button>
@@ -152,11 +129,17 @@ const handleSave = async () => {
       <View style={styles.content}>
         <View style={styles.avatarSection}>
           <TouchableOpacity onPress={handleChangeAvatar} style={styles.avatarContainer}>
-            {/* <Avatar
-              source={account?.prefs?.avatar_url}
-              name={name || 'المستخدم'}
-              size={100}
-            /> */}
+            {selectedAvatar ? (
+              <Image source={{ uri: userProfile.imageUrl }} style={styles.avatarImage} />
+            ) : userProfile?.avatar ? (
+              <Image source={{ uri: userProfile?.avatar }} style={styles.avatarImage} />
+            ) : (
+              <View style={styles.avatarPlaceholder}>
+                <Text style={styles.avatarPlaceholderText}>
+                  {name ? name.charAt(0).toUpperCase() : 'U'}
+                </Text>
+              </View>
+            )}
             <View style={styles.avatarOverlay}>
               <Icon as={Camera} size={24} color="#fff" />
             </View>
@@ -202,7 +185,6 @@ const handleSave = async () => {
           <Button
             title="حفظ التغييرات"
             onPress={handleSave}
-            loading={loading}
             style={styles.saveChangesButton}
           />
           
@@ -214,6 +196,18 @@ const handleSave = async () => {
           />
         </View>
       </View>
+
+      {/* Gallery Component */}
+      <Gallery
+        visible={showGallery}
+        onClose={() => setShowGallery(false)}
+        onImageSelect={handleImageSelect}
+        onImageUpload={handleImageUpload}
+        maxImages={1}
+        allowMultiple={false}
+        showUploadButton={true}
+        showGalleryButton={true}
+      />
     </ScrollView>
   );
 }
@@ -260,6 +254,28 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: 'relative',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarPlaceholderText: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#666',
   },
   avatarOverlay: {
     position: 'absolute',

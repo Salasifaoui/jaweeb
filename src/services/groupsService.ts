@@ -1,4 +1,4 @@
-import { appwriteClient } from '@/src/appwrite/appwriteClient';
+import { account, databases } from '@/src/services/apiService';
 import type { CreateGroupData, Group, UpdateGroupData } from '@/src/types';
 import { APPWRITE_CONFIG } from '@/src/utils/constants';
 import { Query } from 'react-native-appwrite';
@@ -6,7 +6,7 @@ import { Query } from 'react-native-appwrite';
 export class GroupsService {
   async getGroups(): Promise<Group[]> {
     try {
-      const groups = await appwriteClient.databases.listDocuments(
+      const groups = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         [Query.orderDesc('created_at')]
@@ -28,7 +28,7 @@ export class GroupsService {
 
   async getGroup(groupId: string): Promise<Group> {
     try {
-      const group = await appwriteClient.databases.getDocument(
+      const group = await databases.getDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         groupId
@@ -50,10 +50,10 @@ export class GroupsService {
 
   async createGroup(groupData: CreateGroupData): Promise<Group> {
     try {
-      const session = await appwriteClient.account.getSession('current');
+      const session = await account.getSession('current');
       if (!session) throw new Error('غير مصرح لك');
 
-      const group = await appwriteClient.databases.createDocument(
+      const group = await databases.createDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         'unique()',
@@ -83,7 +83,7 @@ export class GroupsService {
 
   async updateGroup(groupId: string, groupData: UpdateGroupData): Promise<Group> {
     try {
-      const group = await appwriteClient.databases.updateDocument(
+      const group = await databases.updateDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         groupId,
@@ -106,7 +106,7 @@ export class GroupsService {
 
   async deleteGroup(groupId: string): Promise<void> {
     try {
-      await appwriteClient.databases.deleteDocument(
+      await databases.deleteDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         groupId
@@ -119,7 +119,7 @@ export class GroupsService {
   async getUserGroups(userId: string): Promise<Group[]> {
     try {
       // Get groups where user is a member through memberships
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -131,7 +131,7 @@ export class GroupsService {
       
       if (groupIds.length === 0) return [];
 
-      const groups = await appwriteClient.databases.listDocuments(
+      const groups = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         [Query.equal('$id', groupIds)]
@@ -153,7 +153,7 @@ export class GroupsService {
 
   async getOwnedGroups(userId: string): Promise<Group[]> {
     try {
-      const groups = await appwriteClient.databases.listDocuments(
+      const groups = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         [
@@ -178,7 +178,7 @@ export class GroupsService {
 
   async searchGroups(query: string): Promise<Group[]> {
     try {
-      const groups = await appwriteClient.databases.listDocuments(
+      const groups = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.GROUPS,
         [
@@ -211,7 +211,7 @@ export class GroupsService {
   async incrementMemberCount(groupId: string): Promise<Group> {
     try {
       const group = await this.getGroup(groupId);
-      return await this.updateMemberCount(groupId, group.members_count + 1);
+      return await this.updateMemberCount(groupId, group.members_count || 0 + 1);
     } catch (error) {
       throw new Error('فشل في زيادة عدد الأعضاء.');
     }
@@ -220,7 +220,7 @@ export class GroupsService {
   async decrementMemberCount(groupId: string): Promise<Group> {
     try {
       const group = await this.getGroup(groupId);
-      return await this.updateMemberCount(groupId, Math.max(0, group.members_count - 1));
+      return await this.updateMemberCount(groupId, Math.max(0, group.members_count || 0 - 1));
     } catch (error) {
       throw new Error('فشل في تقليل عدد الأعضاء.');
     }

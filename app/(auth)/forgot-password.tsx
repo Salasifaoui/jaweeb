@@ -1,8 +1,6 @@
 import { Icon } from "@/components/ui/icon";
-import { useCreateRecovery } from "@/src/appwrite/account/useCreateRecovery";
 import { Button } from "@/src/components/Button";
 import { InputField } from "@/src/components/InputField";
-import { APP_CONFIG } from "@/src/configs";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
@@ -13,21 +11,21 @@ export default function ForgotPasswordScreen() {
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
 
-  const createRecovery = useCreateRecovery({
-    onSuccess: () => {
-      setLoading(false);
-      setIsEmailSent(true);
-    },
-    onError: (error) => {
-      console.error("Password recovery error:", error);
-      setLoading(false);
-      Alert.alert(
-        "Error",
-        "Failed to send password reset email. Please check your email address and try again.",
-        [{ text: "OK" }]
-      );
-    },
-  });
+  // const createRecovery = useCreateRecovery({
+  //   onSuccess: () => {
+  //     setLoading(false);
+  //     setIsEmailSent(true);
+  //   },
+  //   onError: (error) => {
+  //     console.error("Password recovery error:", error);
+  //     setLoading(false);
+  //     Alert.alert(
+  //       "Error",
+  //       "Failed to send password reset email. Please check your email address and try again.",
+  //       [{ text: "OK" }]
+  //     );
+  //   },
+  // });
 
   const handleSendResetEmail = async () => {
     if (!email) {
@@ -46,10 +44,10 @@ export default function ForgotPasswordScreen() {
 
     setLoading(true);
 
-    createRecovery.mutate({
-      email,
-      url: APP_CONFIG.APP_URL + "/auth/reset-password",
-    });
+    // createRecovery.mutate({
+    //   email,
+    //   url: APP_CONFIG.APP_URL + "/auth/reset-password",
+    // });
   };
 
   const handleBackToLogin = () => {

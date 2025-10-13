@@ -1,69 +1,56 @@
-import { useEmailSignIn } from '@/src/appwrite/account/useEmailSignIn';
-import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
+import { useAuth } from '@/src/hooks/useAuth';
+import { useZodForm } from "@/src/hooks/useZodForm";
+import { LoginFormData, loginSchema } from "@/src/validation/schemas";
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<{ title: string; description: string } | null>(null);
-
-    const emailSignIn = useEmailSignIn({
-        onSuccess: () => {
-            setErrorMessage(null); // Clear any previous errors
-            router.replace("/(auth)/complated/welcom");
-        },
-        onError: (error: any) => {
-            const parsedError = parseErrorMessage(error);
-            setErrorMessage(parsedError);
-            console.error("Login error:", error);
-            setIsLoading(false);
+    const { signIn, isLoading } = useAuth();
+    const {
+      values: formData,
+      setValue,
+      setFieldTouched,
+      validateField,
+      handleSubmit,
+    } = useZodForm<LoginFormData>({
+      schema: loginSchema,
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      onSubmit: async (values) => {
+        try {
+          await signIn(values.email, values.password);
+          router.replace("/(tabs)");
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Failed to sign in";
+          Alert.alert(errorMessage, "error");
+          throw error;
         }
+      },
     });
 
-    const handleEmailChange = (text: string) => {
-        setEmail(text);
-        if (errorMessage) {
-            setErrorMessage(null); // Clear error when user starts typing
-        }
+    const handleInputChange = (field: keyof LoginFormData, value: string) => {
+      setValue(field, value);
     };
-
-    const handlePasswordChange = (text: string) => {
-        setPassword(text);
-        if (errorMessage) {
-            setErrorMessage(null); // Clear error when user starts typing
-        }
+  
+    const handleInputBlur = (field: keyof LoginFormData) => {
+      setFieldTouched(field);
+      validateField(field, formData[field]);
     };
-
-    const handleEmailLogin = async () => {
-        if (!email || !password) return;
-
-        setErrorMessage(null); // Clear any previous errors
-        setIsLoading(true);
-        emailSignIn.mutate({ email, password });
-    };
-
-    const handleForgotPassword = () => {
-        // if (email) {
-        //     router.push(`/(auth)/forgot-password?email=${email}`);
-        // } else {
-            router.push("/(auth)/forgot-password");
-        // }
-    };
-
-    const handleAppleLogin = () => {
-        // Implement Apple login
-        console.log("Apple login pressed");
-    };
-
-    const handleGoogleLogin = () => {
-        // Implement Google login
-        console.log("Google login pressed");
-    };
+  
+    useEffect(() => {
+      setEmail(formData.email);
+      setPassword(formData.password);
+    }, [formData, setEmail, setPassword]);
 
   return (
     <View style={styles.container}>
@@ -72,7 +59,8 @@ export default function LoginScreen() {
       <InputField
         placeholder="البريد الإلكتروني"
         value={email}
-        onChangeText={handleEmailChange}
+        onChangeText={(value) => handleInputChange("email", value)}
+        onBlur={() => handleInputBlur("email")}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -80,13 +68,14 @@ export default function LoginScreen() {
       <InputField
         placeholder="كلمة المرور"
         value={password}
-        onChangeText={handlePasswordChange}
+        onChangeText={(value) => handleInputChange("password", value)}
+        onBlur={() => handleInputBlur("password")}
         secureTextEntry
       />
       
       <Button
         title="تسجيل الدخول"
-        onPress={handleEmailLogin}
+        onPress={handleSubmit}
         loading={isLoading}
         style={styles.loginButton}
       />
@@ -100,7 +89,7 @@ export default function LoginScreen() {
       
       <Button
         title="نسيت كلمة المرور؟"
-        onPress={handleForgotPassword}
+        onPress={() => router.push('/(auth)/forgot-password')}
         variant="text"
         style={styles.forgotButton}
       />

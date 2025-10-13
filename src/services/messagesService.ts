@@ -1,4 +1,4 @@
-import { appwriteClient } from '@/src/appwrite/appwriteClient';
+import { databases } from '@/src/services/apiService';
 import type { Message, MessageType } from '@/src/types';
 import { APPWRITE_CONFIG } from '@/src/utils/constants';
 import { Query } from 'react-native-appwrite';
@@ -22,7 +22,7 @@ export interface UpdateMessageData {
 export class MessagesService {
   async getMessages(): Promise<Message[]> {
     try {
-      const messages = await appwriteClient.databases.listDocuments(
+      const messages = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         [Query.orderDesc('created_at')]
@@ -47,7 +47,7 @@ export class MessagesService {
 
   async getMessage(messageId: string): Promise<Message> {
     try {
-      const message = await appwriteClient.databases.getDocument(
+      const message = await databases.getDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         messageId
@@ -72,7 +72,7 @@ export class MessagesService {
 
   async createMessage(messageData: CreateMessageData): Promise<Message> {
     try {
-      const message = await appwriteClient.databases.createDocument(
+      const message = await databases.createDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         'unique()',
@@ -109,7 +109,7 @@ export class MessagesService {
 
   async updateMessage(messageId: string, messageData: UpdateMessageData): Promise<Message> {
     try {
-      const message = await appwriteClient.databases.updateDocument(
+      const message = await databases.updateDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         messageId,
@@ -135,7 +135,7 @@ export class MessagesService {
 
   async deleteMessage(messageId: string): Promise<void> {
     try {
-      await appwriteClient.databases.deleteDocument(
+      await databases.deleteDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         messageId
@@ -147,7 +147,7 @@ export class MessagesService {
 
   async getGroupMessages(groupId: string, limit: number = 50, offset: number = 0): Promise<Message[]> {
     try {
-      const messages = await appwriteClient.databases.listDocuments(
+      const messages = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         [
@@ -177,7 +177,7 @@ export class MessagesService {
 
   async getPrivateMessages(userId1: string, userId2: string): Promise<Message[]> {
     try {
-      const messages = await appwriteClient.databases.listDocuments(
+      const messages = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         [
@@ -214,7 +214,7 @@ export class MessagesService {
 
   async getUserMessages(userId: string): Promise<Message[]> {
     try {
-      const messages = await appwriteClient.databases.listDocuments(
+      const messages = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         [
@@ -266,7 +266,7 @@ export class MessagesService {
         queries.push(Query.equal('group_id', [groupId]));
       }
 
-      const messages = await appwriteClient.databases.listDocuments(
+      const messages = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MESSAGES,
         queries

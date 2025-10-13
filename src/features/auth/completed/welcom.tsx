@@ -4,15 +4,15 @@ import { ThemedView } from '@/components/themed-view';
 import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
 import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { APP_NAME } from '@/constants/variables';
-import { useAccount } from '@/src/appwrite/account';
 import { Button } from '@/src/components/Button';
+import { useAuth } from '@/src/hooks/useAuth';
 import { router } from 'expo-router';
 import { ChevronDownCircle, ChevronUpCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function WelcomePage() {
-  const { data: account } = useAccount();
+  const { account } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const handleNext = () => {
     router.push('/(auth)/complated/gender-birth');

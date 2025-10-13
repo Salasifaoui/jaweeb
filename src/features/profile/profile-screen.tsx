@@ -2,12 +2,11 @@ import { AppHeader } from "@/components/app-header";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Icon } from "@/components/ui/icon";
-import { useAccount } from "@/src/appwrite/account";
-import { useSignOut } from "@/src/appwrite/account/useSignOut";
 import { Button } from "@/src/components/Button";
+import { useAuth } from "@/src/hooks/useAuth";
 import { router } from "expo-router";
 import { Bell, Camera, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
-import React, { useState } from "react";
+import React from "react";
 import {
   Alert,
   ScrollView,
@@ -17,34 +16,13 @@ import {
 } from "react-native";
 
 export function ProfileScreen() {
-  const { data: account } = useAccount();
-  const [loading, setLoading] = useState(false);
 
-  const logout = useSignOut({
-    onSuccess: () => {
-      router.replace("/(auth)/login");
-    },
-  });
+  const { signOut, isLoading, userProfile} = useAuth();
 
-
-  const handleLogout = async () => {
-    Alert.alert("تسجيل الخروج", "هل أنت متأكد من رغبتك في تسجيل الخروج؟", [
-      { text: "إلغاء", style: "cancel" },
-      {
-        text: "تسجيل الخروج",
-        style: "destructive",
-        onPress: async () => {
-          setLoading(true);
-          try {
-            await logout.mutateAsync();
-            router.replace("/(auth)/login");
-          } catch (error) {
-            Alert.alert("خطأ", "فشل في تسجيل الخروج");
-          } finally {
-            setLoading(false);
-          }
-        },
-      },
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Logout", onPress: () => signOut() },
     ]);
   };
 
@@ -52,12 +30,8 @@ export function ProfileScreen() {
     router.push("/(profile)/edit");
   };
 
-  if (!account) {
-    return router.replace('/(auth)/inscription');
-  }
-
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} authProtected={true}>
       <AppHeader title="Me" showBackButton={false} />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -71,10 +45,10 @@ export function ProfileScreen() {
             </TouchableOpacity>
           </View>
           <ThemedText type="subtitle" style={styles.userName}>
-            {account?.name || "User Name"}
+            {userProfile?.username || "User Name"}
           </ThemedText>
           <ThemedText style={styles.userEmail}>
-            {account?.email || "user@example.com"}
+            {userProfile?.email || "user@example.com"}
           </ThemedText>
           <TouchableOpacity
             style={styles.editProfileButton}
@@ -170,7 +144,7 @@ export function ProfileScreen() {
         <Button
           title="تسجيل الخروج"
           onPress={handleLogout}
-          loading={loading}
+          loading={isLoading}
           variant="outline"
           style={styles.logoutButton}
           textStyle={styles.logoutText}

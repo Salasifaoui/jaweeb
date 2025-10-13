@@ -2,19 +2,13 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
-import { useAccount } from '@/src/appwrite/account';
-import { router } from 'expo-router';
 import { Barcode, Camera, FileText, Image, PlayCircle, QrCode, StopCircle, Video } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export function CameraScreen() {
   const [isRecording, setIsRecording] = useState(false);
-  const { data: account } = useAccount();
 
-  if (!account) {
-    return router.replace('/(auth)/inscription');
-  }
   const handleStartRecording = () => {
     setIsRecording(true);
     Alert.alert('Recording Started', 'Video recording has begun');
@@ -30,7 +24,7 @@ export function CameraScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} authProtected={true}>
       <AppHeader
         title="Camera"
         showBackButton={false}

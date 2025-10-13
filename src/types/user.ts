@@ -2,7 +2,8 @@ export interface User {
   user_id: string;        // Appwrite account.$id
   username: string;       // Display name
   email: string;          // Email for quick search
-  avatar_url?: string;    // Profile image URL from storage
+  avatar?: string;    // Profile image URL from storage
+  imageUrl?: string;    // Profile image URL from storage
   status?: string;        // User status (online, busy, etc.)
   bio?: string;          // Short bio
   last_seen?: string;    // Last seen timestamp
@@ -18,6 +19,10 @@ export interface UserProfile {
   username: string;
   email: string;
   bio?: string;
-  avatar_url?: string;
+  avatar?: string;
   status?: string;
+  imageUrl?: string;
+  last_seen?: string;
+  is_online?: boolean;
+  created_at?: string;
 }

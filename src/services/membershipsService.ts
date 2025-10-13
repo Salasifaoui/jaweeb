@@ -1,4 +1,4 @@
-import { appwriteClient } from '@/src/appwrite/appwriteClient';
+import { databases } from '@/src/services/apiService';
 import type { CreateMembershipData, Membership, MembershipRole, UpdateMembershipData } from '@/src/types';
 import { APPWRITE_CONFIG } from '@/src/utils/constants';
 import { Query } from 'react-native-appwrite';
@@ -6,7 +6,7 @@ import { Query } from 'react-native-appwrite';
 export class MembershipsService {
   async getMemberships(): Promise<Membership[]> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS
       );
@@ -25,7 +25,7 @@ export class MembershipsService {
 
   async getMembership(membershipId: string): Promise<Membership> {
     try {
-      const membership = await appwriteClient.databases.getDocument(
+      const membership = await databases.getDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         membershipId
@@ -45,7 +45,7 @@ export class MembershipsService {
 
   async createMembership(membershipData: CreateMembershipData): Promise<Membership> {
     try {
-      const membership = await appwriteClient.databases.createDocument(
+      const membership = await databases.createDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         'unique()',
@@ -71,7 +71,7 @@ export class MembershipsService {
 
   async updateMembership(membershipId: string, membershipData: UpdateMembershipData): Promise<Membership> {
     try {
-      const membership = await appwriteClient.databases.updateDocument(
+      const membership = await databases.updateDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         membershipId,
@@ -92,7 +92,7 @@ export class MembershipsService {
 
   async deleteMembership(membershipId: string): Promise<void> {
     try {
-      await appwriteClient.databases.deleteDocument(
+      await databases.deleteDocument(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         membershipId
@@ -104,7 +104,7 @@ export class MembershipsService {
 
   async getGroupMembers(groupId: string): Promise<Membership[]> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -126,7 +126,7 @@ export class MembershipsService {
 
   async getUserMemberships(userId: string): Promise<Membership[]> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -160,7 +160,7 @@ export class MembershipsService {
 
   async removeMemberFromGroup(userId: string, groupId: string): Promise<void> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -203,7 +203,7 @@ export class MembershipsService {
 
   async isUserMemberOfGroup(userId: string, groupId: string): Promise<boolean> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -220,7 +220,7 @@ export class MembershipsService {
 
   async isUserAdminOfGroup(userId: string, groupId: string): Promise<boolean> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [
@@ -238,7 +238,7 @@ export class MembershipsService {
 
   async getGroupAdmins(groupId: string): Promise<Membership[]> {
     try {
-      const memberships = await appwriteClient.databases.listDocuments(
+      const memberships = await databases.listDocuments(
         APPWRITE_CONFIG.DATABASE_ID,
         APPWRITE_CONFIG.COLLECTIONS.MEMBERSHIPS,
         [

@@ -31,35 +31,46 @@ export const ZixAlertActions: React.FC<ZixAlertActionsProps> = ({
 }) => {
   const [modalVisible, setModalVisible] = useState(visible);
 
+  // Update modal visibility when visible prop changes
+  React.useEffect(() => {
+    setModalVisible(visible);
+  }, [visible]);
+
   const handleClose = () => {
     setModalVisible(false);
     onClose?.();
   };
 
+  if (!closeButton) {
+    return <View>{children}</View>;
+  }
+
   return (
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          onRequestClose={handleClose}
-          transparent={true}
+    <View>
+      {children}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={handleClose}
+        transparent={true}
+      >
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleClose}
         >
           <TouchableOpacity
-            style={styles.overlay}
+            style={styles.modalContent}
             activeOpacity={1}
-            onPress={handleClose}
+            onPress={(e) => e.stopPropagation()}
           >
-            <TouchableOpacity
-              style={styles.modalContent}
-              activeOpacity={1}
-              onPress={(e) => e.stopPropagation()}
-            >
-              <View style={styles.contentContainer}>
-                {childrenContent}
-              </View>
-            </TouchableOpacity>
+            <View style={styles.contentContainer}>
+              {childrenContent}
+            </View>
           </TouchableOpacity>
-        </Modal>
-
+        </TouchableOpacity>
+      </Modal>
+    </View>
   );
 };
 

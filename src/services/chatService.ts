@@ -1,14 +1,14 @@
-import { appwriteClient } from '@/src/appwrite/appwriteClient';
+import { account } from '@/src/services/apiService';
 import type { Chat, CreateGroupData, Message, UpdateGroupData, User } from '@/src/types';
 import { groupsService } from './groupsService';
 import { membershipsService } from './membershipsService';
 import { messagesService } from './messagesService';
-import { usersService } from './usersService';
+import { UserService } from './usersService';
 
 export class ChatService {
   async getChats(): Promise<Chat[]> {
     try {
-      const session = await appwriteClient.account.getSession('current');
+      const session = await account.getSession('current');
       if (!session) throw new Error('غير مصرح لك');
 
       // Get user's groups through memberships
@@ -64,7 +64,7 @@ export class ChatService {
   async createGroup(groupData: CreateGroupData): Promise<string> {
     console.log('groupData', groupData);
     try {
-      const session = await appwriteClient.account.getSession('current');
+      const session = await account.getSession('current');
       if (!session) throw new Error('غير مصرح لك');
 
       // Create the group
@@ -132,7 +132,7 @@ export class ChatService {
 
   async sendMessage(chatId: string, content: string): Promise<Message> {
     try {
-      const session = await appwriteClient.account.getSession('current');
+      const session = await account.getSession('current');
       if (!session) throw new Error('غير مصرح لك');
 
       const message = await messagesService.createMessage({
@@ -151,7 +151,7 @@ export class ChatService {
 
   async getUsers(): Promise<User[]> {
     try {
-      return await usersService.getUsers();
+      return await UserService.getAllUsers();
     } catch (error) {
       throw new Error('فشل في تحميل المستخدمين.');
     }

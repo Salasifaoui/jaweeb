@@ -1,21 +1,32 @@
-import { useAccount } from '@/src/appwrite/account';
-import { router } from 'expo-router';
-import React, { useEffect } from 'react';
+import { useAuth } from '@/src/hooks/useAuth';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
-  const { data: account, isLoading } = useAccount();
+  const router = useRouter();
+  const { isLoggedIn, isLoading,  } = useAuth();
+  const [isReady, setIsReady] = useState(false);
 
+  // Set ready state after component mounts
   useEffect(() => {
-    if (!isLoading) {
-      if (account) {
-        router.replace('/(auth)/inscription');
-      } else {
-        router.replace('/(tabs)');
-      }
-    }
-  }, [account, isLoading]);
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      // Only navigate when not loading and component is ready
+      if (!isLoading && isReady) {
+        router.replace("/(tabs)");
+        }
+
+    
+      }, [router, isLoading, isReady])
+  );
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Jaweeb</Text>

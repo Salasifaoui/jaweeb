@@ -1,92 +1,69 @@
-import { useEmailSignIn } from '@/src/appwrite/account/useEmailSignIn';
-import { useEmailSignUp } from '@/src/appwrite/account/useEmailSignUp';
-import { parseErrorMessage } from '@/src/appwrite/exceptions/parseErrorMessage';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
-import { usersService } from '@/src/services/usersService';
+import { useAuth } from '@/src/hooks/useAuth';
+import { useZodForm } from '@/src/hooks/useZodForm';
+import { CreateUserFormData, createUserSchema } from '@/src/validation/schemas';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState<{ title: string; description: string } | null>(null);
+    const { signUp, signIn, isLoading, error: errorMessage } = useAuth();
+    const {
+      values: formData,
+      setValue,
+      setFieldTouched,
+      validateField,
+      handleSubmit,
 
-    const emailSignUp = useEmailSignUp({
-        onSuccess: async (user) => {
-            setErrorMessage(null); // Clear any previous errors
-            try {
-                // Create user profile in database using the Appwrite user ID
-                await usersService.createUser({
-                    username: name.trim(),
-                    email: email.trim(),
-                    status: 'online',
-                    bio: '',
-                }, user.$id);
-                
-                // After successful registration and profile creation, sign in the user
-                emailSignIn.mutate({ email, password });
-            } catch (profileError) {
-                console.error("Profile creation error:", profileError);
-                setErrorMessage({
-                    title: "خطأ في إنشاء الملف الشخصي",
-                    description: "تم إنشاء الحساب بنجاح ولكن فشل في إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى."
-                });
-                setIsLoading(false);
-            }
-        },
-        onError: (error) => {
-            const parsedError = parseErrorMessage(error);
-            console.error("Registration error:", error);
-            setErrorMessage(parsedError);
-            setIsLoading(false);
+    } = useZodForm<CreateUserFormData>({
+      schema: createUserSchema,
+      initialValues: {
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+      },
+      onSubmit: async (values) => {
+        try {
+          await signUp(values.email, values.password, values.username);
+  
+          Alert.alert("Account created successfully!", "success");
+       
+          await signIn(values.email, values.password);
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Failed to create account";
+          Alert.alert(errorMessage, "error");
+          throw error;
         }
+      },
     });
 
-    const emailSignIn = useEmailSignIn({
-        onSuccess: () => {
-            setErrorMessage(null); // Clear any previous errors
-            router.replace("/");
-        },
-        onError: (error) => {
-            const parsedError = parseErrorMessage(error);
-            setErrorMessage(parsedError);
-            console.error("Auto sign-in error:", error);
-            setIsLoading(false);
-        }
-    });
 
-    const handleInputChange = (text: string, setter: (value: string) => void) => {
-        setter(text);
-        if (errorMessage) {
-            setErrorMessage(null); // Clear error when user starts typing
-        }
+
+    const handleInputChange = (
+      field: keyof CreateUserFormData,
+      value: string
+    ) => {
+      setValue(field, value);
     };
-
-    const handleRegister = async () => {
-        if (!name || !email || !password || !confirmPassword) return;
-
-        // Validate password confirmation
-        if (password !== confirmPassword) {
-            setErrorMessage({
-                title: "خطأ في كلمة المرور",
-                description: "كلمة المرور وتأكيد كلمة المرور غير متطابقين."
-            });
-            return;
-        }
-
-        setErrorMessage(null); // Clear any previous errors
-        setIsLoading(true);
-        emailSignUp.mutate({
-            name: name.trim(),
-            email: email.trim(),
-            password
-        });
+  
+    const handleInputBlur = (field: keyof CreateUserFormData) => {
+      setFieldTouched(field);
+      validateField(field, formData[field]);
     };
+  
+    useEffect(() => {
+      setEmail(formData.email);
+      setName(formData.username);
+      setPassword(formData.password);
+      setConfirmPassword(formData.confirmPassword);
+    }, [formData, setEmail, setName, setPassword, setConfirmPassword]);
 
   return (
     <View style={styles.container}>
@@ -94,22 +71,24 @@ export default function RegisterScreen() {
       
       {errorMessage && (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>{errorMessage.title}</Text>
-          <Text style={styles.errorDescription}>{errorMessage.description}</Text>
+          <Text style={styles.errorTitle}>{errorMessage}</Text>
+          <Text style={styles.errorDescription}>{errorMessage}</Text>
         </View>
       )}
       
       <InputField
         placeholder="الاسم الكامل"
         value={name}
-        onChangeText={(text) => handleInputChange(text, setName)}
+        onChangeText={(value) => handleInputChange("username", value)}
+        onBlur={() => handleInputBlur("username")}
         autoCapitalize="words"
       />
       
       <InputField
         placeholder="البريد الإلكتروني"
         value={email}
-        onChangeText={(text) => handleInputChange(text, setEmail)}
+        onChangeText={(value) => handleInputChange("email", value)}
+        onBlur={() => handleInputBlur("email")}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -117,20 +96,22 @@ export default function RegisterScreen() {
       <InputField
         placeholder="كلمة المرور"
         value={password}
-        onChangeText={(text) => handleInputChange(text, setPassword)}
+        onChangeText={(value) => handleInputChange("password", value)}
+        onBlur={() => handleInputBlur("password")}
         secureTextEntry
       />
       
       <InputField
         placeholder="تأكيد كلمة المرور"
         value={confirmPassword}
-        onChangeText={(text) => handleInputChange(text, setConfirmPassword)}
+        onChangeText={(value) => handleInputChange("confirmPassword", value)}
+        onBlur={() => handleInputBlur("confirmPassword")}
         secureTextEntry
       />
       
       <Button
         title="إنشاء الحساب"
-        onPress={handleRegister}
+        onPress={handleSubmit}
         loading={isLoading}
         style={styles.registerButton}
       />

@@ -1,8 +1,8 @@
 import { Icon } from '@/components/ui/icon';
-import { useAccount } from '@/src/appwrite';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
+import { useAuth } from '@/src/hooks/useAuth';
 import { useChats } from '@/src/hooks/useChats';
 import type { User } from '@/src/types';
 import { router } from 'expo-router';
@@ -17,7 +17,7 @@ export default function NewGroupScreen() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const { createGroup, getUsers } = useChats();
-  const { data: account } = useAccount();
+  const { account } = useAuth();
 
   React.useEffect(() => {
     loadUsers();
@@ -58,7 +58,7 @@ export default function NewGroupScreen() {
     try {
       const groupId = await createGroup({
         name: groupName.trim(),
-        owner_id: account?.user_id,
+        owner_id: account?.$id,
           description: '',
           avatar_url: '',
         memberIds: selectedUsers.map(u => u.user_id),
@@ -124,7 +124,7 @@ export default function NewGroupScreen() {
             </Text>
             <FlatList
               data={selectedUsers}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.user_id}
               renderItem={({ item }) => (
                 <View style={styles.selectedUserChip}>
                   <Avatar
