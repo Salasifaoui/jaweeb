@@ -5,17 +5,42 @@ import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
 import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { APP_NAME } from '@/constants/variables';
 import { Button } from '@/src/components/Button';
-import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { useCompletedProfile } from '@/src/features/profile/hooks';
+import { useUserService } from '@/src/features/profile/hooks/userProfile';
 import { router } from 'expo-router';
 import { ChevronDownCircle, ChevronUpCircle } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-
+import { useAuth } from '../../hooks/useAuth';
 export  function WelcomePage() {
-  const { profile } = useAuth();
+  const { user } = useAuth();
+  const {userProfile: profile} = useUserService(user?.userId || '');
+  const { checkProfileCompletion, getNextIncompleteScreen } = useCompletedProfile();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Check profile completion on component mount
+  useEffect(() => {
+    if (profile) {
+      const completionStatus = checkProfileCompletion(profile);
+      if (completionStatus.isCompleted) {
+        router.push('/(tabs)');
+      }
+    }
+  }, [profile, checkProfileCompletion]);
+
   const handleNext = () => {
-    router.push('/(auth)/complated/gender-birth');
+    if (profile) {
+      const nextScreen = getNextIncompleteScreen(profile);
+      if (nextScreen) {
+        router.push(nextScreen as any);
+      } else {
+        // If profile is complete, go to main app
+        router.push('/(tabs)');
+      }
+    } else {
+      // Default fallback
+      router.push('/(auth)/complated/gender-birth');
+    }
   };
 
   return (
@@ -69,7 +94,7 @@ export  function WelcomePage() {
           </View>
           
          </View>
-         {isOpen && <ListAvatars userProfile={profile} />}
+         {isOpen && <ListAvatars userProfile={profile} setShowGallery={setIsOpen} />}
         {/* Features List */}
         <View style={styles.featuresSection}>
           <View style={styles.featureItem}>

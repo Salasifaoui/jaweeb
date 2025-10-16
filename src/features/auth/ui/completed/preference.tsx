@@ -1,11 +1,15 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
+import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export function PreferencePage() {
+  const { profile } = useAuth();
+  const { updateProfile } = useUpdateProfile();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('');
   const [selectedGenderPreference, setSelectedGenderPreference] = useState<string>('');
@@ -26,6 +30,8 @@ export function PreferencePage() {
   ];
 
   const ageRanges = [
+    { id: '13-17', label: '13-17' },
+    { id: '18-20', label: '18-20' },
     { id: '18-25', label: '18-25' },
     { id: '26-35', label: '26-35' },
     { id: '36-45', label: '36-45' },
@@ -47,12 +53,36 @@ export function PreferencePage() {
     );
   };
 
-  const handleNext = () => {
-    // Save preferences data here
-    console.log('Interests:', selectedInterests);
-    console.log('Age Range:', selectedAgeRange);
-    console.log('Gender Preference:', selectedGenderPreference);
-    router.push('/(auth)/complated/choose-room');
+  const handleNext = async () => {
+    if (!profile?.userId) {
+      Alert.alert('Error', 'User not found. Please try again.');
+      return;
+    }
+
+    try {
+      const updateData: any = {};
+      
+      // Only update fields that have values
+      if (selectedInterests.length > 0) {
+        updateData.interest = selectedInterests;
+      }
+      
+      if (selectedAgeRange) {
+        updateData.ageRange = selectedAgeRange;
+      }
+      
+      if (selectedGenderPreference) {
+        updateData.genderPreference = [selectedGenderPreference];
+      }
+
+      await updateProfile(profile.userId, updateData);
+
+      console.log('Preferences updated successfully');
+      router.push('/(auth)/complated/choose-room');
+    } catch (err) {
+      console.error('Update preferences error:', err);
+      Alert.alert('Error', 'Failed to update preferences. Please try again.');
+    }
   };
 
   const handleSkip = () => {

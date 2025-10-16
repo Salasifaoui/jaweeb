@@ -15,6 +15,12 @@ interface UpdateProfileData {
   imageUrl?: string;
   status?: string;
   is_online?: boolean;
+  birthday?: string;
+  gender?: string;
+  genderPreference?: string[];
+  interest?: string[];
+  location?: string;
+  ageRange?: '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '46-55' | '56-65' | '66-75' | '76-85' | '86-95';
 }
 
 interface UseUpdateProfileReturn {

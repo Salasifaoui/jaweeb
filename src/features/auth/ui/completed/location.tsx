@@ -1,11 +1,15 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
+import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export function LocationPage() {
+  const { profile } = useAuth();
+  const { updateProfile } = useUpdateProfile();
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState(false);
@@ -36,16 +40,38 @@ export function LocationPage() {
     setSelectedLocation('');
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const location = selectedLocation || customLocation;
     if (!location) {
       Alert.alert('Location Required', 'Please select or enter your location to continue.');
       return;
     }
-    
-    // Save location data here
-    console.log('Location:', location);
-    router.push('/(auth)/complated/preference');
+
+    if (!profile?.userId) {
+      Alert.alert('Error', 'User not found. Please try again.');
+      return;
+    }
+
+    try {
+      // Get the actual location label for display
+      let locationLabel = location;
+      if (selectedLocation) {
+        const locationObj = popularLocations.find(loc => loc.id === selectedLocation);
+        locationLabel = locationObj ? locationObj.label : location;
+      } else {
+        locationLabel = customLocation;
+      }
+
+      await updateProfile(profile.userId, {
+        location: locationLabel,
+      });
+
+      console.log('Location updated successfully');
+      router.push('/(auth)/complated/preference');
+    } catch (err) {
+      console.error('Update location error:', err);
+      Alert.alert('Error', 'Failed to update location. Please try again.');
+    }
   };
 
   const handleSkip = () => {

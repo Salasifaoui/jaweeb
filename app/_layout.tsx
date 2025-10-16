@@ -36,7 +36,7 @@ const StackLayout = () => {
       if (isAtRoot) {
         if (isAuthenticated && user && session) {
           // User is authenticated, go to main app
-          router.replace("/(tabs)");
+          router.replace("/(auth)/complated/welcom");
         } else {
           // User is not authenticated, go to auth flow
           router.replace("/(auth)/inscription");
