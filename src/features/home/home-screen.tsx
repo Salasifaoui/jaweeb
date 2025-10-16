@@ -1,23 +1,49 @@
-import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
+import { NavBar } from '@/components/ui/nav-bar';
+import { TabList } from '@/components/ui/tab-list';
 import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { Camera, Plus, User } from 'lucide-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 export function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = THEME[colorScheme ?? 'light'];
   const styles = createStyles(theme);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [sousTabIndex, setSousTabIndex] = useState(0);
+  const tabs = ['Nearby', 'Popular', 'Chat'];
+  const sousTabs = ['Match', 'Live', 'Meet'];
   return (
     <ThemedView style={styles.container}>
-      <AppHeader
-      title='Home'
-      showBackButton={false}
-      />
-      
+
+      <NavBar showSearchButton showNotificationButton>
+        <TabList 
+        tabs={tabs} 
+        textStyle={styles.title} 
+        color={theme.mutedForeground} 
+        colorSelected={theme.primary} 
+        activeTab={tabs[tabIndex]} 
+        onTabChange={(tab) => setTabIndex(tabs.indexOf(tab))} 
+        showIndicator={true} 
+        />
+      </NavBar>
+      <NavBar showAboutButton>
+      <TabList 
+        tabs={sousTabs} 
+        textStyle={styles.sousTitle} 
+        color={theme.mutedForeground} 
+        colorSelected={theme.muted} 
+        activeTab={sousTabs[sousTabIndex]} 
+        onTabChange={(tab) => setSousTabIndex(sousTabs.indexOf(tab))} 
+        showIndicator={false} 
+        backgroundColor={theme.primaryForeground} 
+        backgroundColorSelected={theme.primary} 
+        />
+      </NavBar>
+    
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -26,7 +52,7 @@ export function HomeScreen() {
           
           <TouchableOpacity 
             style={styles.chatItem}
-            onPress={() => router.push('/(chat)/chat-room')}
+            onPress={() => router.push('/(tabs)')}
           >
             <View style={styles.avatar}>
               <Icon as={User} size={20} color="#007AFF" />
@@ -113,24 +139,32 @@ export function HomeScreen() {
 const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
     container: {
       flex: 1,
+      paddingTop: 60,
     },
     header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 20,
-      paddingTop: 60,
-      paddingBottom: 20,
+      flexDirection: 'column',
+      gap: 10,
+      backgroundColor: theme.primaryForeground,
     },
     title: {
-      fontSize: 26,
-      fontWeight: 'bold',
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    sousTitle: {
+      fontSize: 14,
+      fontWeight: '600',
     },
     searchButton: {
       padding: 8,
     },
     content: {
       flex: 1,
+      paddingHorizontal: 20,
+    },
+    sousTabsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: 20,
     },
     section: {
