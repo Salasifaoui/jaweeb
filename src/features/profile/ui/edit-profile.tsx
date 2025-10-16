@@ -7,14 +7,17 @@ import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks/userUpdateProfile';
 import { Media } from '@/src/models/Media';
 import { router } from 'expo-router';
+import { useAtom } from 'jotai';
 import { Camera, ChevronLeft } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useUserService } from '../hooks/userProfile';
+import { userProfileAtom } from '../store/profileAtoms';
 
 export function EditProfileScreen() {
   const { user } = useAuth();
   const { userProfile: profile } = useUserService(user?.userId || "");
+  const [profileFromAtom] = useAtom(userProfileAtom);
 
   const { updateProfile, loading, error, reset } = useUpdateProfile();
   const [name, setName] = useState('');
@@ -26,23 +29,25 @@ export function EditProfileScreen() {
 
 // Initialize form with profile data
 useEffect(() => {
-    if (profile) {
-        setName(profile.username || '');
-        setEmail(profile.email || '');
-        setBio(profile.bio || '');
+    const currentProfile = profileFromAtom || profile;
+    if (currentProfile) {
+        setName(currentProfile.username || '');
+        setEmail(currentProfile.email || '');
+        setBio(currentProfile.bio || '');
     }
-}, [profile]);
+}, [profile, profileFromAtom]);
 
 // Check if there are changes
 useEffect(() => {
-    if (profile) {
-        const nameChanged = name.trim() !== (profile.username || "");
-        const emailChanged = email.trim() !== (profile.email || "");
-        const bioChanged = bio.trim() !== (profile.bio || "");
+    const currentProfile = profileFromAtom || profile;
+    if (currentProfile) {
+        const nameChanged = name.trim() !== (currentProfile.username || "");
+        const emailChanged = email.trim() !== (currentProfile.email || "");
+        const bioChanged = bio.trim() !== (currentProfile.bio || "");
         const avatarChanged = selectedAvatar !== null;
         setHasChanges(nameChanged || emailChanged || bioChanged || avatarChanged);
     }
-}, [name, email, bio, selectedAvatar, profile]);
+}, [name, email, bio, selectedAvatar, profile, profileFromAtom]);
 
 // Handle error display
 useEffect(() => {
@@ -57,11 +62,12 @@ useEffect(() => {
 
 
 const handleSave = async () => {
-  if (!profile || !hasChanges || loading) return;
+  const currentProfile = profileFromAtom || profile;
+  if (!currentProfile || !hasChanges || loading) return;
 
-  const nameChanged = name.trim() !== (profile.username || "");
-  const emailChanged = email.trim() !== (profile.email || "");
-  const bioChanged = bio.trim() !== (profile.bio || "");
+  const nameChanged = name.trim() !== (currentProfile.username || "");
+  const emailChanged = email.trim() !== (currentProfile.email || "");
+  const bioChanged = bio.trim() !== (currentProfile.bio || "");
 
   if (!name.trim()) {
       Alert.alert("Invalid Name", "Name cannot be empty.");
@@ -94,7 +100,7 @@ const handleSave = async () => {
       }
 
       // Update profile using the hook
-      const updatedUser = await updateProfile(profile.userId, updateData);
+      const updatedUser = await updateProfile(currentProfile.userId, updateData);
       
       if (updatedUser) {
           Alert.alert("Success", "Your account information has been updated successfully.");
@@ -111,12 +117,6 @@ const handleSave = async () => {
 
   const handleChangeAvatar = () => {
     setShowGallery(true);
-  };
-
-  const handleImageSelect = (image: Media) => {
-    setSelectedAvatar(image);
-    setShowGallery(false);
-    Alert.alert('تم اختيار الصورة', 'تم اختيار الصورة الشخصية بنجاح');
   };
 
   const handleImageUpload = (image: Media) => {
@@ -160,8 +160,8 @@ const handleSave = async () => {
           <TouchableOpacity onPress={handleChangeAvatar} style={styles.avatarContainer}>
             {selectedAvatar ? (
               <Image source={{ uri: selectedAvatar.url }} style={styles.avatarImage} />
-            ) : profile?.imageUrl ? (
-              <Image source={{ uri: profile?.imageUrl }} style={styles.avatarImage} />
+            ) : (profileFromAtom?.imageUrl || profile?.imageUrl) ? (
+              <Image source={{ uri: profileFromAtom?.imageUrl || profile?.imageUrl }} style={styles.avatarImage} />
             ) : (
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarPlaceholderText}>
@@ -232,7 +232,6 @@ const handleSave = async () => {
       <Gallery
         visible={showGallery}
         onClose={() => setShowGallery(false)}
-        onImageSelect={handleImageSelect}
         onImageUpload={handleImageUpload}
         maxImages={1}
         allowMultiple={false}

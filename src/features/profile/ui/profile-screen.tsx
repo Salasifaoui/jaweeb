@@ -6,21 +6,25 @@ import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/features/auth/hooks/useAuth";
 
 import { router } from "expo-router";
-import { Bell, Camera, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
+import { useAtom } from 'jotai';
+import { Bell, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useUserService } from "../hooks/userProfile";
+import { userProfileAtom } from '../store/profileAtoms';
 
 export function ProfileScreen() {
   const { logout, user } = useAuth();
-  const { userProfile, loading, error } = useUserService(user?.userId || "");
+  const { userProfile, loading } = useUserService(user?.userId || "");
+  const [profileFromAtom] = useAtom(userProfileAtom);
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -44,11 +48,12 @@ export function ProfileScreen() {
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <Icon as={User} size={40} color="#007AFF" />
+              {(profileFromAtom?.imageUrl || userProfile?.imageUrl) ? (
+                <Image source={{ uri: profileFromAtom?.imageUrl || userProfile?.imageUrl }} style={styles.avatarImage} />
+              ) : (
+                <Icon as={User} size={40} color="#007AFF" />
+              )}
             </View>
-            <TouchableOpacity style={styles.editAvatarButton}>
-              <Icon as={Camera} size={16} color="#fff" />
-            </TouchableOpacity>
           </View>
           
           {loading ? (
@@ -56,10 +61,10 @@ export function ProfileScreen() {
           ) : (
             <>
               <ThemedText type="subtitle" style={styles.userName}>
-                {userProfile?.username || "User Name"}
+                {profileFromAtom?.username || userProfile?.username || "User Name"}
               </ThemedText>
               <ThemedText style={styles.userEmail}>
-                {userProfile?.email || "user@example.com"}
+                {profileFromAtom?.email || userProfile?.email || "user@example.com"}
               </ThemedText>
             </>
           )}
@@ -318,5 +323,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     marginVertical: 10,
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
 });

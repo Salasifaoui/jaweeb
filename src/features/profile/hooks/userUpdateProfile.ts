@@ -2,9 +2,8 @@ import {
   profileUpdateErrorAtom,
   profileUpdateLoadingAtom,
   profileUpdateSuccessAtom,
-  userAtom
-} from '@/src/features/auth/store/authAtoms';
-import { profileService } from '@/src/features/profile/service/profileService';
+  updateUserProfileAtom
+} from '@/src/features/profile/store/profileAtoms';
 import { User } from '@/src/types/user';
 import { useAtom } from 'jotai';
 
@@ -27,59 +26,36 @@ interface UseUpdateProfileReturn {
 }
 
 export function useUpdateProfile(): UseUpdateProfileReturn {
-  const [loading, setLoading] = useAtom(profileUpdateLoadingAtom);
-  const [error, setError] = useAtom(profileUpdateErrorAtom);
-  const [success, setSuccess] = useAtom(profileUpdateSuccessAtom);
-  const [user, setUser] = useAtom(userAtom);
+  const [loading] = useAtom(profileUpdateLoadingAtom);
+  const [error] = useAtom(profileUpdateErrorAtom);
+  const [success] = useAtom(profileUpdateSuccessAtom);
+  const [, updateProfileAction] = useAtom(updateUserProfileAtom);
 
   const updateProfile = async (userId: string, data: UpdateProfileData): Promise<User | null> => {
     if (!userId) {
-      setError('User ID is required');
-      return null;
+      throw new Error('User ID is required');
+    }
+
+    // Validate required fields
+    if (data.username !== undefined && !data.username.trim()) {
+      throw new Error('Username cannot be empty');
+    }
+
+    if (data.email !== undefined && (!data.email.trim() || !data.email.includes('@'))) {
+      throw new Error('Please enter a valid email address');
     }
 
     try {
-      setLoading(true);
-      setError(null);
-      setSuccess(false);
-
-      // Validate required fields
-      if (data.username !== undefined && !data.username.trim()) {
-        throw new Error('Username cannot be empty');
-      }
-
-      if (data.email !== undefined && (!data.email.trim() || !data.email.includes('@'))) {
-        throw new Error('Please enter a valid email address');
-      }
-
-      // Call the profile service to update the user
-      const updatedUser = await profileService.updateUserProfile(userId, data);
-      
-      if (!updatedUser) {
-        throw new Error('Failed to update profile');
-      }
-
-      // Update the user atom with the new data
-      if (user && user.userId === userId) {
-        setUser({ ...user, ...updatedUser });
-      }
-
-      setSuccess(true);
+      const updatedUser = await updateProfileAction({ userId, data });
       return updatedUser;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update profile';
-      setError(errorMessage);
       console.error('Update profile error:', err);
-      return null;
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
   const reset = () => {
-    setError(null);
-    setSuccess(false);
-    setLoading(false);
+    // Reset is handled by the atoms themselves
   };
 
   return {

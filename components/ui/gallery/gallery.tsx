@@ -1,6 +1,7 @@
 // import { useUploadFile } from '@/src/appwrite/storage/useFileUpload';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { useFileUpload } from '@/src/hooks/useFileUpload';
 import { Media } from '@/src/models/Media';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ const { width } = Dimensions.get('window');
 const imageSize = (width - 60) / 3;
 
 export interface GalleryProps {
-  onImageSelect?: (image: Media) => void;
+  // onImageSelect?: (image: Media) => void;
   onImageUpload?: (image: Media) => void;
   maxImages?: number;
   allowMultiple?: boolean;
@@ -33,7 +34,7 @@ export interface GalleryProps {
 }
 
 export const Gallery: React.FC<GalleryProps> = ({
-  onImageSelect,
+  // onImageSelect,
   onImageUpload,
   maxImages = 10,
   allowMultiple = false,
@@ -47,15 +48,9 @@ export const Gallery: React.FC<GalleryProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
+  const { isUploading: hookUploading, progress, uploadAvatar } = useFileUpload();
 
-
-  // ⚙️ نستخدم mutateAsync لتفادي race conditions
-  // const { mutateAsync: uploadFile } = useUploadFile({
-  //   bucketId: APPWRITE_CONFIG.BUCKETS.AVATARS,
-  //   collectionId: APPWRITE_CONFIG.COLLECTIONS.USERS,
-  //   documentId: userProfile?.$id || '',
-  // });
 
   useEffect(() => {
     requestPermissions();
@@ -143,9 +138,9 @@ export const Gallery: React.FC<GalleryProps> = ({
       setUploadProgress(0);
 
       if (image.uri) {
-        
-        // await uploadFile(image.uri);
-        // await uploadFile(image.uri); // ✅ نمرر الـ URI فقط
+        const uploaded = await uploadAvatar(image.uri);
+        setUploadProgress(100);
+        onImageUpload?.(uploaded);
       } else {
         Alert.alert('Error', 'Image URI is undefined');
       }
@@ -154,7 +149,6 @@ export const Gallery: React.FC<GalleryProps> = ({
       setIsUploading(false);
 
       Alert.alert('Success', 'Image uploaded successfully!');
-      onImageUpload?.(image);
     } catch (err) {
       console.error('Upload error:', err);
       Alert.alert('Error', 'Failed to upload image');
@@ -165,7 +159,7 @@ export const Gallery: React.FC<GalleryProps> = ({
   };
 
   const handleImageSelect = (image: Media) => {
-    onImageSelect?.(image);
+    // onImageSelect?.(image);
     setIsModalVisible(false);
     onClose?.();
   };
@@ -215,22 +209,22 @@ export const Gallery: React.FC<GalleryProps> = ({
       <View style={styles.buttonContainer}>
         {showUploadButton && (
           <Button
-            title={isUploading ? 'Uploading...' : 'Upload to Database'}
+            title={isUploading || hookUploading ? 'Uploading...' : 'Upload to Database'}
             onPress={async () => {
               for (const image of selectedImages) {
                 await uploadImage(image);
               }
             }}
-            disabled={isUploading || selectedImages.length === 0}
+            disabled={isUploading || hookUploading || selectedImages.length === 0}
             style={styles.uploadButton}
           />
         )}
 
-        {isUploading && (
+        {(isUploading || hookUploading) && (
           <View style={styles.progressContainer}>
             <ActivityIndicator size="small" color="#007AFF" />
             <Text style={styles.progressText}>
-              Uploading... {Math.round(uploadProgress)}%
+              Uploading... {Math.round(hookUploading ? progress : uploadProgress)}%
             </Text>
           </View>
         )}
