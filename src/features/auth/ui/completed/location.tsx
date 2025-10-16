@@ -4,10 +4,11 @@ import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function LocationPage() {
   const { profile } = useAuth();
@@ -16,6 +17,9 @@ export function LocationPage() {
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState(false);
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   const popularLocations = [
     { id: 'new-york', label: 'New York, NY', emoji: '🗽' },
     { id: 'los-angeles', label: 'Los Angeles, CA', emoji: '🌴' },
@@ -235,11 +239,11 @@ export function LocationPage() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   scrollView: {
     flex: 1,
@@ -255,35 +259,35 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: theme.mutedForeground,
     textAlign: 'center',
     lineHeight: 24,
   },
   selectedSection: {
-    backgroundColor: '#F0F8FF',
+    backgroundColor: theme.primary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#FF6B6B',
+    borderColor: theme.primary,
   },
   selectedLabel: {
     fontSize: 14,
-    color: '#666',
+    color: theme.primaryForeground,
     marginBottom: 4,
   },
   selectedValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FF6B6B',
+    color: theme.primary,
   },
   section: {
     marginBottom: 24,
@@ -291,7 +295,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.foreground,
     marginBottom: 16,
   },
   locationGrid: {
@@ -301,7 +305,7 @@ const styles = StyleSheet.create({
   },
   locationOption: {
     width: '48%',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
@@ -310,8 +314,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedLocationOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.primary,
   },
   locationEmoji: {
     fontSize: 20,
@@ -320,30 +324,30 @@ const styles = StyleSheet.create({
   locationLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
   },
   selectedLocationLabel: {
-    color: '#fff',
+    color: theme.primaryForeground,
   },
   customInputSection: {
     marginBottom: 24,
   },
   textInput: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#333',
+    color: theme.foreground,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.border,
     marginBottom: 12,
   },
   cancelButton: {
     alignSelf: 'flex-start',
   },
   cancelButtonText: {
-    color: '#FF6B6B',
+    color: theme.primary,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -351,14 +355,14 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   customLocationButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.border,
   },
   customLocationIcon: {
     fontSize: 16,
@@ -366,14 +370,14 @@ const styles = StyleSheet.create({
   },
   customLocationText: {
     fontSize: 16,
-    color: '#333',
+    color: theme.foreground,
     fontWeight: '500',
   },
   buttonSection: {
     marginTop: 20,
   },
   nextButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
     marginBottom: 12,
   },
   skipButton: {

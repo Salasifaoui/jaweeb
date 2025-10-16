@@ -4,10 +4,11 @@ import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -18,7 +19,9 @@ export function GenderBirthPage() {
   const [selectedGender, setSelectedGender] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  // const [showDatePicker, setShowDatePicker] = useState(false);
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
 
   const genders = [
     { id: 'male', label: 'Male', emoji: '👨' },
@@ -213,11 +216,11 @@ export function GenderBirthPage() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   scrollView: {
     flex: 1,
@@ -230,18 +233,19 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
+    padding: 16,
     marginBottom: 40,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: theme.mutedForeground,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -251,7 +255,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.foreground,
     marginBottom: 16,
   },
   genderGrid: {
@@ -261,7 +265,7 @@ const styles = StyleSheet.create({
   },
   genderOption: {
     width: '48%',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -270,8 +274,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedGenderOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.primary,
   },
   genderEmoji: {
     fontSize: 24,
@@ -280,34 +284,35 @@ const styles = StyleSheet.create({
   genderLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
   },
   selectedGenderLabel: {
-    color: '#fff',
+    color: theme.primaryForeground,
   },
   dateButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.border,
   },
   dateButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: theme.foreground,
   },
   dateButtonIcon: {
     fontSize: 20,
+    color: theme.primary,
   },
   buttonSection: {
     marginTop: 20,
   },
   nextButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
     marginBottom: 12,
   },
   skipButton: {

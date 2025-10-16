@@ -1,4 +1,5 @@
 import { AppHeader } from '@/components/app-header';
+import { ThemedText } from '@/components/themed-text';
 import { Icon } from '@/components/ui/icon';
 import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
 import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
@@ -6,11 +7,12 @@ import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks/userUpdateProfile';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
-import { Camera, ChevronLeft } from 'lucide-react-native';
+import { ChevronDownCircle, ChevronLeft, ChevronUpCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useUserService } from '../hooks/userProfile';
 import { userProfileAtom } from '../store/profileAtoms';
 
@@ -25,6 +27,10 @@ export function EditProfileScreen() {
   const [bio, setBio] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+
+  const styles = createStyles(theme);
 
 // Initialize form with profile data
 useEffect(() => {
@@ -144,13 +150,35 @@ const handleSave = async () => {
 
       <View style={styles.content}>
         <View style={styles.avatarSection}>
-          <TouchableOpacity onPress={handleChangeAvatar} style={styles.avatarContainer}>
+         
             <UserAvatar user={profileFromAtom || profile} size={100} />
-            <View style={styles.avatarOverlay}>
+            {/* <View style={styles.avatarOverlay}>
               <Icon as={Camera} size={24} color="#fff" />
-            </View>
-          </TouchableOpacity>
-          
+            </View> */}
+            <View style={styles.containerChevron}>
+       <ThemedText style={styles.textChevron}>Select your avatar or upload a new one</ThemedText>
+          {!showGallery ? (
+            <TouchableOpacity
+              onPress={() => setShowGallery(true)}
+            >
+              <ChevronDownCircle
+                size={20}
+                color={theme.primary}
+                fill={theme.primaryForeground}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => setShowGallery(false)}
+            >
+              <ChevronUpCircle
+                size={20}
+                color={theme.primary}
+                fill={theme.primaryForeground}
+              />
+            </TouchableOpacity>
+          )}
+          </View>
         </View>
         {showGallery && (
         <ListAvatars setShowGallery={setShowGallery} userProfile={profileFromAtom || profile} />
@@ -206,33 +234,27 @@ const handleSave = async () => {
           />
         </View>
       </View>
-      
-
-      {/* Gallery Component */}
-      {/* <Gallery
-        visible={showGallery}
-        onClose={() => setShowGallery(false)}
-        onImageUpload={handleImageUpload}
-        maxImages={1}
-        allowMultiple={false}
-        showUploadButton={true}
-        showGalleryButton={true}
-      /> */}
+    
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: theme.border,
+  },
+  textChevron: {
+    fontSize: 16,
+    color: theme.foreground,
+    textAlign: 'center',
   },
   backButton: {
     padding: 8,
@@ -242,24 +264,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#333',
+    color: theme.foreground,
   },
   saveButton: {
     padding: 8,
   },
   saveText: {
     fontSize: 16,
-    color: '#007AFF',
+    color: theme.destructive,
     fontWeight: '600',
   },
   disabledText: {
-    color: '#ccc',
+    color: theme.mutedForeground,
   },
   disabledButton: {
     opacity: 0.5,
   },
   content: {
     padding: 24,
+  },
+  containerChevron: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    marginTop: 10,
   },
   avatarSection: {
     alignItems: 'center',
@@ -281,20 +310,20 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: theme.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarPlaceholderText: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#666',
+    color: theme.mutedForeground,
   },
   avatarOverlay: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.primary,
     borderRadius: 16,
     width: 32,
     height: 32,
@@ -303,7 +332,7 @@ const styles = StyleSheet.create({
   },
   avatarHint: {
     fontSize: 14,
-    color: '#666',
+    color: theme.mutedForeground,
     marginTop: 8,
   },
   formSection: {
@@ -315,7 +344,7 @@ const styles = StyleSheet.create({
   },
   characterCount: {
     fontSize: 12,
-    color: '#999',
+    color: theme.mutedForeground,
     textAlign: 'right',
     marginTop: 4,
   },
@@ -324,8 +353,13 @@ const styles = StyleSheet.create({
   },
   saveChangesButton: {
     width: '100%',
+    backgroundColor: theme.primary,
+    color: theme.primaryForeground,
   },
   cancelButton: {
     width: '100%',
+    backgroundColor: theme.background,
+    borderColor: theme.border,
+    color: theme.foreground,
   },
 });

@@ -4,10 +4,11 @@ import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function PreferencePage() {
   const { profile } = useAuth();
@@ -16,7 +17,9 @@ export function PreferencePage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('');
   const [selectedGenderPreference, setSelectedGenderPreference] = useState<string>('');
-
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   const interests = [
     { id: 'gaming', label: 'Gaming', emoji: '🎮' },
     { id: 'music', label: 'Music', emoji: '🎵' },
@@ -236,11 +239,11 @@ export function PreferencePage() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   scrollView: {
     flex: 1,
@@ -256,15 +259,15 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: theme.mutedForeground,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -274,12 +277,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.foreground,
     marginBottom: 4,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: theme.mutedForeground,
     marginBottom: 16,
   },
   interestsGrid: {
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
   },
   interestOption: {
     width: '30%',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
@@ -298,8 +301,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedInterestOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.secondary,
   },
   interestEmoji: {
     fontSize: 20,
@@ -308,11 +311,11 @@ const styles = StyleSheet.create({
   interestLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
   },
   selectedInterestLabel: {
-    color: '#fff',
+    color: theme.primaryForeground,
   },
   ageRangeContainer: {
     flexDirection: 'row',
@@ -321,7 +324,7 @@ const styles = StyleSheet.create({
   },
   ageRangeOption: {
     width: '18%',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -330,16 +333,16 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedAgeRangeOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.secondary,
   },
   ageRangeLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
   },
   selectedAgeRangeLabel: {
-    color: '#fff',
+    color: theme.primaryForeground,
   },
   genderPreferenceContainer: {
     flexDirection: 'row',
@@ -347,7 +350,7 @@ const styles = StyleSheet.create({
   },
   genderPreferenceOption: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -356,8 +359,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedGenderPreferenceOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.secondary,
   },
   genderPreferenceEmoji: {
     fontSize: 24,
@@ -366,17 +369,17 @@ const styles = StyleSheet.create({
   genderPreferenceLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
   },
   selectedGenderPreferenceLabel: {
-    color: '#fff',
+    color: theme.primaryForeground,
   },
   buttonSection: {
     marginTop: 20,
   },
   nextButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
     marginBottom: 12,
   },
   skipButton: {

@@ -1,6 +1,6 @@
 import { Icon } from '@/components/ui/icon';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { THEME } from '@/src/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Circle, Globe, House, Play, Star, User } from 'lucide-react-native';
 import React from 'react';
@@ -14,8 +14,10 @@ interface TabBarProps {
 
 export function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
   const colorScheme = useColorScheme();
-  const activeColor = Colors[colorScheme ?? 'light'].tint;
-  const inactiveColor = '#8E8E93';
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
+  const activeColor = theme.primary;
+  const inactiveColor = theme.mutedForeground;
 
   const getTabIcon = (routeName: string, focused: boolean) => {
     const color = focused ? activeColor : inactiveColor;
@@ -28,7 +30,7 @@ export function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
       case 'camera':
         return (
           <LinearGradient
-            colors={['#007AFF', '#5856D6']}
+            colors={[theme.primary, theme.secondary]}
             style={styles.cameraButton}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -128,12 +130,12 @@ export function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
+    borderTopColor: theme.border,
     paddingBottom: 34, // Safe area for iPhone
     paddingTop: 8,
   },
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#007AFF',
+    shadowColor: theme.primary,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -2,
     right: -2,
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.destructive,
     borderRadius: 6,
     width: 12,
     height: 12,
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -8,
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.destructive,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   notificationText: {
-    color: '#fff',
+    color: theme.primaryForeground,
     fontSize: 10,
     fontWeight: 'bold',
   },

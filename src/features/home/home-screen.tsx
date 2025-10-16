@@ -2,11 +2,15 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { Camera, Plus, User } from 'lucide-react-native';
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 export function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   return (
     <ThemedView style={styles.container}>
       <AppHeader
@@ -106,7 +110,7 @@ export function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -119,7 +123,7 @@ const styles = StyleSheet.create({
       paddingBottom: 20,
     },
     title: {
-      fontSize: 28,
+      fontSize: 26,
       fontWeight: 'bold',
     },
     searchButton: {
@@ -147,7 +151,7 @@ const styles = StyleSheet.create({
       width: 50,
       height: 50,
       borderRadius: 25,
-      backgroundColor: '#F2F2F7',
+      backgroundColor: theme.border,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 12,
@@ -167,14 +171,14 @@ const styles = StyleSheet.create({
     },
     chatTime: {
       fontSize: 12,
-      color: '#8E8E93',
+      color: theme.mutedForeground,
     },
     chatMessage: {
       fontSize: 14,
-      color: '#8E8E93',
+      color: theme.mutedForeground,
     },
     unreadBadge: {
-      backgroundColor: '#007AFF',
+      backgroundColor: theme.primary,
       borderRadius: 10,
       minWidth: 20,
       height: 20,
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 6,
     },
     unreadText: {
-      color: '#fff',
+      color: theme.primaryForeground,
       fontSize: 12,
       fontWeight: 'bold',
     },
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     actionButton: {
       alignItems: 'center',
       padding: 15,
-      backgroundColor: '#F2F2F7',
+      backgroundColor: theme.border,
       borderRadius: 12,
       minWidth: 80,
     },

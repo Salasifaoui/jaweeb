@@ -1,16 +1,19 @@
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/src/components/Button";
 import { InputField } from "@/src/components/InputField";
+import { THEME } from "@/src/theme/theme";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, useColorScheme, View } from "react-native";
 
 export function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
-
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   // const createRecovery = useCreateRecovery({
   //   onSuccess: () => {
   //     setLoading(false);
@@ -89,25 +92,25 @@ export function ForgotPasswordScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: theme.background,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#333",
+    color: theme.foreground,
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 40,
-    color: "#666",
+    color: theme.mutedForeground,
     lineHeight: 24,
   },
   resetButton: {

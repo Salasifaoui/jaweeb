@@ -3,12 +3,16 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
 import { APP_NAME } from '@/constants/variables';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { Building, Calendar, FireExtinguisher, GalleryThumbnails, PlusCircle, QrCode, Star, User, UserPlus } from 'lucide-react-native';
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function ExploreScreen() {
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   return (
     <ThemedView style={styles.container}>
       <AppHeader
@@ -147,7 +151,7 @@ export function ExploreScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -170,7 +174,7 @@ const styles = StyleSheet.create({
   },
   discoverCard: {
     width: '48%',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   trendingCard: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 20,
     borderRadius: 12,
     marginBottom: 15,
@@ -201,7 +205,7 @@ const styles = StyleSheet.create({
   trendingContent: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#666',
+    color: theme.mutedForeground,
     marginBottom: 12,
   },
   trendingStats: {
@@ -210,7 +214,7 @@ const styles = StyleSheet.create({
   },
   trendingStat: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: theme.mutedForeground,
     marginRight: 8,
   },
   quickActions: {
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     borderRadius: 12,
     minWidth: 80,
   },
@@ -230,7 +234,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   recommendationCard: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 15,
     borderRadius: 12,
     marginBottom: 10,
@@ -243,7 +247,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: theme.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -258,16 +262,16 @@ const styles = StyleSheet.create({
   },
   recommendationSubtext: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: theme.mutedForeground,
   },
   joinButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
   },
   joinButtonText: {
-    color: '#fff',
+    color: theme.primaryForeground,
     fontSize: 12,
     fontWeight: '600',
   },

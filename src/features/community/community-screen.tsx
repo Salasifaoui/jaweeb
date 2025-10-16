@@ -3,11 +3,15 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
 import { APP_NAME } from '@/constants/variables';
+import { THEME } from '@/src/theme/theme';
 import { ArrowUpRight, ChevronRight, Heart, Lightbulb, MessageCircle, Star, User } from 'lucide-react-native';
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function CommunityScreen() {
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   return (
     <ThemedView style={styles.container}>
       <AppHeader
@@ -145,7 +149,7 @@ export function CommunityScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
   topicCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 15,
     borderRadius: 12,
     marginBottom: 10,
@@ -180,10 +184,10 @@ const styles = StyleSheet.create({
   },
   topicSubtext: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: theme.mutedForeground,
   },
   postCard: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 20,
     borderRadius: 12,
     marginBottom: 15,
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: theme.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -212,7 +216,7 @@ const styles = StyleSheet.create({
   },
   postTime: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: theme.mutedForeground,
   },
   postTitle: {
     fontSize: 16,
@@ -222,7 +226,7 @@ const styles = StyleSheet.create({
   postContent: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#666',
+    color: theme.mutedForeground,
     marginBottom: 15,
   },
   postActions: {
@@ -230,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
+    borderTopColor: theme.border,
   },
   postAction: {
     flexDirection: 'row',
@@ -239,7 +243,7 @@ const styles = StyleSheet.create({
   postActionText: {
     fontSize: 12,
     marginLeft: 4,
-    color: '#666',
+    color: theme.mutedForeground,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -247,7 +251,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',
@@ -261,6 +265,6 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
+    color: theme.mutedForeground,
   },
 });

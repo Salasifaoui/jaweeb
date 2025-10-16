@@ -2,10 +2,11 @@ import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useZodForm } from '@/src/hooks/useZodForm';
+import { THEME } from '@/src/theme/theme';
 import { CreateUserFormData, createUserSchema } from '@/src/validation/schemas';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
@@ -13,6 +14,9 @@ export function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const { register, login, loading } = useAuth();
+    const colorScheme = useColorScheme();
+    const theme = THEME[colorScheme ?? 'light'];
+    const styles = createStyles(theme);
     const {
       errors,
       values: formData,
@@ -127,37 +131,37 @@ export function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 40,
-    color: '#333',
+    color: theme.foreground,
   },
   errorContainer: {
-    backgroundColor: '#FFE6E6',
+    backgroundColor: theme.border,
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
     borderLeftWidth: 4,
-    borderLeftColor: '#FF3B30',
+    borderLeftColor: theme.primary,
   },
   errorTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FF3B30',
+    color: theme.primary,
     marginBottom: 4,
   },
   errorDescription: {
     fontSize: 14,
-    color: '#FF3B30',
+    color: theme.primary,
     lineHeight: 20,
   },
   registerButton: {

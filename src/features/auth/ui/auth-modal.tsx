@@ -5,6 +5,7 @@ import { APP_NAME } from '@/constants/variables';
 import AppleSignInButton from '@/src/components/AppleSignInButton';
 import EmailSignInButton from '@/src/components/EmailSignInButton';
 import GoogleSignInButton from '@/src/components/GoogleSignInButton';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -12,10 +13,13 @@ import {
   Linking,
   StyleSheet,
   TouchableOpacity,
+  useColorScheme,
   View
 } from 'react-native';
 export function AuthModal() {
-  
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
 
   const handleEmailSignIn = () => {
     // Navigate to phone sign in
@@ -147,10 +151,10 @@ export function AuthModal() {
 }
 
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   closeButton: {
     position: 'absolute',
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FF6B6B',
+    color: theme.primary,
   },
   content: {
     flex: 1,
@@ -199,7 +203,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   primaryButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
     marginBottom: 12,
     paddingVertical: 16,
     borderRadius: 12,
@@ -208,10 +212,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   appleButton: {
-    backgroundColor: '#000',
+    backgroundColor: theme.background,
   },
   primaryButtonText: {
-    color: '#fff',
+    color: theme.primaryForeground,
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -224,12 +228,12 @@ const styles = StyleSheet.create({
   separatorLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: theme.border,
   },
   separatorText: {
     marginHorizontal: 16,
     fontSize: 14,
-    color: '#8E8E93',
+    color: theme.mutedForeground,
     fontWeight: '500',
   },
   socialIcons: {
@@ -241,7 +245,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 12,
@@ -249,7 +253,7 @@ const styles = StyleSheet.create({
   vkText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#0077FF',
+    color: theme.primary,
   },
   legalSection: {
     flex: 1,
@@ -271,11 +275,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 5,
     textAlign: 'center',
-    color: '#8E8E93',
+    color: theme.mutedForeground,
     lineHeight: 18,
   },
   legalLink: {
-    color: '#FF6B6B',
+    color: theme.primary,
     fontSize: 12,
     textDecorationLine: 'underline',
   },

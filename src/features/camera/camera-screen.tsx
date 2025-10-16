@@ -2,11 +2,15 @@ import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Icon } from '@/components/ui/icon';
+import { THEME } from '@/src/theme/theme';
 import { Barcode, Camera, FileText, Image, PlayCircle, QrCode, StopCircle, Video } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function CameraScreen() {
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   const [isRecording, setIsRecording] = useState(false);
 
   const handleStartRecording = () => {
@@ -127,7 +131,7 @@ export function CameraScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -140,14 +144,14 @@ const styles = StyleSheet.create({
   },
   cameraPreview: {
     height: 200,
-    backgroundColor: '#000',
+    backgroundColor: theme.background,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
   },
   previewText: {
-    color: '#8E8E93',
+    color: theme.mutedForeground,
     marginTop: 10,
     fontSize: 16,
   },
@@ -176,16 +180,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   photoButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.primary,
   },
   recordButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: theme.secondary,
   },
   stopButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.destructive,
   },
   controlButtonText: {
-    color: '#fff',
+    color: theme.primaryForeground,
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 8,
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
   },
   mediaItem: {
     width: '48%',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     padding: 15,
     borderRadius: 12,
     alignItems: 'center',
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.border,
     borderRadius: 12,
     minWidth: 80,
   },

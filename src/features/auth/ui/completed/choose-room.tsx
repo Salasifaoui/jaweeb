@@ -1,13 +1,16 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export function ChooseRoomPage() {
   const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
-
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   const roomCategories = [
     {
       id: 'gaming',
@@ -188,10 +191,10 @@ export function ChooseRoomPage() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   scrollView: {
     flex: 1,
@@ -207,30 +210,30 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: theme.mutedForeground,
     textAlign: 'center',
     lineHeight: 24,
   },
   selectedSummary: {
-    backgroundColor: '#F0F8FF',
+    backgroundColor: theme.primary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#FF6B6B',
+    borderColor: theme.primary,
   },
   selectedCount: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FF6B6B',
+    color: theme.primaryForeground,
     textAlign: 'center',
   },
   categorySection: {
@@ -251,12 +254,12 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.foreground,
     marginBottom: 2,
   },
   categoryDescription: {
     fontSize: 14,
-    color: '#666',
+    color: theme.mutedForeground,
   },
   roomsContainer: {
     gap: 8,
@@ -264,15 +267,15 @@ const styles = StyleSheet.create({
   roomOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: theme.background,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   selectedRoomOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
+    backgroundColor: theme.primary,
+    borderColor: theme.primary,
   },
   roomInfo: {
     flex: 1,
@@ -280,7 +283,7 @@ const styles = StyleSheet.create({
   roomName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: theme.foreground,
     marginBottom: 2,
   },
   selectedRoomName: {
@@ -288,10 +291,10 @@ const styles = StyleSheet.create({
   },
   roomMembers: {
     fontSize: 14,
-    color: '#666',
+    color: theme.mutedForeground,
   },
   selectedRoomMembers: {
-    color: '#fff',
+    color: theme.primaryForeground,
     opacity: 0.8,
   },
   roomCheckbox: {
@@ -299,24 +302,24 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#E5E5EA',
+    borderColor: theme.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedRoomCheckbox: {
-    backgroundColor: '#fff',
-    borderColor: '#fff',
+    backgroundColor: theme.primaryForeground,
+    borderColor: theme.primaryForeground,
   },
   checkmark: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FF6B6B',
+    color: theme.primary,
   },
   buttonSection: {
     marginTop: 20,
   },
   startButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
     marginBottom: 12,
   },
   skipButton: {

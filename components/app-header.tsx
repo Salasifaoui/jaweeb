@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { THEME } from '@/src/theme/theme';
 import { ThemedView } from './themed-view';
 
 export interface AppHeaderProps {
@@ -31,6 +32,9 @@ export function AppHeader({
   elevation = 0,
   style,
 }: AppHeaderProps) {
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const themeBackgroundColor = useThemeColor({}, 'background');
   const themeTextColor = useThemeColor({}, 'text');
@@ -110,11 +114,11 @@ export function AppHeader({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     width: '100%',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomColor: theme.border,
   },
   content: {
     flexDirection: 'row',

@@ -2,8 +2,10 @@ import { AppHeader } from "@/components/app-header";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Icon } from "@/components/ui/icon";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/features/auth/hooks/useAuth";
+import { THEME } from "@/src/theme/theme";
 
 import { UserAvatar } from "@/components/ui/user-avatar/user-avatar";
 import { router } from "expo-router";
@@ -25,6 +27,8 @@ export function ProfileScreen() {
   const { logout, user } = useAuth();
   const { userProfile, loading } = useUserService(user?.userId || "");
   const [profileFromAtom] = useAtom(userProfileAtom);
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -40,6 +44,8 @@ export function ProfileScreen() {
     router.push("/(profile)/edit");
   };
 
+  const styles = createStyles(theme);
+
   return (
     <ThemedView style={styles.container}>
       <AppHeader title="Me" showBackButton={false} />
@@ -51,7 +57,7 @@ export function ProfileScreen() {
           </View>
           
           {loading ? (
-            <ActivityIndicator size="small" color="#007AFF" style={{ marginVertical: 10 }} />
+            <ActivityIndicator size="small" color={theme.primary} style={{ marginVertical: 10 }} />
           ) : (
             <>
               <ThemedText type="subtitle" style={styles.userName}>
@@ -88,57 +94,57 @@ export function ProfileScreen() {
 
         <View style={styles.menuSection}>
           <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
-            <Icon as={UserCircle} size={24} color="#007AFF" />
+            <Icon as={UserCircle} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Edit Profile</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/location")}>
-            <Icon as={Locate} size={24} color="#007AFF" />
+            <Icon as={Locate} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Location</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/gender-birth")}>
-            <Icon as={UserCog} size={24} color="#007AFF" />
+            <Icon as={UserCog} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Gender & Birthdate</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/preference")}>
-            <Icon as={HeartHandshake} size={24} color="#007AFF" />
+            <Icon as={HeartHandshake} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>preferences</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={Bell} size={24} color="#007AFF" />
+            <Icon as={Bell} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Notifications</ThemedText>
-            <View style={styles.menuBadge}>
+            <View style={[styles.menuBadge, { backgroundColor: theme.primary }]}>
               <ThemedText style={styles.menuBadgeText}>12</ThemedText>
             </View>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={Lamp} size={24} color="#007AFF" />
+            <Icon as={Lamp} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Privacy & Security</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={GalleryHorizontalIcon} size={24} color="#007AFF" />
+            <Icon as={GalleryHorizontalIcon} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Settings</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={HelpCircle} size={24} color="#007AFF" />
+            <Icon as={HelpCircle} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>Help & Support</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Icon as={CircleAlert} size={24} color="#007AFF" />
+            <Icon as={CircleAlert} size={24} color={theme.primary} />
             <ThemedText style={styles.menuText}>About</ThemedText>
-            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+            <Icon as={ChevronRight} size={16} color={theme.mutedForeground} />
           </TouchableOpacity>
         </View>
 
@@ -156,12 +162,12 @@ export function ProfileScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.quickActionButton}>
-              <Icon as={QrCode} size={24} color="#34C759" />
+              <Icon as={QrCode} size={24} color={theme.chart2} />
               <ThemedText style={styles.quickActionText}>QR Code</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.quickActionButton}>
-              <Icon as={UserPlus} size={24} color="#FF9500" />
+              <Icon as={UserPlus} size={24} color={theme.chart4} />
               <ThemedText style={styles.quickActionText}>
                 Invite Friends
               </ThemedText>
@@ -182,9 +188,10 @@ export function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.background,
   },
   content: {
     flex: 1,
@@ -202,7 +209,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: theme.muted,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -213,24 +220,25 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#007AFF",
+    backgroundColor: theme.primary,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: theme.background,
   },
   userName: {
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 5,
+    color: theme.foreground,
   },
   userEmail: {
     fontSize: 14,
-    color: "#666",
+    color: theme.mutedForeground,
     marginBottom: 15,
   },
   editProfileButton: {
-    backgroundColor: "#F2F2F7",
+    backgroundColor: theme.muted,
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 16,
@@ -238,12 +246,12 @@ const styles = StyleSheet.create({
   editProfileText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#007AFF",
+    color: theme.primary,
   },
   statsSection: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#F2F2F7",
+    backgroundColor: theme.muted,
     paddingVertical: 20,
     borderRadius: 12,
     marginBottom: 30,
@@ -255,10 +263,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 4,
+    color: theme.foreground,
   },
   statLabel: {
     fontSize: 12,
-    color: "#666",
+    color: theme.mutedForeground,
   },
   menuSection: {
     marginBottom: 30,
@@ -273,9 +282,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 15,
     fontSize: 16,
+    color: theme.foreground,
   },
   menuBadge: {
-    backgroundColor: "#FF3B30",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -285,7 +294,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   menuBadgeText: {
-    color: "#fff",
+    color: theme.background,
     fontSize: 12,
     fontWeight: "bold",
   },
@@ -296,6 +305,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 15,
+    color: theme.foreground,
   },
   quickActions: {
     flexDirection: "row",
@@ -304,7 +314,7 @@ const styles = StyleSheet.create({
   quickActionButton: {
     alignItems: "center",
     padding: 15,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: theme.muted,
     borderRadius: 12,
     minWidth: 80,
   },
@@ -312,23 +322,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 8,
     textAlign: "center",
+    color: theme.foreground,
   },
   logoutButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: theme.primary,
+    color: theme.primaryForeground,
     paddingVertical: 15,
     borderRadius: 12,
-    borderColor: "#FF3B30",
+    borderColor: theme.primary,
     borderWidth: 1,
     alignItems: "center",
     marginBottom: 30,
   },
   logoutText: {
-    color: "#fff",
+    color: theme.background,
     fontSize: 16,
     fontWeight: "600",
   },
   errorText: {
-    color: "#FF3B30",
+    color: theme.primary,
     fontSize: 14,
     textAlign: "center",
     marginVertical: 10,

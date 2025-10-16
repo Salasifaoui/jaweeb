@@ -7,17 +7,20 @@ import { APP_NAME } from '@/constants/variables';
 import { Button } from '@/src/components/Button';
 import { useCompletedProfile } from '@/src/features/profile/hooks';
 import { useUserService } from '@/src/features/profile/hooks/userProfile';
+import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { ChevronDownCircle, ChevronUpCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 export  function WelcomePage() {
   const { user } = useAuth();
   const {userProfile: profile} = useUserService(user?.userId || '');
   const { checkProfileCompletion, getNextIncompleteScreen } = useCompletedProfile();
   const [isOpen, setIsOpen] = useState(false);
-
+  const colorScheme = useColorScheme();
+  const theme = THEME[colorScheme ?? 'light'];
+  const styles = createStyles(theme);
   // Check profile completion on component mount
   useEffect(() => {
     if (profile) {
@@ -63,8 +66,8 @@ export  function WelcomePage() {
            <UserAvatar 
              user={profile} 
              size={100} 
-             backgroundColor="#FF6B6B"
-             textColor="#FFFFFF"
+             backgroundColor={theme.primary}
+             textColor={theme.primaryForeground}
              showInitials={true}
            />
            <View style={styles.containerChevron}>
@@ -76,8 +79,8 @@ export  function WelcomePage() {
             >
               <ChevronDownCircle
                 size={20}
-                color={'#FF6B6B'}
-                fill={'#fff'}
+                color={theme.primary}
+                fill={theme.primaryForeground}
               />
             </TouchableOpacity>
           ) : (
@@ -86,8 +89,8 @@ export  function WelcomePage() {
             >
               <ChevronUpCircle
                 size={20}
-                color={'#FF6B6B'}
-                fill={'#fff'}
+                color={theme.primary}
+                fill={theme.primaryForeground}
               />
             </TouchableOpacity>
           )}
@@ -125,10 +128,10 @@ export  function WelcomePage() {
 
 // const { width, height } = Dimensions.get('window');
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.background,
   },
   content: {
     flex: 1,
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#FF6B6B',
+    color: theme.primary,
     marginTop: 16,
   },
   welcomeSection: {
@@ -154,13 +157,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.foreground,
     textAlign: 'center',
     marginBottom: 16,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: theme.mutedForeground,
     textAlign: 'center',
     lineHeight: 24,
     paddingHorizontal: 20,
@@ -174,14 +177,14 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: '#555',
+    color: theme.mutedForeground,
     textAlign: 'center',
   },
   buttonSection: {
     paddingHorizontal: 20,
   },
   nextButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: theme.primary,
   },
   avatarSection: {
     alignItems: 'center',
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
   },
   textChevron: {
     fontSize: 16,
-    color: '#555',
+    color: theme.foreground,
     textAlign: 'center',
   },
   
