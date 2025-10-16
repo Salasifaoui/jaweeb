@@ -12,10 +12,14 @@ export function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = THEME[colorScheme ?? 'light'];
   const styles = createStyles(theme);
-  const [tabIndex, setTabIndex] = useState(0);
-  const [sousTabIndex, setSousTabIndex] = useState(0);
   const tabs = ['Nearby', 'Popular', 'Chat'];
-  const sousTabs = ['Match', 'Live', 'Meet'];
+  const sousTabs = {
+    Nearby: ['Match', 'Live', 'Meet'],
+    Popular: ['All', 'Hot'],
+    Chat: ['Fellow', 'All', 'Live']
+  };
+  const [tabSelected, setTabSelected] = useState('Nearby');
+const [sousTabSelected, setSousTabSelected] = useState('Match');
   return (
     <ThemedView style={styles.container}>
 
@@ -25,23 +29,25 @@ export function HomeScreen() {
         textStyle={styles.title} 
         color={theme.mutedForeground} 
         colorSelected={theme.primary} 
-        activeTab={tabs[tabIndex]} 
-        onTabChange={(tab) => setTabIndex(tabs.indexOf(tab))} 
+        activeTab={tabSelected} 
+        onTabChange={(tab) => {
+          setTabSelected(tab);
+          setSousTabSelected(sousTabs[tab as keyof typeof sousTabs][0]); // Reset sous tab on main tab change
+        }} 
         showIndicator={true} 
         />
       </NavBar>
       <NavBar showAboutButton>
       <TabList 
-        tabs={sousTabs} 
+        tabs={sousTabs[tabSelected as keyof typeof sousTabs] || [] as string[]}  
         textStyle={styles.sousTitle} 
         color={theme.mutedForeground} 
-        colorSelected={theme.muted} 
-        activeTab={sousTabs[sousTabIndex]} 
-        onTabChange={(tab) => setSousTabIndex(sousTabs.indexOf(tab))} 
+        colorSelected={theme.primary} 
+        activeTab={sousTabSelected} 
+        onTabChange={(tab) => setSousTabSelected(tab)} 
         showIndicator={false} 
-        backgroundColor={theme.primaryForeground} 
-        backgroundColorSelected={theme.primary} 
-        />
+        backgroundColor={theme.secondary} 
+        backgroundColorSelected={theme.primaryForeground} />
       </NavBar>
     
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
