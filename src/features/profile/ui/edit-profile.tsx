@@ -1,16 +1,16 @@
 import { AppHeader } from '@/components/app-header';
-import { Gallery } from '@/components/ui/gallery';
 import { Icon } from '@/components/ui/icon';
+import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
+import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks/userUpdateProfile';
-import { Media } from '@/src/models/Media';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import { Camera, ChevronLeft } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useUserService } from '../hooks/userProfile';
 import { userProfileAtom } from '../store/profileAtoms';
 
@@ -24,7 +24,6 @@ export function EditProfileScreen() {
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<Media | null>(null);
   const [showGallery, setShowGallery] = useState(false);
 
 // Initialize form with profile data
@@ -44,10 +43,9 @@ useEffect(() => {
         const nameChanged = name.trim() !== (currentProfile.username || "");
         const emailChanged = email.trim() !== (currentProfile.email || "");
         const bioChanged = bio.trim() !== (currentProfile.bio || "");
-        const avatarChanged = selectedAvatar !== null;
-        setHasChanges(nameChanged || emailChanged || bioChanged || avatarChanged);
+        setHasChanges(nameChanged || emailChanged || bioChanged);
     }
-}, [name, email, bio, selectedAvatar, profile, profileFromAtom]);
+}, [name, email, bio, profile, profileFromAtom, ]);
 
 // Handle error display
 useEffect(() => {
@@ -94,11 +92,6 @@ const handleSave = async () => {
       if (bioChanged) {
           updateData.bio = bio.trim();
       }
-
-      if (selectedAvatar) {
-          updateData.imageUrl = selectedAvatar.url;
-      }
-
       // Update profile using the hook
       const updatedUser = await updateProfile(currentProfile.userId, updateData);
       
@@ -116,13 +109,7 @@ const handleSave = async () => {
 };
 
   const handleChangeAvatar = () => {
-    setShowGallery(true);
-  };
-
-  const handleImageUpload = (image: Media) => {
-    setSelectedAvatar(image);
-    setShowGallery(false);
-    Alert.alert('تم رفع الصورة', 'تم رفع الصورة الشخصية بنجاح');
+    setShowGallery(!showGallery);
   };
 
   return (
@@ -158,24 +145,16 @@ const handleSave = async () => {
       <View style={styles.content}>
         <View style={styles.avatarSection}>
           <TouchableOpacity onPress={handleChangeAvatar} style={styles.avatarContainer}>
-            {selectedAvatar ? (
-              <Image source={{ uri: selectedAvatar.url }} style={styles.avatarImage} />
-            ) : (profileFromAtom?.imageUrl || profile?.imageUrl) ? (
-              <Image source={{ uri: profileFromAtom?.imageUrl || profile?.imageUrl }} style={styles.avatarImage} />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarPlaceholderText}>
-                  {name ? name.charAt(0).toUpperCase() : 'U'}
-                </Text>
-              </View>
-            )}
+            <UserAvatar user={profileFromAtom || profile} size={100} />
             <View style={styles.avatarOverlay}>
               <Icon as={Camera} size={24} color="#fff" />
             </View>
           </TouchableOpacity>
-          <Text style={styles.avatarHint}>اضغط لتغيير الصورة</Text>
+          
         </View>
-
+        {showGallery && (
+        <ListAvatars setShowGallery={setShowGallery} userProfile={profileFromAtom || profile} />
+        )}
         <View style={styles.formSection}>
           <InputField
             label="الاسم الكامل"
@@ -227,9 +206,10 @@ const handleSave = async () => {
           />
         </View>
       </View>
+      
 
       {/* Gallery Component */}
-      <Gallery
+      {/* <Gallery
         visible={showGallery}
         onClose={() => setShowGallery(false)}
         onImageUpload={handleImageUpload}
@@ -237,7 +217,7 @@ const handleSave = async () => {
         allowMultiple={false}
         showUploadButton={true}
         showGalleryButton={true}
-      />
+      /> */}
     </ScrollView>
   );
 }

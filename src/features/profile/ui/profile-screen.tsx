@@ -5,18 +5,18 @@ import { Icon } from "@/components/ui/icon";
 import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/features/auth/hooks/useAuth";
 
+import { UserAvatar } from "@/components/ui/user-avatar/user-avatar";
 import { router } from "expo-router";
 import { useAtom } from 'jotai';
-import { Bell, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, User, UserCircle, UserPlus } from "lucide-react-native";
+import { Bell, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, UserCircle, UserPlus } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useUserService } from "../hooks/userProfile";
 import { userProfileAtom } from '../store/profileAtoms';
@@ -47,13 +47,7 @@ export function ProfileScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              {(profileFromAtom?.imageUrl || userProfile?.imageUrl) ? (
-                <Image source={{ uri: profileFromAtom?.imageUrl || userProfile?.imageUrl }} style={styles.avatarImage} />
-              ) : (
-                <Icon as={User} size={40} color="#007AFF" />
-              )}
-            </View>
+            <UserAvatar user={profileFromAtom || userProfile} size={100} />
           </View>
           
           {loading ? (

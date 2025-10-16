@@ -23,12 +23,6 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     user?.avatar !== '' && 
     user?.avatar in AvatarList;
 
-  // Check if user has an image URL (for future use)
-  // const hasImageUrl = user?.imageUrl || 
-  //   user?.avatar?.startsWith('http') || 
-  //   user?.profilePicture ||
-  //   user?.photoURL;
-
   if (hasCustomAvatar) {
     return (
       <AvatarItem

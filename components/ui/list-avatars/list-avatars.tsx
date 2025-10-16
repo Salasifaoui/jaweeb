@@ -1,66 +1,47 @@
 import { AVATAR_LIST } from "@/constants/variables";
-// import { useUserProfileUpdate } from "@/lib/hooks/useUserProfileUpdate";
 import { Media } from "@/src/models/Media";
-// import { User } from "@/lib/models/User";
-// import { MediaService } from "@/lib/services/mediaService";
 
 
 import { ZixAlertActions } from "@/components/ui/zix-alert-actions/zix-alert-actions";
 import { Button } from '@/src/components/Button';
-import { Check } from "lucide-react-native";
+import { useUpdateProfile } from "@/src/features/profile/hooks/userUpdateProfile";
+import { Check, Plus } from "lucide-react-native";
 import { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AvatarItem } from "../avatar-item/avatar-item";
+import { Gallery } from "../gallery";
 import { ZixCart } from "../zix-cart/zix-cart";
 
+interface ListAvatarsProps {
+  userProfile: any;
+  setShowGallery: (show: boolean) => void;
+}
 
-export const ListAvatars = ({ userProfile }: { userProfile: any }) => {
-  const [selectedMedia, setSelectedMedia] = useState<any | any[] | null>(
+export const ListAvatars = ({ userProfile, setShowGallery }: ListAvatarsProps) => {
+  const [selectedMedia, setSelectedMedia] = useState<Media | Media[] | null>(
     null
   );
   const [avatarSelected, setAvatarSelected] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { updateProfile } = useUpdateProfile();
 
 
   // const { updateUserProfile, isLoading, error, clearError } =
   //   useUserProfileUpdate();
 
-  const handleMediaChange = async (media: Media | Media[]) => {
-    setSelectedMedia(media);
-    setIsOpen(true);
+  const handleImageUpload = async (type: string, selectedMedia: Media | Media[] | string) => {
+    if (type === 'image') {
+     await updateProfile(userProfile.userId, { imageUrl: selectedMedia.url, avatar: "" });
+      setShowGallery(false);
+    } else if (type === 'avatar') {
+     await updateProfile(userProfile.userId, { avatar: selectedMedia as string });
+      setShowGallery(false);
+    }
   };
 
-  const handleSaveMedia = async () => {
-    // if (!selectedMedia) return;
-    // setIsOpen(false);
 
-    // const imageUrl = await MediaService.saveImageToStorage(
-    //   selectedMedia.url || (selectedMedia.uri as string)
-    // );
-    // await updateUserProfile(userProfile.$id, {
-    //   avatar: "",
-    //   imageUrl: imageUrl,
-    // });
-    // setSelectedMedia(null);
-  };
-
-  const handleSave = async () => {
-    // if (!avatarSelected) return;
-
-    // setIsOpen(false);
-
-    // try {
-    //   await updateUserProfile(userProfile.$id, {
-    //     avatar: avatarSelected,
-    //   });
-    //   setAvatarSelected(null);
-    //   console.log("Profile updated with new avatar");
-    // } catch (error) {
-    //   console.error("Failed to update profile with avatar:", error);
-    // }
-  };
   return (
     <>
       <ZixCart>
@@ -73,22 +54,22 @@ export const ListAvatars = ({ userProfile }: { userProfile: any }) => {
             alignItems: "center",
             padding: 4,
           }}
-          // ListHeaderComponent={() => (
-          //       <TouchableOpacity
-          //         style={{ backgroundColor: '#f0f0f0', padding: 8, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}
-          //         onPress={() => {
-          //           setIsOpen(true);
-          //         }}
-          //         disabled={isLoading}
+          ListHeaderComponent={() => (
+                <TouchableOpacity
+                  style={{ backgroundColor: '#f0f0f0', padding: 8, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}
+                  onPress={() => {
+                    setIsOpen(true);
+                  }}
+                  disabled={isLoading}
                   
-          //       >
-          //         <Plus
-          //             size={20}
-          //             color={'black'}
-          //           />
-          //       </TouchableOpacity>
+                >
+                  <Plus
+                      size={20}
+                      color={'black'}
+                    />
+                </TouchableOpacity>
               
-          // )}
+          )}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={{
@@ -162,7 +143,7 @@ export const ListAvatars = ({ userProfile }: { userProfile: any }) => {
                   />
                   <Button
                     title="Save"
-                    onPress={handleSave}
+                    onPress={() => handleImageUpload('avatar', avatarSelected)}
                     variant="primary"
                     size="large"
                     style={styles.styldButton}
@@ -182,57 +163,18 @@ export const ListAvatars = ({ userProfile }: { userProfile: any }) => {
           }
         />
       )}
-      {selectedMedia && isOpen && (
-        <ZixAlertActions
-          closeButton={isOpen}
-          childrenContent={
-            <ZixCart>
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 16,
-              }}>
-                <Image
-                  source={{ uri: selectedMedia.uri }}
-                  style={{
-                    width: 220,
-                    height: 220,
-                  }}
-                />
-                <View style={{
-                  width: '80%',
-                  justifyContent: 'space-between',
-                }}>
-                  <Button
-                    title="Cancel"
-                    onPress={() => {
-                      setIsOpen(false);
-                      setSelectedMedia(null);
-                    }}
-                    variant="primary"
-                    size="large"
-                    style={styles.styldButton}
-                  />
-                  <Button
-                    title="Save"
-                    onPress={handleSaveMedia}
-                    variant="primary"
-                    size="large"
-                    style={styles.styldButton}
-                  />
-                </View>
-                {error && (
-                  <Text style={{
-                    color: 'red',
-                    fontSize: 16,
-                    textAlign: 'center',
-                  }}>
-                    {error}
-                  </Text>
-                )}
-              </View>
-            </ZixCart>
-          }
+      {!selectedMedia && isOpen && (
+        <Gallery
+          visible={isOpen}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedMedia(null);
+          }}
+          onImageUpload={(media: Media | Media[]) => handleImageUpload('image', media)}
+          maxImages={1}
+          allowMultiple={false}
+          showUploadButton={true}
+          showGalleryButton={true}
         />
       )}
     </>
