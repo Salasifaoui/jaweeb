@@ -3,13 +3,16 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
+import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export function PreferencePage() {
   const { profile } = useAuth();
   const { updateProfile } = useUpdateProfile();
+  const [profileFromAtom] = useAtom(userProfileAtom);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('');
   const [selectedGenderPreference, setSelectedGenderPreference] = useState<string>('');
@@ -45,6 +48,18 @@ export function PreferencePage() {
     { id: 'all', label: 'All', emoji: '👥' },
   ];
 
+  useEffect(() => {
+    if (profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference) {
+      setSelectedInterests(profileFromAtom?.interest || []);
+      setSelectedAgeRange(profileFromAtom?.ageRange || '');
+      setSelectedGenderPreference(profileFromAtom?.genderPreference.map((gender: string) => gender.toLowerCase())[0] || '');
+    } else {
+      setSelectedInterests([]);
+      setSelectedAgeRange('');
+      setSelectedGenderPreference('');
+    }
+  }, [profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference]);
+
   const toggleInterest = (interestId: string) => {
     setSelectedInterests(prev => 
       prev.includes(interestId) 
@@ -58,7 +73,6 @@ export function PreferencePage() {
       Alert.alert('Error', 'User not found. Please try again.');
       return;
     }
-
     try {
       const updateData: any = {};
       
@@ -86,9 +100,17 @@ export function PreferencePage() {
   };
 
   const handleSkip = () => {
-    router.push('/(auth)/complated/choose-room');
+      router.push('/(auth)/complated/choose-room');
   };
 
+  const handleUpdate = async () => {
+    await updateProfile(profile?.userId || '', {
+      interest: selectedInterests,
+      ageRange: selectedAgeRange as '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '46-55' | '56-65' | '66-75' | '76-85' | '86-95',
+      genderPreference: [selectedGenderPreference as 'male' | 'female' | 'all'],
+    });
+    router.back();
+  };
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -193,19 +215,20 @@ export function PreferencePage() {
           {/* Action Buttons */}
           <View style={styles.buttonSection}>
             <Button
-              title="Next"
-              onPress={handleNext}
+              title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Update' : 'Next'}
+              onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleNext}
               variant="primary"
               size="large"
               style={styles.nextButton}
             />
             <Button
-              title="Skip"
-              onPress={handleSkip}
+              title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Back' : 'Skip'}
+              onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleSkip}
               variant="text"
               size="large"
               style={styles.skipButton}
             />
+         
           </View>
         </View>
       </ScrollView>
@@ -216,15 +239,16 @@ export function PreferencePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
     backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
+    paddingTop: 60,
   },
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 60,
     paddingBottom: 40,
   },
   header: {
@@ -356,6 +380,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   skipButton: {
+    backgroundColor: 'transparent',
+  },
+  backButton: {
     backgroundColor: 'transparent',
   },
 });

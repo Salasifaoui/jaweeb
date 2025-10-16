@@ -8,7 +8,7 @@ import { useAuth } from "@/src/features/auth/hooks/useAuth";
 import { UserAvatar } from "@/components/ui/user-avatar/user-avatar";
 import { router } from "expo-router";
 import { useAtom } from 'jotai';
-import { Bell, ChevronRight, CircleAlert, GalleryHorizontalIcon, HelpCircle, Lamp, QrCode, UserCircle, UserPlus } from "lucide-react-native";
+import { Bell, ChevronRight, CircleAlert, GalleryHorizontalIcon, HeartHandshake, HelpCircle, Lamp, Locate, QrCode, UserCircle, UserCog, UserPlus } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -90,6 +90,21 @@ export function ProfileScreen() {
           <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
             <Icon as={UserCircle} size={24} color="#007AFF" />
             <ThemedText style={styles.menuText}>Edit Profile</ThemedText>
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/location")}>
+            <Icon as={Locate} size={24} color="#007AFF" />
+            <ThemedText style={styles.menuText}>Location</ThemedText>
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/gender-birth")}>
+            <Icon as={UserCog} size={24} color="#007AFF" />
+            <ThemedText style={styles.menuText}>Gender & Birthdate</ThemedText>
+            <Icon as={ChevronRight} size={16} color="#C7C7CC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(auth)/complated/preference")}>
+            <Icon as={HeartHandshake} size={24} color="#007AFF" />
+            <ThemedText style={styles.menuText}>preferences</ThemedText>
             <Icon as={ChevronRight} size={16} color="#C7C7CC" />
           </TouchableOpacity>
 

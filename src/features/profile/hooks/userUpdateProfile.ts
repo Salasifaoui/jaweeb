@@ -20,7 +20,7 @@ interface UpdateProfileData {
   genderPreference?: string[];
   interest?: string[];
   location?: string;
-  ageRange?: '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '46-55' | '56-65' | '66-75' | '76-85' | '86-95';
+  ageRange?: '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '55+'
 }
 
 interface UseUpdateProfileReturn {
@@ -41,7 +41,7 @@ export function useUpdateProfile(): UseUpdateProfileReturn {
     if (!userId) {
       throw new Error('User ID is required');
     }
-
+    console.log('data', JSON.stringify(data, null, 2));
     // Validate required fields
     if (data.username !== undefined && !data.username.trim()) {
       throw new Error('Username cannot be empty');
@@ -52,7 +52,7 @@ export function useUpdateProfile(): UseUpdateProfileReturn {
     }
 
     try {
-      const updatedUser = await updateProfileAction({ userId, data });
+      const updatedUser = await updateProfileAction({ userId, data: data as Partial<User> });
       return updatedUser;
     } catch (err) {
       console.error('Update profile error:', err);

@@ -3,17 +3,19 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
+import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export function LocationPage() {
   const { profile } = useAuth();
+  const [profileFromAtom] = useAtom(userProfileAtom);
   const { updateProfile } = useUpdateProfile();
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-
   const popularLocations = [
     { id: 'new-york', label: 'New York, NY', emoji: '🗽' },
     { id: 'los-angeles', label: 'Los Angeles, CA', emoji: '🌴' },
@@ -28,6 +30,25 @@ export function LocationPage() {
     { id: 'austin', label: 'Austin, TX', emoji: '🎸' },
     { id: 'jacksonville', label: 'Jacksonville, FL', emoji: '🌊' },
   ];
+
+  useEffect(() => {
+    if (profileFromAtom?.location) {
+      const location = popularLocations.find(loc => loc.label === profileFromAtom?.location);
+      if (location) {
+        setSelectedLocation(location.id);
+      } else {
+        setSelectedLocation('');
+        setCustomLocation(profileFromAtom?.location || '');
+        setShowCustomInput(true);
+      }
+      setCustomLocation('');
+      setShowCustomInput(false);
+    } else {
+      setSelectedLocation('');
+      setCustomLocation('');
+      setShowCustomInput(false);
+    }
+  }, [profileFromAtom?.location]);
 
   const handleLocationSelect = (locationId: string) => {
     setSelectedLocation(locationId);
@@ -77,6 +98,19 @@ export function LocationPage() {
   const handleSkip = () => {
     router.push('/(auth)/complated/preference');
   };
+  const handleUpdate = async () => {
+    let locationLabel: string = '';
+      if (selectedLocation) {
+        const locationObj = popularLocations.find(loc => loc.id === selectedLocation);
+        locationLabel = locationObj ? locationObj.label as string : '';
+      } else {
+        locationLabel = customLocation;
+      }
+    await updateProfile(profileFromAtom?.userId || '', {
+      location: locationLabel,
+    });
+    router.back();
+  };
 
   const getSelectedLocationLabel = () => {
     if (selectedLocation) {
@@ -85,6 +119,7 @@ export function LocationPage() {
     }
     return customLocation;
   };
+
 
   return (
     <ThemedView style={styles.container}>
@@ -178,19 +213,21 @@ export function LocationPage() {
           {/* Action Buttons */}
           <View style={styles.buttonSection}>
             <Button
-              title="Next"
-              onPress={handleNext}
+              title={profileFromAtom?.location ? 'Update' : 'Next'}
+              onPress={profileFromAtom?.location ? handleUpdate : handleNext}
               variant="primary"
               size="large"
               style={styles.nextButton}
             />
+            
             <Button
-              title="Skip"
-              onPress={handleSkip}
+              title={profileFromAtom?.location ? 'Back' : 'Skip'}
+              onPress={profileFromAtom?.location ? handleUpdate : handleSkip}
               variant="text"
               size="large"
               style={styles.skipButton}
             />
+            
           </View>
         </View>
       </ScrollView>
@@ -201,6 +238,7 @@ export function LocationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
     backgroundColor: '#fff',
   },
   scrollView: {
@@ -339,6 +377,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   skipButton: {
+    backgroundColor: 'transparent',
+  },
+  backButton: {
     backgroundColor: 'transparent',
   },
 });

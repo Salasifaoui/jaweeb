@@ -3,8 +3,10 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
+import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,6 +14,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 export function GenderBirthPage() {
   const { profile } = useAuth();
   const { updateProfile } = useUpdateProfile();
+  const [profileFromAtom] = useAtom(userProfileAtom);
   const [selectedGender, setSelectedGender] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -23,6 +26,13 @@ export function GenderBirthPage() {
     { id: 'non-binary', label: 'Non-binary', emoji: '🧑' },
     { id: 'prefer-not-to-say', label: 'Prefer not to say', emoji: '🤐' },
   ];
+
+  useEffect(() => {
+    if (profileFromAtom?.gender && profileFromAtom?.birthday) {
+      setSelectedGender(profileFromAtom?.gender as string);
+      setSelectedDate(new Date(profileFromAtom?.birthday));
+    }
+  }, [profileFromAtom?.gender && profileFromAtom?.birthday]);
 
   const handleNext = async () => {
     if (!selectedGender) {
@@ -44,7 +54,9 @@ export function GenderBirthPage() {
       });
 
       console.log('Profile updated successfully');
-      router.push('/(auth)/complated/location');
+
+        router.push('/(auth)/complated/location');
+      
     } catch (err) {
       console.error('Update profile error:', err);
       Alert.alert('Error', 'Failed to update profile. Please try again.');
@@ -52,10 +64,19 @@ export function GenderBirthPage() {
   };
 
   const handleSkip = () => {
-    router.push('/(auth)/complated/location');
+      router.push('/(auth)/complated/location');
+    
   };
 
-
+  const handleUpdate = async () => {
+    
+      await updateProfile(profileFromAtom?.userId || '', {
+        gender: selectedGender ? selectedGender : profileFromAtom?.gender,
+        birthday: selectedDate ? selectedDate.toISOString().split('T')[0] : profileFromAtom?.birthday,
+      });
+      router.back();
+    
+  };
 
   const isAgeValid = (birthDateString: string): boolean => {
     // Parse the birth date string (assuming format: DD/MM/YYYY)
@@ -170,34 +191,24 @@ export function GenderBirthPage() {
           {/* Action Buttons */}
           <View style={styles.buttonSection}>
             <Button
-              title="Next"
-              onPress={handleNext}
+              title={profileFromAtom?.gender && profileFromAtom?.birthday ? 'Update' : 'Next'}
+              onPress={profileFromAtom?.gender && profileFromAtom?.birthday ? handleUpdate : handleNext}
               variant="primary"
               size="large"
               style={styles.nextButton}
             />
+            
             <Button
-              title="Skip"
-              onPress={handleSkip}
+              title={profileFromAtom?.gender && profileFromAtom?.birthday ? 'Back' : 'Skip'}
+              onPress={profileFromAtom?.gender && profileFromAtom?.birthday ? handleUpdate : handleSkip}
               variant="text"
               size="large"
               style={styles.skipButton}
             />
+            
           </View>
         </View>
       </ScrollView>
-
-      {/* Date Picker Modal - Commented out until DateTimePicker is installed */}
-      {/* {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={onDateChange}
-          maximumDate={new Date()}
-          minimumDate={new Date(1900, 0, 1)}
-        />
-      )} */}
     </ThemedView>
   );
 }
@@ -205,6 +216,7 @@ export function GenderBirthPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
     backgroundColor: '#fff',
   },
   scrollView: {
@@ -299,6 +311,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   skipButton: {
+    backgroundColor: 'transparent',
+  },
+  backButton: {
     backgroundColor: 'transparent',
   },
 });

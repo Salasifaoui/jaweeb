@@ -26,7 +26,7 @@ export  function WelcomePage() {
         router.push('/(tabs)');
       }
     }
-  }, [profile, checkProfileCompletion]);
+  }, []);
 
   const handleNext = () => {
     if (profile) {
