@@ -1,6 +1,6 @@
 import {
   APP_CONFIG
-} from "@/src/configs";
+} from "@/src/config";
 import {
   Account,
   Avatars,
@@ -30,7 +30,7 @@ export const getDocument = async (collectionId: string, documentId: string) => {
 
     return document;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error as string);
   }
 };
 export const listDocuments = async (
@@ -46,7 +46,7 @@ export const listDocuments = async (
 
     return documents;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error as string);
   }
 };
 
@@ -65,7 +65,7 @@ export const updateDocument = async (
 
     return updatedDocument;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error as string);
   }
 };
 
@@ -84,7 +84,7 @@ export const createDocument = async (
 
     return newDocument;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error as string);
   }
 };
 

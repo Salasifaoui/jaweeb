@@ -1,4 +1,4 @@
-import { AuthModal } from '@/src/features/auth/auth-modal';
+import { AuthModal } from '@/src/features/auth/ui/auth-modal';
 
 export default function Screen() {
   return <AuthModal />

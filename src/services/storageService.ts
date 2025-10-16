@@ -1,11 +1,16 @@
+import { storage } from '@/src/services/apiService';
 import { APPWRITE_CONFIG, FILE_UPLOAD } from '@/src/utils/constants';
-import { fileStorage } from './appwrite';
 
 export class StorageService {
   async uploadAvatar(file: File): Promise<string> {
     try {
       const fileId = `avatar_${Date.now()}`;
-      await fileStorage.upload(APPWRITE_CONFIG.BUCKETS.AVATARS, fileId, file);
+      await storage.createFile(APPWRITE_CONFIG.BUCKETS.AVATARS, fileId, {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        uri: file.uri,
+      });
       return fileId;
     } catch (error) {
       throw new Error('فشل في رفع الصورة الشخصية.');
@@ -15,7 +20,12 @@ export class StorageService {
   async uploadMessageAttachment(file: File): Promise<string> {
     try {
       const fileId = `attachment_${Date.now()}`;
-      await fileStorage.upload(APPWRITE_CONFIG.BUCKETS.MESSAGE_ATTACHMENTS, fileId, file);
+      await storage.createFile(APPWRITE_CONFIG.BUCKETS.MESSAGE_ATTACHMENTS, fileId, {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        uri: file.uri,
+      });
       return fileId;
     } catch (error) {
       throw new Error('فشل في رفع المرفق.');
@@ -24,7 +34,7 @@ export class StorageService {
 
   async getFileUrl(bucketId: string, fileId: string): Promise<string> {
     try {
-      return fileStorage.getView(bucketId, fileId).toString();
+      return storage.getFileView(bucketId, fileId).toString();
     } catch (error) {
       throw new Error('فشل في تحميل الملف.');
     }
@@ -32,7 +42,7 @@ export class StorageService {
 
   async deleteFile(bucketId: string, fileId: string): Promise<void> {
     try {
-      await fileStorage.delete(bucketId, fileId);
+      await storage.deleteFile(bucketId, fileId);
     } catch (error) {
       throw new Error('فشل في حذف الملف.');
     }

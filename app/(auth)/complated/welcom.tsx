@@ -1,4 +1,4 @@
-import WelcomePage from '@/src/features/auth/completed/welcom';
+import { WelcomePage } from '@/src/features/auth';
 import React from 'react';
 
 export default function Screen() {

@@ -2,9 +2,10 @@ import { ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
 import '../global.css';
 
-import { useAuth } from '@/src/hooks/useAuth';
-import { Provider } from '@/src/provider/Provider';
+import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { AuthProvider } from '@/src/providers/AuthProvider';
 import { NAV_THEME } from '@/src/theme/theme';
+import { Provider as JotaiProvider } from 'jotai';
 import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 
@@ -13,51 +14,45 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 
   return (
-    <Providers>
+    <JotaiProvider>
+    <AuthProvider>
       <RootLayoutNav />
-    </Providers>
+    </AuthProvider>
+    </JotaiProvider>
   );
 }
 
-const Providers = ({ children }: { children: React.ReactNode }) => {
-  return <Provider value={undefined}>{children}</Provider>;
-};
 
 const StackLayout = () => {
   const router = useRouter();
   const segments = useSegments();
-  const { isLoggedIn, isLoading, fetchAuthData, session, user } = useAuth();
+  const { user, session, loading, isAuthenticated, reload } = useAuth();
   
-  // Initialize auth data on mount
-  useEffect(() => {
-    if(isLoggedIn){
-    fetchAuthData();
-    }
-  }, [fetchAuthData, isLoggedIn]);
-
   // Handle navigation after auth data is loaded and navigation is ready
   useEffect(() => {
-    if (!isLoading) {
-      // TODO: We may add this check to (auth) layout
-      if (segments.length === (0 as number)) {
-        if (session) {
-          if (!user) {
-            router.replace("/(auth)/inscription");
-          } else {
-            router.replace("/(tabs)");
-          }
+   if (!loading) {
+      // Only navigate if we're at the root
+      const isAtRoot = segments.length === (0 as number);
+      if (isAtRoot) {
+        if (isAuthenticated && user && session) {
+          // User is authenticated, go to main app
+          router.replace("/(tabs)");
+        } else {
+          // User is not authenticated, go to auth flow
+          router.replace("/(auth)/inscription");
         }
+        
         setTimeout(() => {
           SplashScreen.hideAsync();
         }, 500);
       }
-    }
-  }, [isLoading, user, session, segments, router]);
+     }
+  }, [loading, isAuthenticated, user, session, segments, router]);
+
   return (
     <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(chat)" options={{ headerShown: false }} />
             <Stack.Screen name="(profile)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />

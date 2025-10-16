@@ -1,32 +1,8 @@
-import { useAuth } from '@/src/hooks/useAuth';
-import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const { isLoggedIn, isLoading,  } = useAuth();
-  const [isReady, setIsReady] = useState(false);
-
-  // Set ready state after component mounts
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      // Only navigate when not loading and component is ready
-      if (!isLoading && isReady) {
-        router.replace("/(tabs)");
-        }
-
-    
-      }, [router, isLoading, isReady])
-  );
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Jaweeb</Text>

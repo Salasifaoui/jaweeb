@@ -1,4 +1,4 @@
-import EditProfileScreen from '@/src/features/profile/edit-profile';
+import { EditProfileScreen } from '@/src/features/profile';
 import React from 'react';
 
 export default function Screen() {

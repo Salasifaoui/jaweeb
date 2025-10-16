@@ -1,4 +1,4 @@
-import PreferencePage from '@/src/features/auth/completed/preference';
+import { PreferencePage } from '@/src/features/auth';
 import React from 'react';
 
 export default function Screen() {

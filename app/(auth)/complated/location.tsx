@@ -1,4 +1,4 @@
-import LocationPage from '@/src/features/auth/completed/location';
+import { LocationPage } from '@/src/features/auth';
 import React from 'react';
 
 export default function Screen() {

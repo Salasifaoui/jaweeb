@@ -1,5 +1,5 @@
 export interface User {
-  user_id: string;        // Appwrite account.$id
+  userId: string;        // Appwrite account.$id
   username: string;       // Display name
   email: string;          // Email for quick search
   avatar?: string;    // Profile image URL from storage
@@ -7,8 +7,7 @@ export interface User {
   status?: string;        // User status (online, busy, etc.)
   bio?: string;          // Short bio
   last_seen?: string;    // Last seen timestamp
-  is_online?: boolean;   // Currently online
-  created_at: string;    // Creation timestamp
+  is_online?: boolean;   // Creation timestamp
 }
 
 export interface AuthUser extends User {
@@ -24,5 +23,4 @@ export interface UserProfile {
   imageUrl?: string;
   last_seen?: string;
   is_online?: boolean;
-  created_at?: string;
 }

@@ -1,6 +1,6 @@
 // import { useUploadFile } from '@/src/appwrite/storage/useFileUpload';
 import { Button } from '@/src/components/Button';
-import { useAuth } from '@/src/hooks/useAuth';
+import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { Media } from '@/src/models/Media';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
