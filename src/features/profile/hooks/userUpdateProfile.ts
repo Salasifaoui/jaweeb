@@ -1,10 +1,10 @@
-import { profileService } from '@/src/features/profile/service/profileService';
 import {
-    profileUpdateErrorAtom,
-    profileUpdateLoadingAtom,
-    profileUpdateSuccessAtom,
-    userAtom
-} from '@/src/store/atoms';
+  profileUpdateErrorAtom,
+  profileUpdateLoadingAtom,
+  profileUpdateSuccessAtom,
+  userAtom
+} from '@/src/features/auth/store/authAtoms';
+import { profileService } from '@/src/features/profile/service/profileService';
 import { User } from '@/src/types/user';
 import { useAtom } from 'jotai';
 

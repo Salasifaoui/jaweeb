@@ -4,7 +4,7 @@ import {
   isAuthenticatedAtom,
   sessionAtom,
   userAtom
-} from '@/src/store/atoms';
+} from '@/src/features/auth/store/authAtoms';
 import { User } from '@/src/types/user';
 import { useAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
@@ -61,7 +61,7 @@ export function useAuth() {
     } finally {
       setLoading(false);
     }
-  }, [setUser, setSession, setIsAuthenticated, setLoading]);
+  }, [setUser, setSession, setIsAuthenticated, setLoading, setProfile]);
 
   useEffect(() => {
     reload();

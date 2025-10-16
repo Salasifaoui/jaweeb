@@ -26,7 +26,7 @@ export default function RootLayout() {
 const StackLayout = () => {
   const router = useRouter();
   const segments = useSegments();
-  const { user, session, loading, isAuthenticated, reload } = useAuth();
+  const { user, session, loading, isAuthenticated } = useAuth();
   
   // Handle navigation after auth data is loaded and navigation is ready
   useEffect(() => {
