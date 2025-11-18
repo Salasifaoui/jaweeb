@@ -8,6 +8,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { useEffect } from 'react';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -68,7 +69,10 @@ function RootLayoutNav() {
   return (
     <GluestackUIProvider mode={isDarkColorScheme ? "dark" : "light"}>
           <StackLayout />
-          {/* <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} /> */}
+          <StatusBar
+          key={`root-status-bar-${isDarkColorScheme ? "light" : "dark"}`}
+          style={isDarkColorScheme ? "light" : "dark"}
+        />
         </GluestackUIProvider>
 
   );

@@ -1,7 +1,9 @@
 import AppleIcon from './apple.svg';
 import EmailIcon from './email.svg';
+import FemaleIcon from './female.svg';
 import GoogleIcon from './google.svg';
 import JaweebIcon from './jaweeb.svg';
+import MaleIcon from './male.svg';
 import FacebookIcon from './social/facebook.svg';
 import InstagramIcon from './social/instagram.svg';
 import SnapchatIcon from './social/snapchat.svg';
@@ -42,6 +44,8 @@ export const IconsList = {
   tiktok: TikTokIcon,
   whatsapp: WhatsAppIcon,
   snapchat: SnapchatIcon,
+  female: FemaleIcon,
+  male: MaleIcon,
 };
 
 export const AvatarList = {
@@ -67,3 +71,5 @@ export const AvatarList = {
   avatar21: Avatar21Icon,
   avatar22: Avatar22Icon,
 }
+
+

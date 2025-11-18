@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { CustomTabBar } from '@/components/custom-tab-bar';
+import { CustomTabBarGluestack } from '@/components/custom-tab-bar-gluestack';
 
 export default function TabLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
+      tabBar={(props) => <CustomTabBarGluestack {...props} />}
       screenOptions={{
         headerShown: false,
       }}>

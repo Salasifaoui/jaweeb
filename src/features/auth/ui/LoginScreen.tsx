@@ -1,12 +1,16 @@
-import { Button } from '@/src/components/Button';
+import { NavBar } from '@/components/ui/nav-bar';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
+import ButtonArrowBack from '@/src/components/ButtonArrowBack';
 import { InputField } from '@/src/components/InputField';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useZodForm } from "@/src/hooks/useZodForm";
-import { THEME } from '@/src/theme/theme';
 import { LoginFormData, loginSchema } from "@/src/validation/schemas";
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Alert } from 'react-native';
 
 
 
@@ -14,9 +18,6 @@ export function LoginScreen() {
   const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login, loading } = useAuth();
-    const colorScheme = useColorScheme();
-    const theme = THEME[colorScheme ?? 'light'];
-    const styles = createStyles(theme);
     const {
       values: formData,
       setValue,
@@ -57,8 +58,12 @@ export function LoginScreen() {
     }, [formData, setEmail, setPassword]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>تسجيل الدخول</Text>
+    <ScreenLayout>
+      <NavBar>
+        <ButtonArrowBack />
+      </NavBar>
+      <VStack className=" flex-1 gap-4 justify-center ">
+      <Text className="text-2xl font-bold text-center">تسجيل الدخول</Text>
       
       <InputField
         placeholder="البريد الإلكتروني"
@@ -67,6 +72,7 @@ export function LoginScreen() {
         onBlur={() => handleInputBlur("email")}
         keyboardType="email-address"
         autoCapitalize="none"
+        textAlign='right'
       />
       
       <InputField
@@ -75,53 +81,35 @@ export function LoginScreen() {
         onChangeText={(value) => handleInputChange("password", value)}
         onBlur={() => handleInputBlur("password")}
         secureTextEntry
+        textAlign='right'
+        className='w-full'
       />
       
-      <Button
-        title="تسجيل الدخول"
+      <VStack className='gap-2'>
+      <ButtonAction
+        text="تسجيل الدخول"
         onPress={handleSubmit}
         loading={loading}
-        style={styles.loginButton}
+        variant="solid"
+        action="primary"
       />
-      
-      <Button
-        title="إنشاء حساب جديد"
+      <ButtonAction
+        text="إنشاء حساب جديد"
         onPress={() => router.push('/(auth)/register')}
         variant="outline"
-        style={styles.registerButton}
+        action="primary"
       />
+      </VStack>
       
-      <Button
-        title="نسيت كلمة المرور؟"
+     
+      
+      <ButtonAction
+        text="نسيت كلمة المرور؟"
         onPress={() => router.push('/(auth)/forgot-password')}
-        variant="text"
-        style={styles.forgotButton}
+        variant="link"
+        action="secondary"
       />
-    </View>
+      </VStack>
+    </ScreenLayout>
   );
 }
-
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    backgroundColor: theme.background,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 40,
-    color: theme.foreground,
-  },
-  loginButton: {
-    marginTop: 20,
-  },
-  registerButton: {
-    marginTop: 10,
-  },
-  forgotButton: {
-    marginTop: 10,
-  },
-});

@@ -1,14 +1,14 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { Pressable } from '@/components/ui/pressable';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
-import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -19,9 +19,6 @@ export function GenderBirthPage() {
   const [selectedGender, setSelectedGender] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
 
   const genders = [
     { id: 'male', label: 'Male', emoji: '👨' },
@@ -116,58 +113,34 @@ export function GenderBirthPage() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
+    <ScreenLayout>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="flex-1">
           {/* Header */}
-          <View style={styles.header}>
-            <ThemedText style={styles.title}>Tell us about yourself</ThemedText>
-            <ThemedText style={styles.subtitle}>
+          <View className="flex-1">
+            <Text className="text-2xl font-bold">Tell us about yourself</Text>
+            <Text className="text-sm text-muted-foreground">
               This helps us personalize your experience
-            </ThemedText>
+            </Text>
           </View>
 
           {/* Gender Selection */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Gender</ThemedText>
-            <View style={styles.genderGrid}>
+          <View className="mb-4">
+            <Text className="text-lg font-bold">Gender</Text>
+            <View className="flex-row flex-wrap gap-2">
               {genders.map((gender) => (
-                <TouchableOpacity
+                <Pressable
                   key={gender.id}
-                  style={[
-                    styles.genderOption,
-                    selectedGender === gender.id && styles.selectedGenderOption,
-                  ]}
+                  className={`p-2 rounded-lg border border-gray-200 ${selectedGender === gender.id ? 'bg-primary-500' : ''}`}
                   onPress={() => setSelectedGender(gender.id)}
                 >
-                  <ThemedText style={styles.genderEmoji}>{gender.emoji}</ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.genderLabel,
-                      selectedGender === gender.id && styles.selectedGenderLabel,
-                    ]}
-                  >
-                    {gender.label}
-                  </ThemedText>
-                </TouchableOpacity>
+                  <Text >{gender.emoji}</Text>
+                  <Text className="text-sm">{gender.label}</Text>
+                </Pressable>
               ))}
             </View>
           </View>
-
-          {/* Birthday Selection */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Birthday</ThemedText>
-            <TouchableOpacity
-              style={styles.dateButton}
-              onPress={() => {setDatePickerVisibility(true)}}
-            >
-              <ThemedText style={styles.dateButtonText}>
-                {formatDate(selectedDate)}
-              </ThemedText>
-              <ThemedText style={styles.dateButtonIcon}>📅</ThemedText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.section}>
+          <View className="mb-4">
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
@@ -192,13 +165,12 @@ export function GenderBirthPage() {
           </View>
 
           {/* Action Buttons */}
-          <View style={styles.buttonSection}>
+          <View className="mb-4">
             <Button
               title={profileFromAtom?.gender && profileFromAtom?.birthday ? 'Update' : 'Next'}
               onPress={profileFromAtom?.gender && profileFromAtom?.birthday ? handleUpdate : handleNext}
               variant="primary"
               size="large"
-              style={styles.nextButton}
             />
             
             <Button
@@ -206,119 +178,12 @@ export function GenderBirthPage() {
               onPress={profileFromAtom?.gender && profileFromAtom?.birthday ? handleUpdate : handleSkip}
               variant="text"
               size="large"
-              style={styles.skipButton}
             />
             
           </View>
         </View>
       </ScrollView>
-    </ThemedView>
+    </ScreenLayout>
   );
 }
 
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 60,
-    backgroundColor: theme.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    padding: 16,
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: theme.foreground,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.foreground,
-    marginBottom: 16,
-  },
-  genderGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  genderOption: {
-    width: '48%',
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedGenderOption: {
-    backgroundColor: theme.primary,
-    borderColor: theme.primary,
-  },
-  genderEmoji: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  genderLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: theme.foreground,
-    textAlign: 'center',
-  },
-  selectedGenderLabel: {
-    color: theme.primaryForeground,
-  },
-  dateButton: {
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.border,
-  },
-  dateButtonText: {
-    fontSize: 16,
-    color: theme.foreground,
-  },
-  dateButtonIcon: {
-    fontSize: 20,
-    color: theme.primary,
-  },
-  buttonSection: {
-    marginTop: 20,
-  },
-  nextButton: {
-    backgroundColor: theme.primary,
-    marginBottom: 12,
-  },
-  skipButton: {
-    backgroundColor: 'transparent',
-  },
-  backButton: {
-    backgroundColor: 'transparent',
-  },
-});

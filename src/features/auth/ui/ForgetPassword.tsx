@@ -1,19 +1,18 @@
-import { Icon } from "@/components/ui/icon";
-import { Button } from "@/src/components/Button";
+import { NavBar } from "@/components/ui/nav-bar";
+import { ScreenLayout } from "@/components/ui/screen-layout/screen-layout";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
+import ButtonAction from "@/src/components/ButtonAction";
+import ButtonArrowBack from "@/src/components/ButtonArrowBack";
 import { InputField } from "@/src/components/InputField";
-import { THEME } from "@/src/theme/theme";
 import { router } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Alert } from "react-native";
 
 export function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
   // const createRecovery = useCreateRecovery({
   //   onSuccess: () => {
   //     setLoading(false);
@@ -58,12 +57,14 @@ export function ForgotPasswordScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={handleBackToLogin} className="mb-8 lg:mb-8">
-        <Icon as={ChevronLeft} size={24} color="#007AFF" />
-      </Pressable>
-      <Text style={styles.title}>نسيت كلمة المرور؟</Text>
-      <Text style={styles.subtitle}>
+    <ScreenLayout>
+      <NavBar>
+        <ButtonArrowBack />
+      </NavBar>
+      <VStack className=" flex-1 gap-4 justify-center ">
+      
+      <Text className="text-2xl font-bold text-center">نسيت كلمة المرور؟</Text>
+      <Text className="text-lg font-bold text-right">
         أدخل بريدك الإلكتروني وسنرسل لك رابط لإعادة تعيين كلمة المرور
       </Text>
 
@@ -73,50 +74,23 @@ export function ForgotPasswordScreen() {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        textAlign='right'
       />
 
-      <Button
-        title="إرسال رابط إعادة التعيين"
+      <ButtonAction
+        text="إرسال رابط إعادة التعيين"
         onPress={handleSendResetEmail}
         loading={loading}
-        style={styles.resetButton}
       />
 
-      <Button
-        title="العودة لتسجيل الدخول"
+      <ButtonAction
+        text="العودة لتسجيل الدخول"
         onPress={handleBackToLogin}
         variant="outline"
-        style={styles.backButton}
+        action="primary"
       />
-    </View>
+      </VStack>
+    </ScreenLayout>
   );
 }
 
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    backgroundColor: theme.background,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: theme.foreground,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 40,
-    color: theme.mutedForeground,
-    lineHeight: 24,
-  },
-  resetButton: {
-    marginTop: 20,
-  },
-  backButton: {
-    marginTop: 10,
-  },
-});

@@ -1,10 +1,21 @@
-import { ThemedView } from "@/components/themed-view";
-import { useThemeColor } from "@/hooks/use-theme-color";
-import { THEME } from "@/src/theme/theme";
-import { Bell, BookOpen, Filter, HelpCircle, LogOut, MessageCircle, Phone, Search, Settings, UserCircle } from "lucide-react-native";
-import { Platform, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Icon } from "../icon";
+
+import { useRouter } from "expo-router";
+import {
+  Bell,
+  BookOpen,
+  Filter,
+  HelpCircle,
+  LogOut,
+  MessageCircle,
+  Phone,
+  Search,
+  Settings,
+  UserCircle,
+} from "lucide-react-native";
+import { Button, ButtonIcon } from "../button";
+import { HStack } from "../hstack";
+import { Text } from "../text";
+import { VStack } from "../vstack";
 
 interface NavBarProps {
   children?: React.ReactNode;
@@ -19,140 +30,98 @@ interface NavBarProps {
   showContactButton?: boolean;
   showFilterButton?: boolean;
   showComponent?: React.ReactNode;
+  title?: string;
+  subtitle?: string;
 }
 export function NavBar({
-children,
-showLogoutButton =  false,
-showSearchButton = false,
-showNotificationButton = false,
-showProfileButton = false,
-showSettingsButton = false,
-showHelpButton = false,
-showFeedbackButton = false,
-showAboutButton = false,
-showContactButton = false,
-showFilterButton = false,
-showComponent = null,
+  children,
+  showLogoutButton = false,
+  showSearchButton = false,
+  showNotificationButton = false,
+  showProfileButton = false,
+  showSettingsButton = false,
+  showHelpButton = false,
+  showFeedbackButton = false,
+  showAboutButton = false,
+  showContactButton = false,
+  showFilterButton = false,
+  showComponent = null,
+  title,
+  subtitle,
 }: NavBarProps) {
-const colorScheme = useColorScheme();
-const theme = THEME[colorScheme ?? 'light'];
-const styles = createStyles(theme);
-const insets = useSafeAreaInsets();
-const themeBackgroundColor = useThemeColor({}, 'background');
-
-  const elevation = 0;
+  const router = useRouter();
   return (
+    <HStack className="items-center justify-between">
+      <HStack className="items-center justify-start py-3">
+        {children}
+      </HStack>
 
-      <ThemedView
-        style={styles.container}
-      >
-        <View style={styles.leftSection}>
-          {children}
-        </View>
-
-        <View style={styles.rightSection}>
-          {showSearchButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={Search} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showNotificationButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={Bell} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showProfileButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={UserCircle} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showSettingsButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={Settings} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showLogoutButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={LogOut} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showHelpButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={HelpCircle} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showFeedbackButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={MessageCircle} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showAboutButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={BookOpen} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showContactButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={Phone} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showFilterButton && (
-            <TouchableOpacity style={styles.iconItem} onPress={() => {}}>
-              <Icon as={Filter} size={24} color={theme.mutedForeground} />
-            </TouchableOpacity>
-          )}
-          {showComponent && (
-            <View style={styles.iconItem}>
-              {showComponent}
-            </View>
-          )}
-          </View>
-
-
-
-        </ThemedView>
-
+      <HStack className="items-center justify-end px-4 py-4 gap-2.5">
+        {title && (
+          <VStack className="items-center justify-center">
+            <Text size="lg" bold>{title}</Text>
+            {subtitle && (
+              <Text size="sm" className="text-gray-500">{subtitle}</Text>
+            )}
+          </VStack>
+        )}
+        
+        {showSearchButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={Search} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showNotificationButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={Bell} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showProfileButton && (
+          <Button variant="link" action="secondary" onPress={() => {
+            router.push('/profile');
+          }}>
+            <ButtonIcon as={UserCircle} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showSettingsButton && (
+          <Button variant="link" action="secondary" onPress={() => router.push('/(profile)/edit')}>
+            <ButtonIcon as={Settings} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showLogoutButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={LogOut} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showHelpButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={HelpCircle} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showFeedbackButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={MessageCircle} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showAboutButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={BookOpen} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showContactButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={Phone} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showFilterButton && (
+          <Button variant="link" action="secondary" onPress={() => {}}>
+            <ButtonIcon as={Filter} style={{ width: 25, height: 25 }} className="text-primary-400" />
+          </Button>
+        )}
+        {showComponent && (
+          <HStack className="items-center justify-center">{showComponent}</HStack>
+        )}
+      </HStack>
+    </HStack>
   );
 }
-
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-
-      },
-      content: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        minHeight: 44,
-      },
-      rightSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        gap: 10,
-      },
-      leftSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-      },
-      title: {
-        fontSize: 18,
-        fontWeight: Platform.OS === 'ios' ? '600' : 'bold',
-        textAlign: 'center',
-      },
-      iconItem: {
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      
-});

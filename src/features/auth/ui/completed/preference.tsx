@@ -1,14 +1,14 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { Pressable } from '@/components/ui/pressable';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
-import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 
 export function PreferencePage() {
   const { profile } = useAuth();
@@ -17,9 +17,6 @@ export function PreferencePage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('');
   const [selectedGenderPreference, setSelectedGenderPreference] = useState<string>('');
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
   const interests = [
     { id: 'gaming', label: 'Gaming', emoji: '🎮' },
     { id: 'music', label: 'Music', emoji: '🎵' },
@@ -115,277 +112,94 @@ export function PreferencePage() {
     router.back();
   };
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
+    <ScreenLayout>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="flex-1">
           {/* Header */}
-          <View style={styles.header}>
-            <ThemedText style={styles.title}>Set your preferences</ThemedText>
-            <ThemedText style={styles.subtitle}>
+          <View className="flex-1">
+            <Text className="text-2xl font-bold">Set your preferences</Text>
+            <Text className="text-sm text-muted-foreground">
               Help us match you with the right people
-            </ThemedText>
+            </Text>
           </View>
 
           {/* Interests Section */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Interests</ThemedText>
-            <ThemedText style={styles.sectionSubtitle}>
+          <View className="mb-4">
+            <Text className="text-lg font-bold">Interests</Text>
+            <Text className="text-sm text-muted-foreground">
               Select topics you&apos;re interested in (optional)
-            </ThemedText>
-            <View style={styles.interestsGrid}>
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
               {interests.map((interest) => (
-                <TouchableOpacity
+                <Pressable
                   key={interest.id}
-                  style={[
-                    styles.interestOption,
-                    selectedInterests.includes(interest.id) && styles.selectedInterestOption,
-                  ]}
+                  className={`p-2 rounded-lg border border-gray-200 ${selectedInterests.includes(interest.id) ? 'bg-primary-500' : ''}`}
                   onPress={() => toggleInterest(interest.id)}
                 >
-                  <ThemedText style={styles.interestEmoji}>{interest.emoji}</ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.interestLabel,
-                      selectedInterests.includes(interest.id) && styles.selectedInterestLabel,
-                    ]}
-                  >
-                    {interest.label}
-                  </ThemedText>
-                </TouchableOpacity>
+                  <Text >{interest.emoji}</Text>
+                  <Text className="text-sm">{interest.label}</Text>
+                </Pressable>
               ))}
             </View>
           </View>
 
           {/* Age Range Section */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Age Range</ThemedText>
-            <ThemedText style={styles.sectionSubtitle}>
+          <View className="mb-4">
+            <Text className="text-lg font-bold">Age Range</Text>
+            <Text className="text-sm text-muted-foreground">
               Who would you like to connect with?
-            </ThemedText>
-            <View style={styles.ageRangeContainer}>
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
               {ageRanges.map((range) => (
-                <TouchableOpacity
+                <Pressable
                   key={range.id}
-                  style={[
-                    styles.ageRangeOption,
-                    selectedAgeRange === range.id && styles.selectedAgeRangeOption,
-                  ]}
+                  className={`p-2 rounded-lg border border-gray-200 ${selectedAgeRange === range.id ? 'bg-primary-500' : ''}`}
                   onPress={() => setSelectedAgeRange(range.id)}
                 >
-                  <ThemedText
-                    style={[
-                      styles.ageRangeLabel,
-                      selectedAgeRange === range.id && styles.selectedAgeRangeLabel,
-                    ]}
-                  >
-                    {range.label}
-                  </ThemedText>
-                </TouchableOpacity>
+                  <Text className="text-sm">{range.label}</Text>
+                </Pressable>
               ))}
             </View>
           </View>
 
           {/* Gender Preference Section */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Gender Preference</ThemedText>
-            <ThemedText style={styles.sectionSubtitle}>
+          <View className="mb-4">
+            <Text className="text-lg font-bold">Gender Preference</Text>
+            <Text className="text-sm text-muted-foreground">
               Who would you like to connect with?
-            </ThemedText>
-            <View style={styles.genderPreferenceContainer}>
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
               {genderPreferences.map((preference) => (
-                <TouchableOpacity
+                <Pressable
                   key={preference.id}
-                  style={[
-                    styles.genderPreferenceOption,
-                    selectedGenderPreference === preference.id && styles.selectedGenderPreferenceOption,
-                  ]}
+                  className={`p-2 rounded-lg border border-gray-200 ${selectedGenderPreference === preference.id ? 'bg-primary-500' : ''}`}
                   onPress={() => setSelectedGenderPreference(preference.id)}
                 >
-                  <ThemedText style={styles.genderPreferenceEmoji}>{preference.emoji}</ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.genderPreferenceLabel,
-                      selectedGenderPreference === preference.id && styles.selectedGenderPreferenceLabel,
-                    ]}
-                  >
-                    {preference.label}
-                  </ThemedText>
-                </TouchableOpacity>
+                  <Text >{preference.emoji}</Text>
+                  <Text className="text-sm">{preference.label}</Text>
+                </Pressable>
               ))}
             </View>
           </View>
 
           {/* Action Buttons */}
-          <View style={styles.buttonSection}>
+          <View className="mb-4">
             <Button
               title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Update' : 'Next'}
               onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleNext}
               variant="primary"
               size="large"
-              style={styles.nextButton}
             />
             <Button
               title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Back' : 'Skip'}
               onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleSkip}
               variant="text"
               size="large"
-              style={styles.skipButton}
             />
          
           </View>
         </View>
       </ScrollView>
-    </ThemedView>
+    </ScreenLayout>
   );
 }
-
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 60,
-    backgroundColor: theme.background,
-  },
-  scrollView: {
-    flex: 1,
-    paddingTop: 60,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: theme.foreground,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.foreground,
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: theme.mutedForeground,
-    marginBottom: 16,
-  },
-  interestsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  interestOption: {
-    width: '30%',
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedInterestOption: {
-    backgroundColor: theme.primary,
-    borderColor: theme.secondary,
-  },
-  interestEmoji: {
-    fontSize: 20,
-    marginBottom: 6,
-  },
-  interestLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: theme.foreground,
-    textAlign: 'center',
-  },
-  selectedInterestLabel: {
-    color: theme.primaryForeground,
-  },
-  ageRangeContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  ageRangeOption: {
-    width: '18%',
-    backgroundColor: theme.background,
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 8,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedAgeRangeOption: {
-    backgroundColor: theme.primary,
-    borderColor: theme.secondary,
-  },
-  ageRangeLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: theme.foreground,
-  },
-  selectedAgeRangeLabel: {
-    color: theme.primaryForeground,
-  },
-  genderPreferenceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  genderPreferenceOption: {
-    flex: 1,
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginHorizontal: 4,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedGenderPreferenceOption: {
-    backgroundColor: theme.primary,
-    borderColor: theme.secondary,
-  },
-  genderPreferenceEmoji: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  genderPreferenceLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: theme.foreground,
-    textAlign: 'center',
-  },
-  selectedGenderPreferenceLabel: {
-    color: theme.primaryForeground,
-  },
-  buttonSection: {
-    marginTop: 20,
-  },
-  nextButton: {
-    backgroundColor: theme.primary,
-    marginBottom: 12,
-  },
-  skipButton: {
-    backgroundColor: 'transparent',
-  },
-  backButton: {
-    backgroundColor: 'transparent',
-  },
-});

@@ -1,7 +1,9 @@
-import { cn } from '@/src/utils/utils';
-import type { LucideIcon, LucideProps } from 'lucide-react-native';
-import { cssInterop } from 'nativewind';
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { cn } from "@/src/utils/utils";
+import { createIcon, Svg } from "@gluestack-ui/core/icon/creator";
+import { type LucideIcon, type LucideProps } from "lucide-react-native";
+import { cssInterop } from "nativewind";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { Path } from 'react-native-svg';
 
 type IconProps = LucideProps & {
   as: LucideIcon;
@@ -14,10 +16,10 @@ function IconImpl({ as: IconComponent, ...props }: IconProps) {
 
 cssInterop(IconImpl, {
   className: {
-    target: 'style',
+    target: "style",
     nativeStyleToProp: {
-      height: 'size',
-      width: 'size',
+      height: "size",
+      width: "size",
     },
   },
 });
@@ -42,15 +44,40 @@ cssInterop(IconImpl, {
  * @param {number} size - Icon size (defaults to 14).
  * @param {...LucideProps} ...props - Additional Lucide icon props passed to the "as" icon.
  */
-function Icon({ as: IconComponent, className, size = 14, ...props }: IconProps) {
+function Icon({
+  as: IconComponent,
+  className,
+  size = 14,
+  ...props
+}: IconProps) {
   return (
     <IconImpl
       as={IconComponent}
-      className={cn('text-foreground', className)}
+      className={cn("text-foreground", className)}
       size={size}
       {...props}
     />
   );
 }
 
-export { Icon };
+const ChevronRightIcon = createIcon({
+  Root: Svg,
+
+  viewBox: '0 0 24 24',
+  path: (
+    <>
+      <Path
+        d="M9 18L15 12L9 6"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </>
+  ),
+});
+
+
+ChevronRightIcon.displayName = 'ChevronRightIcon';
+
+export { ChevronRightIcon, Icon };
+

@@ -1,25 +1,20 @@
 import { IconsList } from '@/components/icons/icons';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { HStack } from '@/components/ui/hstack';
+import { Pressable } from '@/components/ui/pressable';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
 import { APP_NAME } from '@/constants/variables';
 import AppleSignInButton from '@/src/components/AppleSignInButton';
 import EmailSignInButton from '@/src/components/EmailSignInButton';
 import GoogleSignInButton from '@/src/components/GoogleSignInButton';
-import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import React from 'react';
 import {
   Alert,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-  View
+  Linking
 } from 'react-native';
 export function AuthModal() {
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
 
   const handleEmailSignIn = () => {
     // Navigate to phone sign in
@@ -69,218 +64,90 @@ export function AuthModal() {
   };
 
   return (
-      <ThemedView style={styles.container}>
+      <ScreenLayout>
+        <VStack className="flex-1 gap-4 justify-center">
+
+        
         {/* Logo Section */}
-        <View style={styles.logoSection}>
+        <HStack className=" items-center justify-center">
           <IconsList.jaweeb width={40} height={40} />
-          <ThemedText style={styles.logoText}>{APP_NAME}</ThemedText>
-        </View>
+          <Text className="text-2xl font-bold">{APP_NAME}</Text>
+        </HStack>
 
         {/* Main Content */}
-        <View style={styles.content}>
-          <ThemedText style={styles.title}>
+        <VStack className="gap-4 items-center justify-center  ">
+          <Text className="text-lg font-bold">
             Sign in to experience complete functions
-          </ThemedText>
+          </Text>
 
           {/* Primary Sign In Buttons */}
-          <View style={styles.primaryButtons}>
+          <VStack className="items-center gap-4">
             <GoogleSignInButton onPress={handleGoogleSignIn} />
 
             <EmailSignInButton onPress={handleEmailSignIn} />
 
             <AppleSignInButton onPress={handleAppleSignIn} />
             
-          </View>
+          </VStack>
 
           {/* OR Separator */}
-          <View style={styles.separator}>
-            <View style={styles.separatorLine} />
-            <ThemedText style={styles.separatorText}>OR</ThemedText>
-            <View style={styles.separatorLine} />
-          </View>
+          <VStack className="items-center gap-2">
+            <Text className="text-lg font-bold">OR</Text>
+          </VStack>
 
           {/* Social Media Icons */}
-          <View style={styles.socialIcons}>
-            <TouchableOpacity style={styles.socialIcon} onPress={handleFacebookSignIn}>
+          <HStack className="items-center gap-5">
+            <Pressable className="flex-row items-center" onPress={handleFacebookSignIn}>
               <IconsList.facebook width={24} height={24} />
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={styles.socialIcon} onPress={handleTwitterSignIn}>
+            <Pressable className="flex-row items-center" onPress={handleTwitterSignIn}>
               <IconsList.instagram width={24} height={24} />
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={styles.socialIcon} onPress={handleVKSignIn}>
+            <Pressable className="flex-row items-center" onPress={handleVKSignIn}>
               <IconsList.tiktok width={24} height={24} />
-            </TouchableOpacity>
-          </View>
+            </Pressable>
+          </HStack>
 
-          {/* Legal Text */}
-          <View style={styles.legalSection}>
-            <ThemedText style={styles.legalText}>
+          
+      
+        </VStack>
+
+        
+        </VStack>
+        {/* Legal Text */}
+        <VStack className="justify-center items-center gap-6 pb-11">
+            <HStack className="items-center gap-2">
+            <Text className="text-lg font-bold">
             By continuing, you agree to our{' '}
-            </ThemedText>
-              <TouchableOpacity onPress={handleTermsOfUse}>
-                <ThemedText style={styles.legalLink}>Terms of use</ThemedText>
-              </TouchableOpacity>
-              <ThemedText style={styles.legalText}>
-              ,{' '}
-            </ThemedText>
-              <TouchableOpacity onPress={handleBroadcasterAgreement}>
-                <ThemedText style={styles.legalLink}>Broadcaster Agreement</ThemedText>
-              </TouchableOpacity>
-              <ThemedText style={styles.legalText}>
+            </Text>
+              <Pressable className="items-center" onPress={handleTermsOfUse}>
+                <Text className="text-lg font-bold text-primary-500">Terms of use</Text>
+              </Pressable>
+              </HStack>
+              <HStack className="items-center gap-2">
+              <Pressable className="items-center" onPress={handleBroadcasterAgreement}>
+                <Text className="text-lg font-bold text-primary-500">Broadcaster Agreement</Text>
+              </Pressable>
+              <Text className="text-lg font-bold">
             and
-            </ThemedText>
-              <TouchableOpacity onPress={handlePrivacyPolicy}>
-                <ThemedText style={styles.legalLink}>Privacy Policy</ThemedText>
-              </TouchableOpacity>
+            </Text>
+            <Pressable className="items-center" onPress={handlePrivacyPolicy}>
+                <Text className="text-lg font-bold text-primary-500">Privacy Policy</Text>
+              </Pressable>
+            </HStack>
+            <HStack className="items-center justify-center gap-2">
             
-          </View>
-          <View style={styles.productSection}>
-            <ThemedText style={styles.legalText}>
-            powered by
-            </ThemedText>
-            <TouchableOpacity onPress={handleZixDev}>
-                <ThemedText style={styles.legalLink}>ZixDev</ThemedText>
-              </TouchableOpacity>
-          </View>
-        </View>
-      </ThemedView>
+              <Text className="text-sm font-bold">
+              powered by
+              </Text>
+              <Pressable className="items-center" onPress={handleZixDev}>
+                  <Text className="text-sm font-bold text-primary-500">ZixDev</Text>
+                </Pressable>
+            </HStack>
+          </VStack>
+      </ScreenLayout>
 
   );
 }
-
-
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    zIndex: 1,
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoSection: {
-    alignItems: 'center',
-    marginTop: 180,
-    marginBottom: 40,
-  },
-  logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  logoText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.primary,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#333',
-    lineHeight: 24,
-  },
-  primaryButtons: {
-    marginBottom: 30,
-    gap: 16,
-  },
-  primaryButton: {
-    backgroundColor: theme.primary,
-    marginBottom: 12,
-    paddingVertical: 16,
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appleButton: {
-    backgroundColor: theme.background,
-  },
-  primaryButtonText: {
-    color: theme.primaryForeground,
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  separator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  separatorLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.border,
-  },
-  separatorText: {
-    marginHorizontal: 16,
-    fontSize: 14,
-    color: theme.mutedForeground,
-    fontWeight: '500',
-  },
-  socialIcons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 40,
-  },
-  socialIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: theme.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 12,
-  },
-  vkText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.primary,
-  },
-  legalSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 30,
-    paddingHorizontal: 20,
-  },
-  productSection: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 20,
-  },
-  legalText: {
-    fontSize: 12,
-    paddingHorizontal: 5,
-    textAlign: 'center',
-    color: theme.mutedForeground,
-    lineHeight: 18,
-  },
-  legalLink: {
-    color: theme.primary,
-    fontSize: 12,
-    textDecorationLine: 'underline',
-  },
-});

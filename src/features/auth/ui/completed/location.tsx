@@ -1,14 +1,14 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { Pressable } from '@/components/ui/pressable';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
 import { Button } from '@/src/components/Button';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
-import { THEME } from '@/src/theme/theme';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { Alert, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 
 export function LocationPage() {
   const { profile } = useAuth();
@@ -17,9 +17,7 @@ export function LocationPage() {
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
+
   const popularLocations = [
     { id: 'new-york', label: 'New York, NY', emoji: '🗽' },
     { id: 'los-angeles', label: 'Los Angeles, CA', emoji: '🌴' },
@@ -126,74 +124,62 @@ export function LocationPage() {
 
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
+    <ScreenLayout>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="flex-1">
           {/* Header */}
-          <View style={styles.header}>
-            <ThemedText style={styles.title}>Where are you located?</ThemedText>
-            <ThemedText style={styles.subtitle}>
+          <View className="flex-1">
+            <Text className="text-2xl font-bold">Where are you located?</Text>
+            <Text className="text-sm text-muted-foreground">
               Help us connect you with people nearby
-            </ThemedText>
+            </Text>
           </View>
 
           {/* Current Selection Display */}
           {(selectedLocation || customLocation) && (
-            <View style={styles.selectedSection}>
-              <ThemedText style={styles.selectedLabel}>Selected:</ThemedText>
-              <ThemedText style={styles.selectedValue}>
-                📍 {getSelectedLocationLabel()}
-              </ThemedText>
+            <View className="mb-4">
+              <Text className="text-lg font-bold">Selected:</Text>
+              <Text className="text-sm">{getSelectedLocationLabel()}</Text>
             </View>
           )}
 
           {/* Custom Location Input */}
           {showCustomInput && (
-            <View style={styles.customInputSection}>
-              <ThemedText style={styles.sectionTitle}>Enter your location</ThemedText>
+            <View className="mb-4">
+              <Text className="text-lg font-bold">Enter your location</Text>
               <TextInput
-                style={styles.textInput}
+                className="border border-gray-200 rounded-lg p-2"
                 placeholder="City, State/Country"
                 value={customLocation}
                 onChangeText={setCustomLocation}
                 autoFocus
               />
               <TouchableOpacity
-                style={styles.cancelButton}
+                className="p-2 rounded-lg border border-gray-200"
                 onPress={() => {
                   setShowCustomInput(false);
                   setCustomLocation('');
                 }}
               >
-                <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+                <Text className="text-sm">Cancel</Text>
               </TouchableOpacity>
             </View>
           )}
 
           {/* Popular Locations */}
           {!showCustomInput && (
-            <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Popular Locations</ThemedText>
-              <View style={styles.locationGrid}>
+            <View className="flex-row items-center gap-2">
+              <Text className="text-sm text-muted-foreground">Popular Locations</Text>
+              <View className="flex-row items-center gap-2">
                 {popularLocations.map((location) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={location.id}
-                    style={[
-                      styles.locationOption,
-                      selectedLocation === location.id && styles.selectedLocationOption,
-                    ]}
+                    className={`flex-row items-center gap-2 ${selectedLocation === location.id ? 'bg-primary-500' : ''}`}
                     onPress={() => handleLocationSelect(location.id)}
                   >
-                    <ThemedText style={styles.locationEmoji}>{location.emoji}</ThemedText>
-                    <ThemedText
-                      style={[
-                        styles.locationLabel,
-                        selectedLocation === location.id && styles.selectedLocationLabel,
-                      ]}
-                    >
-                      {location.label}
-                    </ThemedText>
-                  </TouchableOpacity>
+                    <Text className="text-sm text-muted-foreground">{location.emoji}</Text>
+                    <Text className="text-sm text-muted-foreground">{location.label}</Text>
+                  </Pressable>
                 ))}
               </View>
             </View>
@@ -201,27 +187,24 @@ export function LocationPage() {
 
           {/* Custom Location Button */}
           {!showCustomInput && (
-            <View style={styles.customSection}>
+            <View className="mb-4">
               <TouchableOpacity
-                style={styles.customLocationButton}
+                className="p-2 rounded-lg border border-gray-200"
                 onPress={handleCustomLocation}
               >
-                <ThemedText style={styles.customLocationIcon}>✏️</ThemedText>
-                <ThemedText style={styles.customLocationText}>
-                  Enter custom location
-                </ThemedText>
+                <Text className="text-sm">✏️</Text>
+                <Text className="text-sm">Enter custom location</Text>
               </TouchableOpacity>
             </View>
           )}
 
           {/* Action Buttons */}
-          <View style={styles.buttonSection}>
+          <View className="mb-4">
             <Button
               title={profileFromAtom?.location ? 'Update' : 'Next'}
               onPress={profileFromAtom?.location ? handleUpdate : handleNext}
               variant="primary"
               size="large"
-              style={styles.nextButton}
             />
             
             <Button
@@ -229,161 +212,12 @@ export function LocationPage() {
               onPress={profileFromAtom?.location ? handleUpdate : handleSkip}
               variant="text"
               size="large"
-              style={styles.skipButton}
             />
             
           </View>
         </View>
       </ScrollView>
-    </ThemedView>
+    </ScreenLayout>
   );
 }
 
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 60,
-    backgroundColor: theme.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: theme.foreground,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  selectedSection: {
-    backgroundColor: theme.primary,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: theme.primary,
-  },
-  selectedLabel: {
-    fontSize: 14,
-    color: theme.primaryForeground,
-    marginBottom: 4,
-  },
-  selectedValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.primary,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.foreground,
-    marginBottom: 16,
-  },
-  locationGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  locationOption: {
-    width: '48%',
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedLocationOption: {
-    backgroundColor: theme.primary,
-    borderColor: theme.primary,
-  },
-  locationEmoji: {
-    fontSize: 20,
-    marginBottom: 6,
-  },
-  locationLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: theme.foreground,
-    textAlign: 'center',
-  },
-  selectedLocationLabel: {
-    color: theme.primaryForeground,
-  },
-  customInputSection: {
-    marginBottom: 24,
-  },
-  textInput: {
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: theme.foreground,
-    borderWidth: 1,
-    borderColor: theme.border,
-    marginBottom: 12,
-  },
-  cancelButton: {
-    alignSelf: 'flex-start',
-  },
-  cancelButtonText: {
-    color: theme.primary,
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  customSection: {
-    marginBottom: 24,
-  },
-  customLocationButton: {
-    backgroundColor: theme.background,
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: theme.border,
-  },
-  customLocationIcon: {
-    fontSize: 16,
-    marginRight: 8,
-  },
-  customLocationText: {
-    fontSize: 16,
-    color: theme.foreground,
-    fontWeight: '500',
-  },
-  buttonSection: {
-    marginTop: 20,
-  },
-  nextButton: {
-    backgroundColor: theme.primary,
-    marginBottom: 12,
-  },
-  skipButton: {
-    backgroundColor: 'transparent',
-  },
-  backButton: {
-    backgroundColor: 'transparent',
-  },
-});

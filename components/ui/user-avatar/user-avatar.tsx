@@ -1,5 +1,5 @@
 import { AvatarList } from "@/components/icons/icons";
-import { AvatarItem } from "@/components/ui/avatar-item/avatar-item";
+import { AvatarItem } from "../avatar-item/avatar-item";
 import { ZixAvatar } from "../zix-avatar/zix-avatar";
 
 export type UserAvatarProps = {

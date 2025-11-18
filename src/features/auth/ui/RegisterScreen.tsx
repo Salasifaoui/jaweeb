@@ -1,12 +1,16 @@
-import { Button } from '@/src/components/Button';
+import { NavBar } from '@/components/ui/nav-bar';
+import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
+import ButtonArrowBack from '@/src/components/ButtonArrowBack';
 import { InputField } from '@/src/components/InputField';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useZodForm } from '@/src/hooks/useZodForm';
-import { THEME } from '@/src/theme/theme';
 import { CreateUserFormData, createUserSchema } from '@/src/validation/schemas';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Alert } from 'react-native';
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
@@ -14,9 +18,6 @@ export function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const { register, login, loading } = useAuth();
-    const colorScheme = useColorScheme();
-    const theme = THEME[colorScheme ?? 'light'];
-    const styles = createStyles(theme);
     const {
       errors,
       values: formData,
@@ -71,15 +72,19 @@ export function RegisterScreen() {
     }, [formData, setEmail, setName, setPassword, setConfirmPassword]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>إنشاء حساب جديد</Text>
+    <ScreenLayout>
+      <NavBar>
+        <ButtonArrowBack />
+      </NavBar>
+      <VStack className=" flex-1 gap-4 justify-center ">
+      <Text className="text-2xl font-bold text-center">إنشاء حساب جديد</Text>
       
-      {errors && (
+      {/* {errors && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorTitle}>{errors}</Text>
           <Text style={styles.errorDescription}>{errors}</Text>
         </View>
-      )}
+      )} */}
       
       <InputField
         placeholder="الاسم الكامل"
@@ -87,6 +92,7 @@ export function RegisterScreen() {
         onChangeText={(value) => handleInputChange("username", value)}
         onBlur={() => handleInputBlur("username")}
         autoCapitalize="words"
+        textAlign='right'
       />
       
       <InputField
@@ -96,6 +102,7 @@ export function RegisterScreen() {
         onBlur={() => handleInputBlur("email")}
         keyboardType="email-address"
         autoCapitalize="none"
+        textAlign='right'
       />
       
       <InputField
@@ -104,6 +111,7 @@ export function RegisterScreen() {
         onChangeText={(value) => handleInputChange("password", value)}
         onBlur={() => handleInputBlur("password")}
         secureTextEntry
+        textAlign='right'
       />
       
       <InputField
@@ -112,62 +120,24 @@ export function RegisterScreen() {
         onChangeText={(value) => handleInputChange("confirmPassword", value)}
         onBlur={() => handleInputBlur("confirmPassword")}
         secureTextEntry
+        textAlign='right'
       />
       
-      <Button
-        title="إنشاء الحساب"
+      <ButtonAction
+        text="إنشاء الحساب"
         onPress={handleSubmit}
         loading={loading}
-        style={styles.registerButton}
+        variant="solid"
+        action="primary"
       />
       
-      <Button
-        title="لديك حساب بالفعل؟ تسجيل الدخول"
+      <ButtonAction
+        text="لديك حساب بالفعل؟ تسجيل الدخول"
         onPress={() => router.back()}
         variant="outline"
-        style={styles.loginButton}
+        action="primary"
       />
-    </View>
+      </VStack>
+    </ScreenLayout>
   );
 }
-
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    backgroundColor: theme.background,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 40,
-    color: theme.foreground,
-  },
-  errorContainer: {
-    backgroundColor: theme.border,
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.primary,
-  },
-  errorTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.primary,
-    marginBottom: 4,
-  },
-  errorDescription: {
-    fontSize: 14,
-    color: theme.primary,
-    lineHeight: 20,
-  },
-  registerButton: {
-    marginTop: 20,
-  },
-  loginButton: {
-    marginTop: 10,
-  },
-});

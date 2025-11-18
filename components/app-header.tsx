@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { StatusBar, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { THEME } from '@/src/theme/theme';
-import { ThemedView } from './themed-view';
+import { Pressable } from './ui/pressable';
+
 
 export interface AppHeaderProps {
   title?: string;
@@ -32,9 +32,6 @@ export function AppHeader({
   elevation = 0,
   style,
 }: AppHeaderProps) {
-  const colorScheme = useColorScheme();
-  const theme = THEME[colorScheme ?? 'light'];
-  const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const themeBackgroundColor = useThemeColor({}, 'background');
   const themeTextColor = useThemeColor({}, 'text');
@@ -56,26 +53,14 @@ export function AppHeader({
         barStyle={headerTextColor === '#ECEDEE' ? 'light-content' : 'dark-content'}
         backgroundColor={headerBackgroundColor}
       />
-      <ThemedView
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top,
-            backgroundColor: headerBackgroundColor,
-            elevation: elevation,
-            shadowOpacity: elevation > 0 ? 0.1 : 0,
-          },
-          style,
-        ]}
-      >
-        <View style={styles.content}>
+
+        <View className="flex-row items-center justify-between">
           {/* Left Section */}
-          <View style={styles.leftSection}>
+          <View className="flex-row items-center">
             {leftComponent || (
               showBackButton && (
-                <TouchableOpacity
+                <Pressable
                   onPress={handleBackPress}
-                  style={styles.backButton}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
                   <Ionicons
@@ -83,19 +68,17 @@ export function AppHeader({
                     size={24}
                     color={headerIconColor}
                   />
-                </TouchableOpacity>
+                </Pressable>
               )
             )}
           </View>
 
           {/* Center Section - Title */}
-          <View style={styles.centerSection}>
+          <View className="flex-1">
             {title && (
               <Text
-                style={[
-                  styles.title,
-                  { color: headerTextColor },
-                ]}
+                className="text-lg font-bold"
+                style={{ color: headerTextColor }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
@@ -105,53 +88,12 @@ export function AppHeader({
           </View>
 
           {/* Right Section */}
-          <View style={styles.rightSection}>
+          <View className="flex-row items-center">
             {rightComponent}
           </View>
         </View>
-      </ThemedView>
+     
     </>
   );
 }
 
-const createStyles = (theme: typeof THEME.light) => StyleSheet.create({
-  container: {
-    width: '100%',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.border,
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 44,
-  },
-  leftSection: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  centerSection: {
-    flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rightSection: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: Platform.OS === 'ios' ? '600' : 'bold',
-    textAlign: 'center',
-  },
-  backButton: {
-    padding: 4,
-    marginRight: 8,
-  },
-});
