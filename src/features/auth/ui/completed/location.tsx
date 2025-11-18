@@ -1,14 +1,33 @@
+import { Box } from '@/components/ui/box';
+import { HStack } from '@/components/ui/hstack';
 import { Pressable } from '@/components/ui/pressable';
 import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
 import { Text } from '@/components/ui/text';
-import { Button } from '@/src/components/Button';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
+import InputForm from '@/src/components/InputForm';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
+
+const popularLocations = [
+  { id: 'new-york', label: 'New York, NY', emoji: '🗽' },
+  { id: 'los-angeles', label: 'Los Angeles, CA', emoji: '🌴' },
+  { id: 'chicago', label: 'Chicago, IL', emoji: '🏙️' },
+  { id: 'houston', label: 'Houston, TX', emoji: '🤠' },
+  { id: 'phoenix', label: 'Phoenix, AZ', emoji: '☀️' },
+  { id: 'philadelphia', label: 'Philadelphia, PA', emoji: '🔔' },
+  { id: 'san-antonio', label: 'San Antonio, TX', emoji: '🌮' },
+  { id: 'san-diego', label: 'San Diego, CA', emoji: '🏖️' },
+  { id: 'dallas', label: 'Dallas, TX', emoji: '🤠' },
+  { id: 'san-jose', label: 'San Jose, CA', emoji: '💻' },
+  { id: 'austin', label: 'Austin, TX', emoji: '🎸' },
+  { id: 'jacksonville', label: 'Jacksonville, FL', emoji: '🌊' },
+];
 
 export function LocationPage() {
   const { profile } = useAuth();
@@ -18,33 +37,18 @@ export function LocationPage() {
   const [customLocation, setCustomLocation] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState(false);
 
-  const popularLocations = [
-    { id: 'new-york', label: 'New York, NY', emoji: '🗽' },
-    { id: 'los-angeles', label: 'Los Angeles, CA', emoji: '🌴' },
-    { id: 'chicago', label: 'Chicago, IL', emoji: '🏙️' },
-    { id: 'houston', label: 'Houston, TX', emoji: '🤠' },
-    { id: 'phoenix', label: 'Phoenix, AZ', emoji: '☀️' },
-    { id: 'philadelphia', label: 'Philadelphia, PA', emoji: '🔔' },
-    { id: 'san-antonio', label: 'San Antonio, TX', emoji: '🌮' },
-    { id: 'san-diego', label: 'San Diego, CA', emoji: '🏖️' },
-    { id: 'dallas', label: 'Dallas, TX', emoji: '🤠' },
-    { id: 'san-jose', label: 'San Jose, CA', emoji: '💻' },
-    { id: 'austin', label: 'Austin, TX', emoji: '🎸' },
-    { id: 'jacksonville', label: 'Jacksonville, FL', emoji: '🌊' },
-  ];
-
   useEffect(() => {
     if (profileFromAtom?.location) {
       const location = popularLocations.find(loc => loc.label === profileFromAtom?.location);
       if (location) {
         setSelectedLocation(location.id);
+        setCustomLocation('');
+        setShowCustomInput(false);
       } else {
         setSelectedLocation('');
         setCustomLocation(profileFromAtom?.location || '');
         setShowCustomInput(true);
       }
-      setCustomLocation('');
-      setShowCustomInput(false);
     } else {
       setSelectedLocation('');
       setCustomLocation('');
@@ -125,97 +129,106 @@ export function LocationPage() {
 
   return (
     <ScreenLayout>
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="flex-1">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <VStack className="flex-1 items-center justify-between py-10" space="2xl">
           {/* Header */}
-          <View className="flex-1">
-            <Text className="text-2xl font-bold">Where are you located?</Text>
-            <Text className="text-sm text-muted-foreground">
+          <VStack className="items-center justify-center" space="sm">
+            <Text size="2xl" bold>Where are you located?</Text>
+            <Text size="sm" className="text-muted-foreground">
               Help us connect you with people nearby
             </Text>
-          </View>
+          </VStack>
 
           {/* Current Selection Display */}
           {(selectedLocation || customLocation) && (
-            <View className="mb-4">
-              <Text className="text-lg font-bold">Selected:</Text>
-              <Text className="text-sm">{getSelectedLocationLabel()}</Text>
-            </View>
+            <VStack className="mb-4" space="xs">
+              <Text size="lg" bold>Selected:</Text>
+              <Text size="sm" className="text-typography-700">{getSelectedLocationLabel()}</Text>
+            </VStack>
           )}
 
           {/* Custom Location Input */}
           {showCustomInput && (
-            <View className="mb-4">
-              <Text className="text-lg font-bold">Enter your location</Text>
-              <TextInput
-                className="border border-gray-200 rounded-lg p-2"
+            <VStack className="items-center justify-center" space="2xl">
+              <Text size="lg" bold className="text-center">Enter your location</Text>
+              <InputForm
+                variant="outline"
+                text="City, State/Country"
                 placeholder="City, State/Country"
                 value={customLocation}
                 onChangeText={setCustomLocation}
-                autoFocus
-              />
-              <TouchableOpacity
-                className="p-2 rounded-lg border border-gray-200"
-                onPress={() => {
+                onBlur={() => {
                   setShowCustomInput(false);
                   setCustomLocation('');
                 }}
-              >
-                <Text className="text-sm">Cancel</Text>
-              </TouchableOpacity>
-            </View>
+                className="w-full"
+                textAlign="center"
+              />
+            </VStack>
           )}
 
           {/* Popular Locations */}
           {!showCustomInput && (
-            <View className="flex-row items-center gap-2">
-              <Text className="text-sm text-muted-foreground">Popular Locations</Text>
-              <View className="flex-row items-center gap-2">
+            <VStack className="items-center justify-center mb-4" space="sm">
+              <Text size="sm" className="text-muted-foreground">Popular Locations</Text>
+              <Box className="flex-row flex-wrap items-center justify-center" style={{ gap: 16 }}>
                 {popularLocations.map((location) => (
                   <Pressable
                     key={location.id}
-                    className={`flex-row items-center gap-2 ${selectedLocation === location.id ? 'bg-primary-500' : ''}`}
+                    className={`flex-row items-center p-2 rounded-lg border ${
+                      selectedLocation === location.id 
+                        ? 'bg-primary-500 border-primary-500' 
+                        : 'border-outline-200 bg-background-0'
+                    }`}
                     onPress={() => handleLocationSelect(location.id)}
                   >
-                    <Text className="text-sm text-muted-foreground">{location.emoji}</Text>
-                    <Text className="text-sm text-muted-foreground">{location.label}</Text>
+                    <HStack className="items-center" space="sm">
+                      <Text size="md" className="text-muted-foreground">{location.emoji}</Text>
+                      <Text 
+                        size="md" 
+                        className={selectedLocation === location.id ? 'text-white' : 'text-typography-700'}
+                      >
+                        {location.label}
+                      </Text>
+                    </HStack>
                   </Pressable>
                 ))}
-              </View>
-            </View>
+              </Box>
+            </VStack>
           )}
 
           {/* Custom Location Button */}
           {!showCustomInput && (
-            <View className="mb-4">
-              <TouchableOpacity
-                className="p-2 rounded-lg border border-gray-200"
+            <VStack className="mb-4">
+              <Pressable
+                className="p-2 rounded-lg border border-outline-200 bg-background-0"
                 onPress={handleCustomLocation}
               >
-                <Text className="text-sm">✏️</Text>
-                <Text className="text-sm">Enter custom location</Text>
-              </TouchableOpacity>
-            </View>
+                <HStack className="items-center" space="sm">
+                  <Text size="md" className="text-muted-foreground">✏️</Text>
+                  <Text size="sm" className="text-typography-700">Enter custom location</Text>
+                </HStack>
+              </Pressable>
+            </VStack>
           )}
 
           {/* Action Buttons */}
-          <View className="mb-4">
-            <Button
-              title={profileFromAtom?.location ? 'Update' : 'Next'}
+          <VStack className="w-full items-center justify-center" space="sm">
+            <ButtonAction
+              text={profileFromAtom?.location ? 'Update' : 'Next'}
               onPress={profileFromAtom?.location ? handleUpdate : handleNext}
-              variant="primary"
-              size="large"
+              action="primary"
+              variant="solid"
             />
             
-            <Button
-              title={profileFromAtom?.location ? 'Back' : 'Skip'}
-              onPress={profileFromAtom?.location ? handleUpdate : handleSkip}
-              variant="text"
-              size="large"
+            <ButtonAction
+              text={profileFromAtom?.location ? 'Back' : 'Skip'}
+              onPress={profileFromAtom?.location ? () => router.back() : handleSkip}
+              action="secondary"
+              variant="outline"
             />
-            
-          </View>
-        </View>
+          </VStack>
+        </VStack>
       </ScrollView>
     </ScreenLayout>
   );

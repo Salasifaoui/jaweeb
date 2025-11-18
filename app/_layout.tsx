@@ -37,13 +37,14 @@ const StackLayout = () => {
       // Only navigate if we're at the root
       const isAtRoot = segments.length === (0 as number);
       if (isAtRoot) {
-        if (isAuthenticated && user && session) {
-          // User is authenticated, go to main app
-          router.replace("/(auth)/complated/welcom");
-        } else {
-          // User is not authenticated, go to auth flow
-          router.replace("/(auth)/inscription");
-        }
+        // if (isAuthenticated && user && session) {
+        //   // User is authenticated, go to main app
+        //   router.replace("/(auth)/complated/welcom");
+        // } else {
+        //   // User is not authenticated, go to auth flow
+        //   router.replace("/(auth)/inscription");
+        // }
+        router.replace("/(auth)/complated/welcom");
         
         setTimeout(() => {
           SplashScreen.hideAsync();

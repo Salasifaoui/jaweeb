@@ -1,14 +1,16 @@
+import { Box } from '@/components/ui/box';
 import { Pressable } from '@/components/ui/pressable';
 import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
 import { Text } from '@/components/ui/text';
-import { Button } from '@/src/components/Button';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks';
 import { userProfileAtom } from '@/src/features/profile/store/profileAtoms';
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 
 export function PreferencePage() {
   const { profile } = useAuth();
@@ -49,16 +51,17 @@ export function PreferencePage() {
   ];
 
   useEffect(() => {
-    if (profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference) {
+    const hasProfileData = profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference;
+    if (hasProfileData) {
       setSelectedInterests(profileFromAtom?.interest || []);
       setSelectedAgeRange(profileFromAtom?.ageRange || '');
-      setSelectedGenderPreference(profileFromAtom?.genderPreference.map((gender: string) => gender.toLowerCase())[0] || '');
+      setSelectedGenderPreference(profileFromAtom?.genderPreference?.map((gender: string) => gender.toLowerCase())[0] || '');
     } else {
       setSelectedInterests([]);
       setSelectedAgeRange('');
       setSelectedGenderPreference('');
     }
-  }, [profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference]);
+  }, [profileFromAtom?.gender, profileFromAtom?.ageRange, profileFromAtom?.genderPreference, profileFromAtom?.interest]);
 
   const toggleInterest = (interestId: string) => {
     setSelectedInterests(prev => 
@@ -106,99 +109,102 @@ export function PreferencePage() {
   const handleUpdate = async () => {
     await updateProfile(profile?.userId || '', {
       interest: selectedInterests,
-      ageRange: selectedAgeRange as '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '46-55' | '56-65' | '66-75' | '76-85' | '86-95',
+      ageRange: selectedAgeRange as '13-17' | '18-20' | '18-25' | '26-35' | '36-45' | '55+',
       genderPreference: [selectedGenderPreference as 'male' | 'female' | 'all'],
     });
     router.back();
   };
   return (
     <ScreenLayout>
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="flex-1">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <VStack className="flex-1 items-center justify-between py-10 gap-6">
           {/* Header */}
-          <View className="flex-1">
-            <Text className="text-2xl font-bold">Set your preferences</Text>
-            <Text className="text-sm text-muted-foreground">
+          <VStack className="items-center justify-center gap-2">
+            <Text size="2xl" bold>Set your preferences</Text>
+            <Text size="sm" className="text-muted-foreground">
               Help us match you with the right people
             </Text>
-          </View>
+          </VStack>
 
           {/* Interests Section */}
-          <View className="mb-4">
-            <Text className="text-lg font-bold">Interests</Text>
-            <Text className="text-sm text-muted-foreground">
+          <Box className="mb-4 w-full">
+            <Text size="lg" bold className="mb-2">Interests</Text>
+            <Text size="sm" className="text-muted-foreground mb-4">
               Select topics you&apos;re interested in (optional)
             </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <Box className="flex-row flex-wrap gap-2">
               {interests.map((interest) => (
                 <Pressable
                   key={interest.id}
-                  className={`p-2 rounded-lg border border-gray-200 ${selectedInterests.includes(interest.id) ? 'bg-primary-500' : ''}`}
+                  className={`p-3 rounded-lg border border-outline-200 items-center justify-center min-w-[80px] ${selectedInterests.includes(interest.id) ? 'bg-primary-500 border-primary-500' : 'bg-background-0'}`}
                   onPress={() => toggleInterest(interest.id)}
                 >
-                  <Text >{interest.emoji}</Text>
-                  <Text className="text-sm">{interest.label}</Text>
+                  <VStack className="items-center gap-1">
+                    <Text size="lg">{interest.emoji}</Text>
+                    <Text size="sm" className={selectedInterests.includes(interest.id) ? 'text-white' : 'text-typography-700'}>{interest.label}</Text>
+                  </VStack>
                 </Pressable>
               ))}
-            </View>
-          </View>
+            </Box>
+          </Box>
 
           {/* Age Range Section */}
-          <View className="mb-4">
-            <Text className="text-lg font-bold">Age Range</Text>
-            <Text className="text-sm text-muted-foreground">
+          <Box className="mb-4 w-full">
+            <Text size="lg" bold className="mb-2">Age Range</Text>
+            <Text size="sm" className="text-muted-foreground mb-4">
               Who would you like to connect with?
             </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <Box className="flex-row flex-wrap gap-2">
               {ageRanges.map((range) => (
                 <Pressable
                   key={range.id}
-                  className={`p-2 rounded-lg border border-gray-200 ${selectedAgeRange === range.id ? 'bg-primary-500' : ''}`}
+                  className={`px-4 py-2 rounded-lg border items-center justify-center ${selectedAgeRange === range.id ? 'bg-primary-500 border-primary-500' : 'bg-background-0 border-outline-200'}`}
                   onPress={() => setSelectedAgeRange(range.id)}
                 >
-                  <Text className="text-sm">{range.label}</Text>
+                  <Text size="sm" className={selectedAgeRange === range.id ? 'text-white' : 'text-typography-700'}>{range.label}</Text>
                 </Pressable>
               ))}
-            </View>
-          </View>
+            </Box>
+          </Box>
 
           {/* Gender Preference Section */}
-          <View className="mb-4">
-            <Text className="text-lg font-bold">Gender Preference</Text>
-            <Text className="text-sm text-muted-foreground">
+          <Box className="mb-4 w-full">
+            <Text size="lg" bold className="mb-2">Gender Preference</Text>
+            <Text size="sm" className="text-muted-foreground mb-4">
               Who would you like to connect with?
             </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <Box className="flex-row flex-wrap gap-2">
               {genderPreferences.map((preference) => (
                 <Pressable
                   key={preference.id}
-                  className={`p-2 rounded-lg border border-gray-200 ${selectedGenderPreference === preference.id ? 'bg-primary-500' : ''}`}
+                  className={`p-3 rounded-lg border items-center justify-center min-w-[80px] ${selectedGenderPreference === preference.id ? 'bg-primary-500 border-primary-500' : 'bg-background-0 border-outline-200'}`}
                   onPress={() => setSelectedGenderPreference(preference.id)}
                 >
-                  <Text >{preference.emoji}</Text>
-                  <Text className="text-sm">{preference.label}</Text>
+                  <VStack className="items-center gap-1">
+                    <Text size="lg">{preference.emoji}</Text>
+                    <Text size="sm" className={selectedGenderPreference === preference.id ? 'text-white' : 'text-typography-700'}>{preference.label}</Text>
+                  </VStack>
                 </Pressable>
               ))}
-            </View>
-          </View>
+            </Box>
+          </Box>
 
           {/* Action Buttons */}
-          <View className="mb-4">
-            <Button
-              title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Update' : 'Next'}
+          <VStack className="mb-4 w-full gap-2">
+            <ButtonAction
+              text={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Update' : 'Next'}
               onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleNext}
-              variant="primary"
-              size="large"
+              action="primary"
+              variant="solid"
             />
-            <Button
-              title={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Back' : 'Skip'}
-              onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? handleUpdate : handleSkip}
-              variant="text"
-              size="large"
+            <ButtonAction
+              text={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? 'Back' : 'Skip'}
+              onPress={profileFromAtom?.gender && profileFromAtom?.ageRange && profileFromAtom?.genderPreference ? () => router.back() : handleSkip}
+              action="secondary"
+              variant="outline"
             />
-         
-          </View>
-        </View>
+          </VStack>
+        </VStack>
       </ScrollView>
     </ScreenLayout>
   );

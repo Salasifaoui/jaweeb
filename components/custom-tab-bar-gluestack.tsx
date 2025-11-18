@@ -203,13 +203,13 @@ function TabButton({
             className="items-center justify-center gap-2 bg-primary-400 rounded-full p-2 px-4"
             style={animatedBackgroundStyle}
           >
-            <AnimatedText
+            {/* <AnimatedText
               size="md"
               className="text-center text-white"
               style={animatedTextStyle}
             >
               {label}
-            </AnimatedText>
+            </AnimatedText> */}
             {icon}
           </AnimatedHStack>
         ) : (

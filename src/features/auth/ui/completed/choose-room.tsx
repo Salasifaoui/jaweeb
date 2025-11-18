@@ -1,10 +1,13 @@
+import { Box } from '@/components/ui/box';
+import { HStack } from '@/components/ui/hstack';
 import { Pressable } from '@/components/ui/pressable';
 import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
 import { Text } from '@/components/ui/text';
-import { Button } from '@/src/components/Button';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 
 export function ChooseRoomPage() {
   const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
@@ -94,73 +97,94 @@ export function ChooseRoomPage() {
   return (
     <ScreenLayout>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-1">
+        <VStack className="flex-1 py-10" space="xl">
           {/* Header */}
-          <View className="flex-row items-center gap-2">
-            <Text className="text-sm text-muted-foreground">Choose your rooms</Text>
-            <Text className="text-sm text-muted-foreground">Join communities that interest you to start connecting</Text>
-          </View>
+          <VStack className="items-center justify-center" space="sm">
+            <Text size="2xl" bold>Choose your rooms</Text>
+            <Text size="sm" className="text-muted-foreground text-center">
+              Join communities that interest you to start connecting
+            </Text>
+          </VStack>
 
           {/* Selected Rooms Summary */}
           {selectedRooms.length > 0 && (
-            <View className="flex-row items-center gap-2">
-              <Text className="text-sm text-muted-foreground">
+            <Box className="w-full items-center">
+              <Text size="sm" className="text-muted-foreground">
                 {selectedRooms.length} room{selectedRooms.length !== 1 ? 's' : ''} selected
               </Text>
-            </View>
+            </Box>
           )}
 
           {/* Room Categories */}
-          {roomCategories.map((category) => (
-            <View key={category.id} className="flex-row items-center gap-2">
-              <View className="flex-row items-center gap-2">
-                <Text className="text-sm text-muted-foreground">{category.emoji}</Text>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-sm text-muted-foreground">{category.title}</Text>
-                  <Text className="text-sm text-muted-foreground">{category.description}</Text>
-                </View>
-              </View>
-              
-              <View className="flex-row items-center gap-2">
-                {category.rooms.map((room) => (
-                  <Pressable
-                    key={room.id}
-                    className={`flex-row items-center gap-2 ${selectedRooms.includes(room.id) ? 'bg-primary-500' : ''}`}
-                   
-                    onPress={() => toggleRoom(room.id)}
-                  >
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-sm text-muted-foreground">{room.name}</Text>
-                      <Text className="text-sm text-muted-foreground">{room.members} members</Text>
-                    </View>
-                    <View className={`flex-row items-center gap-2 ${selectedRooms.includes(room.id) ? 'bg-primary-500' : ''}`}
-                    >
-                      {selectedRooms.includes(room.id) && (
-                        <Text className="text-sm text-muted-foreground">✓</Text>
-                      )}
-                    </View>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          ))}
+          <VStack className="w-full" space="lg">
+            {roomCategories.map((category) => (
+              <Box key={category.id} className="w-full">
+                <VStack space="sm">
+                  {/* Category Header */}
+                  <HStack className="items-center" space="sm">
+                    <Text size="lg">{category.emoji}</Text>
+                    <VStack space="xs">
+                      <Text size="lg" bold>{category.title}</Text>
+                      <Text size="sm" className="text-muted-foreground">
+                        {category.description}
+                      </Text>
+                    </VStack>
+                  </HStack>
+                  
+                  {/* Rooms Grid */}
+                  <Box className="flex-row flex-wrap gap-2">
+                    {category.rooms.map((room) => (
+                      <Pressable
+                        key={room.id}
+                        className={`p-3 rounded-lg border items-center justify-center min-w-[120px] ${
+                          selectedRooms.includes(room.id) 
+                            ? 'bg-primary-500 border-primary-500' 
+                            : 'bg-background-0 border-outline-200'
+                        }`}
+                        onPress={() => toggleRoom(room.id)}
+                      >
+                        <VStack className="items-center" space="xs">
+                          <Text 
+                            size="sm" 
+                            className={selectedRooms.includes(room.id) ? 'text-white' : 'text-typography-700'}
+                            bold
+                          >
+                            {room.name}
+                          </Text>
+                          <Text 
+                            size="xs" 
+                            className={selectedRooms.includes(room.id) ? 'text-white/80' : 'text-muted-foreground'}
+                          >
+                            {room.members} members
+                          </Text>
+                          {selectedRooms.includes(room.id) && (
+                            <Text size="sm" className="text-white">✓</Text>
+                          )}
+                        </VStack>
+                      </Pressable>
+                    ))}
+                  </Box>
+                </VStack>
+              </Box>
+            ))}
+          </VStack>
 
           {/* Action Buttons */}
-          <View className="flex-row items-center gap-2">
-            <Button
-              title="Start Chatting"
+          <VStack className="w-full mb-4" space="sm">
+            <ButtonAction
+              text="Start Chatting"
               onPress={handleStart}
-              variant="primary"
-              size="large"
+              action="primary"
+              variant="solid"
             />
-            <Button
-              title="Skip for now"
+            <ButtonAction
+              text="Skip for now"
               onPress={handleSkip}
-              variant="text"
-              size="large"
+              action="secondary"
+              variant="outline"
             />
-          </View>
-        </View>
+          </VStack>
+        </VStack>
       </ScrollView>
     </ScreenLayout>
   );

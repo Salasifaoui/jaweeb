@@ -75,10 +75,10 @@ export function ProfileScreen() {
             <ActivityIndicator size="small" color="#007AFF" style={{ marginVertical: 10 }} />
           ) : (
             <>
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-lg text-muted-foreground">
                 {profileFromAtom?.username || userProfile?.username || "User Name"}
               </Text>
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-md text-muted-foreground">
                 {profileFromAtom?.email || userProfile?.email || "user@example.com"}
               </Text>
             </>

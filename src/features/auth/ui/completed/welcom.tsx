@@ -3,11 +3,13 @@ import { ScreenLayout } from '@/components/ui/screen-layout/screen-layout';
 import { Text } from '@/components/ui/text';
 import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { APP_NAME } from '@/constants/variables';
-import { Button } from '@/src/components/Button';
 import { ListAvatars } from '@/src/components/list-avatars/list-avatars';
 import { useCompletedProfile } from '@/src/features/profile/hooks';
 import { useUserService } from '@/src/features/profile/hooks/userProfile';
 
+import { HStack } from '@/components/ui/hstack';
+import { VStack } from '@/components/ui/vstack';
+import ButtonAction from '@/src/components/ButtonAction';
 import { router } from 'expo-router';
 import { ChevronDownCircle, ChevronUpCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -46,27 +48,27 @@ export  function WelcomePage() {
 
   return (
     <ScreenLayout>
-      <View className="flex-1">
+      <VStack className="flex-1 items-center justify-between py-10">
         {/* Logo Section */}
-        <View className="flex-row items-center gap-2">
+        <HStack className=" items-center gap-2">
           <IconsList.jaweeb width={80} height={80} />
           <Text className="text-2xl font-bold">{APP_NAME}</Text>
-        </View>
+        </HStack>
 
         {/* Welcome Content */}
-        <View className="flex-1">
+        <VStack className="items-center justify-center gap-2">
           <Text className="text-2xl font-bold">Welcome to {APP_NAME}!</Text>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-sm text-muted-foreground text-center">
             Let&apos;s get you set up with a few quick steps to personalize your experience.
           </Text>
-        </View>
-         <View className="flex-row items-center gap-2">
+        </VStack>
+         <VStack className=" items-center gap-2">
            <UserAvatar 
              user={profile} 
              size={100} 
              showInitials={true}
            />
-           <View className="flex-row items-center gap-2">
+           <HStack className=" items-center gap-2">
             <Text className="text-sm text-muted-foreground">Select your avatar or upload a new one</Text>
            
            {!isOpen ? (
@@ -75,7 +77,7 @@ export  function WelcomePage() {
             >
               <ChevronDownCircle
                 size={20}
-                color="#007AFF"
+                color="white"
                 fill="#007AFF"
               />
             </TouchableOpacity>
@@ -85,17 +87,17 @@ export  function WelcomePage() {
             >
               <ChevronUpCircle
                 size={20}
-                color="#007AFF"
+                color="white"
                 fill="#007AFF"
               />
             </TouchableOpacity>
           )}
-          </View>
+          </HStack>
           
-         </View>
+         </VStack>
          {isOpen && <ListAvatars userProfile={profile} setShowGallery={setIsOpen} />}
         {/* Features List */}
-        <View className="flex-row items-center gap-2">
+        <VStack className=" items-center gap-3">
           <View className="flex-row items-center gap-2">
             <Text className="text-sm text-muted-foreground">🎯 Connect with like-minded people</Text>
           </View>
@@ -105,18 +107,19 @@ export  function WelcomePage() {
           <View className="flex-row items-center gap-2">
             <Text className="text-sm text-muted-foreground">🌟 Discover new communities</Text>
           </View>
-        </View>
+        </VStack>
 
         {/* Next Button */}
-        <View className="flex-row items-center gap-2">
-          <Button
-            title="Get Started"
+        
+      </VStack>
+      <HStack className=" items-center gap-2 justify-center pb-10">
+          <ButtonAction
+            text="Get Started"
             onPress={handleNext}
-            variant="primary"
-            size="large"
+            action="primary"
+            variant="solid"
           />
-        </View>
-      </View>
+        </HStack>
     </ScreenLayout>
   );
 }
