@@ -1,10 +1,10 @@
 import { AppHeader } from '@/components/app-header';
 import { ThemedText } from '@/components/themed-text';
 import { Icon } from '@/components/ui/icon';
-import { ListAvatars } from '@/components/ui/list-avatars/list-avatars';
 import { UserAvatar } from '@/components/ui/user-avatar/user-avatar';
 import { Button } from '@/src/components/Button';
 import { InputField } from '@/src/components/InputField';
+import { ListAvatars } from '@/src/components/list-avatars/list-avatars';
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { useUpdateProfile } from '@/src/features/profile/hooks/userUpdateProfile';
 import { THEME } from '@/src/theme/theme';

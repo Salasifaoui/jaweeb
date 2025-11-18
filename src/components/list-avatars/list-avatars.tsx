@@ -8,9 +8,9 @@ import { useUpdateProfile } from "@/src/features/profile/hooks/userUpdateProfile
 import { Check, Plus } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { AvatarItem } from "../avatar-item/avatar-item";
+import { AvatarItem } from "../../../components/ui/avatar-item/avatar-item";
+import { ZixCart } from "../../../components/ui/zix-cart/zix-cart";
 import { Gallery } from "../gallery";
-import { ZixCart } from "../zix-cart/zix-cart";
 
 interface ListAvatarsProps {
   userProfile: any;

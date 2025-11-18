@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { ZixAlertActions } from '../zix-alert-actions/zix-alert-actions';
+import { ZixAlertActions } from '../../../components/ui/zix-alert-actions/zix-alert-actions';
 
 const { width } = Dimensions.get('window');
 const imageSize = (width - 60) / 3;

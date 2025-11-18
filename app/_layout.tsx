@@ -1,24 +1,26 @@
-import { ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
 import '../global.css';
 
 import { useAuth } from '@/src/features/auth/hooks/useAuth';
+import { useColorScheme } from "@/src/hooks/useColorSchema";
 import { AuthProvider } from '@/src/providers/AuthProvider';
-import { NAV_THEME } from '@/src/theme/theme';
 import { Provider as JotaiProvider } from 'jotai';
-import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
+
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
   return (
+    
     <JotaiProvider>
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
     </JotaiProvider>
+  
   );
 }
 
@@ -61,13 +63,13 @@ const StackLayout = () => {
 };
 
 function RootLayoutNav() {
-  const { colorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
 
   return (
-        <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+    <GluestackUIProvider mode={isDarkColorScheme ? "dark" : "light"}>
           <StackLayout />
           {/* <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} /> */}
-        </ThemeProvider>
+        </GluestackUIProvider>
 
   );
 }

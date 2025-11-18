@@ -17,7 +17,15 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const auth = useAuth();
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{
+    user: null,
+    loading: false,
+    login: async () => {},
+    register: async () => {},
+    logout: async () => {},
+    upgradeGuest: async () => {},
+    reload: async () => {},
+  }}>{children}</AuthContext.Provider>;
 };
 
 /**

@@ -1,25 +1,28 @@
-export type MessageType = 'text' | 'image' | 'audio' | 'system';
-
 export interface Message {
-  id: string;
-  sender_id: string;      // User who sent the message
-  receiver_id?: string;   // For private messages
-  group_id?: string;      // For group messages
-  content: string;        // Message text
-  type: MessageType;      // Message type
-  media_url?: string;     // Media URL (image/audio)
-  is_read?: boolean;      // Read status
-  read_by?: string[];     // Users who read the message (for groups)
-  created_at: string;     // Send timestamp
+  $id: string;
+  chat_id: string; // مرجع إلى chats
+  sender_id: string; // مرجع إلى profiles.user_id
+  content: string; // نص الرسالة
+  file_id?: string; // معرف الملف (اختياري)
+  seen_by: string[]; // المستخدمون الذين قرأوا الرسالة
+  created_at: string; // وقت الإرسال
 }
 
-// For backward compatibility with existing Chat interface
-export interface ChatMessage extends Message {
-  chatId: string;         // Alias for group_id or receiver_id
-  senderId: string;       // Alias for sender_id
-  createdAt: string;      // Alias for created_at
-  updatedAt: string;      // Same as created_at
-  status?: 'sent' | 'delivered' | 'read';
-  replyTo?: string;
-  attachments?: string[];
+export interface MessageInput {
+  chat_id: string;
+  content: string;
+  file_id?: string;
+}
+
+export interface MessageStatus {
+  message_id: string;
+  seen_by: string[];
+  delivered_to: string[];
+}
+
+export interface TypingIndicator {
+  chat_id: string;
+  user_id: string;
+  is_typing: boolean;
+  timestamp: string;
 }

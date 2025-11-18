@@ -1,160 +1,123 @@
-export const colors = {
-  // Primary colors
-  primary: {
-    50: '#eff6ff',
-    100: '#dbeafe',
-    200: '#bfdbfe',
-    300: '#93c5fd',
-    400: '#60a5fa',
-    500: '#3b82f6',
-    600: '#2563eb',
-    700: '#1d4ed8',
-    800: '#1e40af',
-    900: '#1e3a8a',
-  },
-  
-  // Secondary colors
-  secondary: {
-    50: '#f8fafc',
-    100: '#f1f5f9',
-    200: '#e2e8f0',
-    300: '#cbd5e1',
-    400: '#94a3b8',
-    500: '#64748b',
-    600: '#475569',
-    700: '#334155',
-    800: '#1e293b',
-    900: '#0f172a',
-  },
-  
-  // Success colors
-  success: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e',
-    600: '#16a34a',
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
-  },
-  
-  // Warning colors
-  warning: {
-    50: '#fffbeb',
-    100: '#fef3c7',
-    200: '#fde68a',
-    300: '#fcd34d',
-    400: '#fbbf24',
-    500: '#f59e0b',
-    600: '#d97706',
-    700: '#b45309',
-    800: '#92400e',
-    900: '#78350f',
-  },
-  
-  // Error colors
-  error: {
-    50: '#fef2f2',
-    100: '#fee2e2',
-    200: '#fecaca',
-    300: '#fca5a5',
-    400: '#f87171',
-    500: '#ef4444',
-    600: '#dc2626',
-    700: '#b91c1c',
-    800: '#991b1b',
-    900: '#7f1d1d',
-  },
-  
-  // Neutral colors
-  neutral: {
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#e5e5e5',
-    300: '#d4d4d4',
-    400: '#a3a3a3',
-    500: '#737373',
-    600: '#525252',
-    700: '#404040',
-    800: '#262626',
-    900: '#171717',
-  },
-  
-  // Semantic colors
-  background: {
-    primary: '#ffffff',
-    secondary: '#f8fafc',
-    tertiary: '#f1f5f9',
-  },
-  
-  text: {
-    primary: '#0f172a',
-    secondary: '#475569',
-    tertiary: '#64748b',
-    inverse: '#ffffff',
-  },
-  
-  border: {
-    primary: '#e2e8f0',
-    secondary: '#cbd5e1',
-    focus: '#3b82f6',
-  },
-  
-  // iOS specific colors
-  ios: {
-    blue: '#007AFF',
-    green: '#34C759',
-    orange: '#FF9500',
-    red: '#FF3B30',
-    purple: '#5856D6',
-    pink: '#FF2D92',
-    teal: '#5AC8FA',
-    indigo: '#007AFF',
-    gray: '#8E8E93',
-    gray2: '#AEAEB2',
-    gray3: '#C7C7CC',
-    gray4: '#D1D1D6',
-    gray5: '#E5E5EA',
-    gray6: '#F2F2F7',
-  },
-  
-  // Android specific colors
-  android: {
-    blue: '#2196F3',
-    green: '#4CAF50',
-    orange: '#FF9800',
-    red: '#F44336',
-    purple: '#9C27B0',
-    teal: '#009688',
-    indigo: '#3F51B5',
-    gray: '#9E9E9E',
-  },
-};
+import { Platform } from 'react-native';
 
-// Theme variants
-export const lightTheme = {
-  colors: {
-    ...colors,
-    background: colors.background.primary,
-    surface: colors.background.secondary,
-    text: colors.text.primary,
-    textSecondary: colors.text.secondary,
-    border: colors.border.primary,
+const IOS_SYSTEM_COLORS = {
+  white: 'rgb(255, 255, 255)',
+  black: 'rgb(0, 0, 0)',
+  light: {
+    grey6: 'rgb(242, 242, 247)',
+    grey5: 'rgb(230, 230, 235)',
+    grey4: 'rgb(210, 210, 215)',
+    grey3: 'rgb(199, 199, 204)',
+    grey2: 'rgb(175, 176, 180)',
+    grey: 'rgb(142, 142, 147)',
+    background: 'rgb(242, 242, 247)',
+    foreground: 'rgb(0, 0, 0)',
+    root: 'rgb(255, 255, 255)',
+    card: 'rgb(255, 255, 255)',
+    cardForeground: 'rgb(8, 28, 30)',
+    popover: 'rgb(230, 230, 235)',
+    popoverForeground: 'rgb(0, 0, 0)',
+    destructive: 'rgb(255, 56, 43)',
+    primary: 'rgb(74, 112, 169)',
+    primaryForeground: 'rgb(255, 255, 255)',
+    secondary: 'rgb(45, 175, 231)',
+    secondaryForeground: 'rgb(255, 255, 255)',
+    muted: 'rgb(175, 176, 180)',
+    mutedForeground: 'rgb(142, 142, 147)',
+    accent: 'rgb(255, 40, 84)',
+    accentForeground: 'rgb(255, 255, 255)',
+    border: 'rgb(230, 230, 235)',
+    input: 'rgb(210, 210, 215)',
+    ring: 'rgb(230, 230, 235)',
   },
-};
-
-export const darkTheme = {
-  colors: {
-    ...colors,
-    background: colors.neutral[900],
-    surface: colors.neutral[800],
-    text: colors.text.inverse,
-    textSecondary: colors.neutral[300],
-    border: colors.neutral[700],
+  dark: {
+    grey6: 'rgb(21, 21, 24)',
+    grey5: 'rgb(40, 40, 42)',
+    grey4: 'rgb(55, 55, 57)',
+    grey3: 'rgb(70, 70, 73)',
+    grey2: 'rgb(99, 99, 102)',
+    grey: 'rgb(142, 142, 147)',
+    background: 'rgb(0, 0, 0)',
+    foreground: 'rgb(255, 255, 255)',
+    root: 'rgb(0, 0, 0)',
+    card: 'rgb(21, 21, 24)',
+    cardForeground: 'rgb(255, 255, 255)',
+    popover: 'rgb(40, 40, 42)',
+    popoverForeground: 'rgb(255, 255, 255)',
+    destructive: 'rgb(254, 67, 54)',
+    primary: 'rgb(74, 112, 169)',
+    primaryForeground: 'rgb(255, 255, 255)',
+    secondary: 'rgb(100, 211, 254)',
+    secondaryForeground: 'rgb(255, 255, 255)',
+    muted: 'rgb(70, 70, 73)',
+    mutedForeground: 'rgb(142, 142, 147)',
+    accent: 'rgb(255, 52, 95)',
+    accentForeground: 'rgb(255, 255, 255)',
+    border: 'rgb(40, 40, 42)',
+    input: 'rgb(55, 55, 57)',
+    ring: 'rgb(40, 40, 42)',
   },
-};
+} as const;
 
-export default colors;
+const ANDROID_COLORS = {
+  white: 'rgb(255, 255, 255)',
+  black: 'rgb(0, 0, 0)',
+  light: {
+    grey6: 'rgb(249, 249, 255)',
+    grey5: 'rgb(215, 217, 228)',
+    grey4: 'rgb(193, 198, 215)',
+    grey3: 'rgb(113, 119, 134)',
+    grey2: 'rgb(65, 71, 84)',
+    grey: 'rgb(24, 28, 35)',
+    background: 'rgb(249, 249, 255)',
+    foreground: 'rgb(0, 0, 0)',
+    root: 'rgb(255, 255, 255)',
+    card: 'rgb(255, 255, 255)',
+    cardForeground: 'rgb(24, 28, 35)',
+    popover: 'rgb(215, 217, 228)',
+    popoverForeground: 'rgb(0, 0, 0)',
+    destructive: 'rgb(186, 26, 26)',
+    primary: 'rgb(74, 112, 169)',
+    primaryForeground: 'rgb(255, 255, 255)',
+    secondary: 'rgb(176, 201, 255)',
+    secondaryForeground: 'rgb(20, 55, 108)',
+    muted: 'rgb(193, 198, 215)',
+    mutedForeground: 'rgb(65, 71, 84)',
+    accent: 'rgb(169, 73, 204)',
+    accentForeground: 'rgb(255, 255, 255)',
+    border: 'rgb(215, 217, 228)',
+    input: 'rgb(210, 210, 215)',
+    ring: 'rgb(215, 217, 228)',
+  },
+  dark: {
+    grey6: 'rgb(16, 19, 27)',
+    grey5: 'rgb(39, 42, 50)',
+    grey4: 'rgb(49, 53, 61)',
+    grey3: 'rgb(54, 57, 66)',
+    grey2: 'rgb(139, 144, 160)',
+    grey: 'rgb(193, 198, 215)',
+    background: 'rgb(0, 0, 0)',
+    foreground: 'rgb(255, 255, 255)',
+    root: 'rgb(0, 0, 0)',
+    card: 'rgb(16, 19, 27)',
+    cardForeground: 'rgb(224, 226, 237)',
+    popover: 'rgb(39, 42, 50)',
+    popoverForeground: 'rgb(224, 226, 237)',
+    destructive: 'rgb(147, 0, 10)',
+    primary: 'rgb(74, 112, 169)',
+    primaryForeground: 'rgb(255, 255, 255)',
+    secondary: 'rgb(28, 60, 114)',
+    secondaryForeground: 'rgb(189, 209, 255)',
+    muted: 'rgb(216, 226, 255)',
+    mutedForeground: 'rgb(139, 144, 160)',
+    accent: 'rgb(83, 0, 111)',
+    accentForeground: 'rgb(238, 177, 255)',
+    border: 'rgb(39, 42, 50)',
+    input: 'rgb(55, 55, 57)',
+    ring: 'rgb(39, 42, 50)',
+  },
+} as const;
+
+const COLORS = Platform.OS === 'ios' ? IOS_SYSTEM_COLORS : ANDROID_COLORS;
+
+export { COLORS };

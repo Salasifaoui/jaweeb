@@ -1,11 +1,12 @@
 
+import { APP_NAME } from '@/constants/variables';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Jaweeb</Text>
+      <Text style={styles.title}>{APP_NAME}</Text>
       <Text style={styles.subtitle}>جاري التحميل...</Text>
     </View>
   );

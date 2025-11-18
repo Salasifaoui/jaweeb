@@ -5,6 +5,8 @@ export const APP_CONFIG = {
     APP_URL: process.env.EXPO_PUBLIC_APP_URL || 'http://localhost:8081',
     DATABASE_ID: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID || 'Jaweeb',
     USERS_COLLECTION: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION || 'users',
+    CHATS_COLLECTION: process.env.EXPO_PUBLIC_APPWRITE_CHATS_COLLECTION || 'chats',
+    MESSAGES_COLLECTION: process.env.EXPO_PUBLIC_APPWRITE_MESSAGES_COLLECTION || 'messages',
     STORAGE_BUCKET_ID: process.env.EXPO_PUBLIC_APPWRITE_AVATARS_BUCKET || 'storage',
     STORAGE_BUCKET_NAME: process.env.EXPO_PUBLIC_APPWRITE_STORAGE_BUCKET_NAME || 'storage',
   } as const;
