@@ -2,7 +2,6 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { ScreenLayout } from "@/components/ui/screen-layout/screen-layout";
 import { Text } from "@/components/ui/text";
-import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/features/auth/hooks/useAuth";
 
 
@@ -11,6 +10,7 @@ import { NavBar } from "@/components/ui/nav-bar";
 import { UserAvatar } from "@/components/ui/user-avatar/user-avatar";
 import { VStack } from "@/components/ui/vstack";
 import { CardHero } from "@/src/components";
+import ButtonAction from "@/src/components/ButtonAction";
 import ButtonArrowBack from "@/src/components/ButtonArrowBack";
 import { router } from "expo-router";
 import { useAtom } from 'jotai';
@@ -83,12 +83,7 @@ export function ProfileScreen() {
               </Text>
             </>
           )}
-          
-          <Pressable
-            onPress={handleEditProfile}
-          >
-            <Text className="text-sm text-muted-foreground text-primary-500">Edit Profile</Text>
-          </Pressable>
+
           </CardHero>
         </VStack>
         <CardHero className="flex-1 justify-between">
@@ -124,10 +119,10 @@ export function ProfileScreen() {
           <ProfileItem icon={CircleAlert} title="About" onPress={() => router.push("/(auth)/complated/about")} />
         </VStack>
 
-        <Button
-          title="تسجيل الخروج"
+        <ButtonAction
+          text="تسجيل الخروج"
           onPress={handleLogout}
-          // loading={loading}
+          loading={loading}
           variant="outline"
         />
 

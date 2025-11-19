@@ -65,23 +65,23 @@ export function AuthModal() {
 
   return (
       <ScreenLayout>
-        <VStack className="flex-1 gap-4 justify-center">
+        <VStack className="flex-1 justify-center" space="lg">
 
         
         {/* Logo Section */}
-        <HStack className=" items-center justify-center">
+        <HStack className="items-center justify-center">
           <IconsList.jaweeb width={40} height={40} />
-          <Text className="text-2xl font-bold">{APP_NAME}</Text>
+          <Text size="2xl" bold>{APP_NAME}</Text>
         </HStack>
 
         {/* Main Content */}
-        <VStack className="gap-4 items-center justify-center  ">
-          <Text className="text-lg font-bold">
+        <VStack className="items-center justify-center" space="lg">
+          <Text size="lg" bold>
             Sign in to experience complete functions
           </Text>
 
           {/* Primary Sign In Buttons */}
-          <VStack className="items-center gap-4">
+          <VStack className="items-center" space="lg">
             <GoogleSignInButton onPress={handleGoogleSignIn} />
 
             <EmailSignInButton onPress={handleEmailSignIn} />
@@ -91,12 +91,12 @@ export function AuthModal() {
           </VStack>
 
           {/* OR Separator */}
-          <VStack className="items-center gap-2">
-            <Text className="text-lg font-bold">OR</Text>
+          <VStack className="items-center" space="sm">
+            <Text size="lg" bold>OR</Text>
           </VStack>
 
           {/* Social Media Icons */}
-          <HStack className="items-center gap-5">
+          <HStack className="items-center" space="xl">
             <Pressable className="flex-row items-center" onPress={handleFacebookSignIn}>
               <IconsList.facebook width={24} height={24} />
             </Pressable>
@@ -117,33 +117,33 @@ export function AuthModal() {
         
         </VStack>
         {/* Legal Text */}
-        <VStack className="justify-center items-center gap-6 pb-11">
-            <HStack className="items-center gap-2">
-            <Text className="text-lg font-bold">
+        <VStack className="justify-center items-center pb-11" space="3xl">
+            <HStack className="items-center" space="sm">
+            <Text size="lg" bold>
             By continuing, you agree to our{' '}
             </Text>
               <Pressable className="items-center" onPress={handleTermsOfUse}>
-                <Text className="text-lg font-bold text-primary-500">Terms of use</Text>
+                <Text size="lg" bold className="text-primary-500">Terms of use</Text>
               </Pressable>
               </HStack>
-              <HStack className="items-center gap-2">
+              <HStack className="items-center" space="sm">
               <Pressable className="items-center" onPress={handleBroadcasterAgreement}>
-                <Text className="text-lg font-bold text-primary-500">Broadcaster Agreement</Text>
+                <Text size="lg" bold className="text-primary-500">Broadcaster Agreement</Text>
               </Pressable>
-              <Text className="text-lg font-bold">
+              <Text size="lg" bold>
             and
             </Text>
             <Pressable className="items-center" onPress={handlePrivacyPolicy}>
-                <Text className="text-lg font-bold text-primary-500">Privacy Policy</Text>
+                <Text size="lg" bold className="text-primary-500">Privacy Policy</Text>
               </Pressable>
             </HStack>
-            <HStack className="items-center justify-center gap-2">
+            <HStack className="items-center justify-center" space="sm">
             
-              <Text className="text-sm font-bold">
+              <Text size="sm" bold>
               powered by
               </Text>
               <Pressable className="items-center" onPress={handleZixDev}>
-                  <Text className="text-sm font-bold text-primary-500">ZixDev</Text>
+                  <Text size="sm" bold className="text-primary-500">ZixDev</Text>
                 </Pressable>
             </HStack>
           </VStack>
